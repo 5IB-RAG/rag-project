@@ -6,6 +6,7 @@ Embeddings:
 - Colombo
 - Passoni
 - Cagliani
+\n
 Db:
 - Arosio
 - Fikri
