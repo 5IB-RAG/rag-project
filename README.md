@@ -1,4 +1,5 @@
 Consegna su Teams
+
 Gruppi:
 
 Embeddings:
@@ -6,7 +7,7 @@ Embeddings:
 - Colombo
 - Passoni
 - Cagliani
-\n
+
 Db:
 - Arosio
 - Fikri
@@ -17,11 +18,13 @@ Frontend:
 - Locatelli
 - Ghisoni
 - Formenti
+
 Chat:
 - Pozzi
 - Panzeri M
 - Galimberti
 - Motta
+
 Parsing:
 - Panzeri P
 - Adam
