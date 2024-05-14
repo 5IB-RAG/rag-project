@@ -4,15 +4,17 @@ public class Document
 {
     public string Name { get; set; }
     public string Extension { get; set; }
+    private List<string> Metadata { get; set; }
     
     //Probably need an user
 
-    public DocumentChunk[] Chunks { get; set; }
+    public List<DocumentChunk> Chunks { get; set; }
 
-    public Document(string name, string extension, DocumentChunk[] chunks)
+    public Document(string name, string extension, List<string> metadata, List<DocumentChunk> chunks)
     {
         this.Name = name;
         this.Extension = extension;
+        this.Metadata = metadata;
         this.Chunks = chunks;
     }
     
@@ -26,7 +28,9 @@ public class DocumentBuilder
 {
     private string name;
     private string extension;
-    private DocumentChunk[] chunks;
+    private List<string> metadata;
+    
+    private List<DocumentChunk> chunks;
 
     public DocumentBuilder Name(string name)
     {
@@ -40,14 +44,20 @@ public class DocumentBuilder
         return this;
     }
         
-    public DocumentBuilder Chunk(DocumentChunk[] chunks)
+    public DocumentBuilder Chunk(List<DocumentChunk> chunks)
     {
         this.chunks = chunks;
         return this;
     }
-        
+
+    public DocumentBuilder Metadata(List<string> metadata)
+    {
+        this.metadata = metadata;
+        return this;
+    }
+         
     public Document Build()
     {
-        return new Document(name, extension, chunks);
+        return new Document(name, extension, metadata, chunks);
     }
 }
