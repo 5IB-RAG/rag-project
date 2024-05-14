@@ -10,7 +10,7 @@ public class ParsingService : IParsingDocument
         { ".pdf", new PdfConvertor() }
     };
     
-    public async Task<Document> ParseDocument(FileStream documentStream, string[] metadata)
+    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
     {
         string text =  await _convertors[documentStream.Name.Split(".").Last()].GetTextAsync(documentStream);
 
