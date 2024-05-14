@@ -13,6 +13,7 @@ Db:
 - Fikri
 - Ertola
 - Rossetti
+  
 Frontend:
 - Vaccarella
 - Locatelli

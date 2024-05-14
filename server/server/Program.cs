@@ -10,12 +10,6 @@ public class Program
     static HttpClient client = new HttpClient();
     public static void Main(string[] args)
     {
-        string resourceName = ""; //inserire il proprio resource name
-        string apiKey = ""; //inserire la propria api-key
-        string deploymentId = "ada-embedding"; // inserire il modello del deploy
-        string apiVersion = "2024-03-01-preview"; // inserire la versione delle api
-        string urlEmbedding = $"https://{resourceName}.openai.azure.com/openai/deployments/{deploymentId}/embeddings?api-version={apiVersion}";
-
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -24,6 +18,9 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        // Get the embedding parameters
+        var embeddingParameters = builder.Configuration.GetSection("EmbeddingParameters").Get<EmbeddingParameters>();
 
         var app = builder.Build();
 
@@ -40,17 +37,13 @@ public class Program
 
         app.MapGet("/embedding", async (HttpContext httpContext) =>
         {
-            // Aggiungi l'intestazione api-key
-            client.DefaultRequestHeaders.Add("api-key", apiKey);
+            string urlEmbedding = $"https://{embeddingParameters.ResourceName}.openai.azure.com/openai/deployments/{embeddingParameters.DeploymentId}/embeddings?api-version={embeddingParameters.ApiVersion}";
+            
+            client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
             var requestBody = new
             {
-                input = new[] { "Let me cook" } //poi da inserire i chunk
+                input = new[] { "iphone", "apple" } //TODO: qui andranno messi i chunk del parsing
             };
-            //var requestBody = new
-            //{
-            //    input = new[] { "iphone", "apple" }, //poi da aggiungere i chunk
-            //    dimensions = 5
-            //};
             var json = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
