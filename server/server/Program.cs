@@ -1,3 +1,5 @@
+using client.Model;
+
 namespace client;
 
 public class Program
@@ -25,7 +27,6 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
         var summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
