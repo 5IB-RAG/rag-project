@@ -9,7 +9,8 @@
 
 ---
 
-> [!NOTE] > **Capo gruppo: Citterio Giorgio** > <br>
+> [!NOTE]
+> > **Capo gruppo: Citterio Giorgio** > <br>
 
 ## Gruppi
 
