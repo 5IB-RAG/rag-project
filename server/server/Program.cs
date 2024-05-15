@@ -40,9 +40,10 @@ public class Program
             string urlEmbedding = $"https://{embeddingParameters.ResourceName}.openai.azure.com/openai/deployments/{embeddingParameters.DeploymentId}/embeddings?api-version={embeddingParameters.ApiVersion}";
             
             client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
+            List<string> inputList = new List<string> { "iphone", "apple" };
             var requestBody = new
             {
-                input = new[] { "iphone", "apple" } //TODO: qui andranno messi i chunk del parsing
+                input = inputList  //TODO: qui andranno messi i chunk del parsing
             };
             var json = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
