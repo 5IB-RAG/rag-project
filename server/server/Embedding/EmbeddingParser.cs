@@ -1,9 +1,11 @@
 using client.Model;
+using client.Services;
 
 namespace client.Embedding;
 
-public abstract class EmbeddingParser
+public abstract class EmbeddingParser : IService
 {
+    private IService _serviceImplementation;
     public abstract Task<float[]> GetChunkEmbeddingAsync(DocumentChunk chunk);
 
 
@@ -15,4 +17,7 @@ public abstract class EmbeddingParser
         
         return await Task.WhenAll(embeddingChunk);
     }
+
+    public abstract void Enable(WebApplicationBuilder builder);
+    public abstract void Disable();
 }
