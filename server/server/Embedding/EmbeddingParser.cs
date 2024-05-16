@@ -18,6 +18,8 @@ public abstract class EmbeddingParser : IService
         return await Task.WhenAll(embeddingChunk);
     }
 
+    public abstract Task<DocumentChunk> GetContextChunk(Message message);
+
     public abstract void PreLoad(WebApplicationBuilder builder);
     public abstract void Enable(WebApplication app);
     public abstract void Disable();
