@@ -2,6 +2,7 @@
 
 public interface IService
 {
-    void Enable(WebApplicationBuilder builder);
+    void PreLoad(WebApplicationBuilder builder);
+    void Enable(WebApplication app);
     void Disable();
 }

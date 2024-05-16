@@ -13,7 +13,7 @@ public class ServiceHandler
     
     public ServiceHandler() { }
 
-    public void Start(WebApplicationBuilder builder)
+    public void PreLoad(WebApplicationBuilder builder)
     {
         _services.ForEach(service =>
         {
@@ -22,7 +22,12 @@ public class ServiceHandler
         });
         _serviceProvider = builder.Services.BuildServiceProvider();
         
-        _services.ForEach(service => ((IService) _serviceProvider.GetService(service)).Enable(builder));
+        _services.ForEach(service => ((IService) _serviceProvider.GetService(service)).PreLoad(builder));
+    }
+
+    public void Start(WebApplication app)
+    {
+        _services.ForEach(service => ((IService) _serviceProvider.GetService(service)).Enable(app));
     }
 
     public void Stop()

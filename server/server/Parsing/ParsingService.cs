@@ -25,7 +25,12 @@ public class ParsingService : IParsingDocument
         throw new NotImplementedException();
     }
 
-    public void Enable(WebApplicationBuilder builder)
+    public void PreLoad(WebApplicationBuilder builder)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Enable(WebApplication app)
     {
         throw new NotImplementedException();
     }

@@ -18,6 +18,7 @@ public abstract class EmbeddingParser : IService
         return await Task.WhenAll(embeddingChunk);
     }
 
-    public abstract void Enable(WebApplicationBuilder builder);
+    public abstract void PreLoad(WebApplicationBuilder builder);
+    public abstract void Enable(WebApplication app);
     public abstract void Disable();
 }

@@ -17,9 +17,11 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         ServiceHandler serviceHandler = new ServiceHandler();
-        serviceHandler.Start(builder);
+        serviceHandler.PreLoad(builder);
 
         var app = builder.Build();
+        
+        serviceHandler.Start(app);
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
