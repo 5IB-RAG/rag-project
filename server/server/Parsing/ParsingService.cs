@@ -10,6 +10,7 @@ public class ParsingService : IParsingDocument
         { ".pdf", new PdfConvertor() },
         { ".txt", new TxtConvertor() }
     };
+    
     public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
     {
         int chunklenght = 400; //Da modificare in base alle preferenze dell'utente
@@ -31,7 +32,6 @@ public class ParsingService : IParsingDocument
     {
         throw new NotImplementedException();
     }
-
 
     static List<DocumentChunk> SplitText(string text, int length)
     {
@@ -60,5 +60,13 @@ public class ParsingService : IParsingDocument
         return new List<DocumentChunk>();
     }
 
+    public void Enable(WebApplicationBuilder builder)
+    {
+        throw new NotImplementedException();
+    }
 
+    public void Disable()
+    {
+        throw new NotImplementedException();
+    }
 }
