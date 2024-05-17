@@ -17,7 +17,7 @@
 
 <table>
 <tr>
-<th> Parsing </th>
+<th> Embedding </th>
 </tr>
 <tr>
 <td>
