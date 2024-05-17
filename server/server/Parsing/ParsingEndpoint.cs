@@ -4,7 +4,7 @@
     {
         public static void MapParsingEndPoints(IEndpointRouteBuilder endpoint)
         {
-            
+            // /upload (stram, metadata, grandezzachunk)
         }
     }
 }

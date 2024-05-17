@@ -8,7 +8,8 @@ public class ParsingService : IParsingDocument
     private static Dictionary<string, DocumentConvertor> _convertors = new()
     {
         { ".pdf", new PdfConvertor() },
-        { ".txt", new TxtConvertor() }
+        { ".txt", new TxtConvertor() },
+        {".docx", new DocxConvertor() }
     };
     
     public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
