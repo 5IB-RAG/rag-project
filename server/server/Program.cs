@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text;
 using client.Model;
+using client.Services;
 
 namespace client;
 
@@ -21,8 +22,12 @@ public class Program
 
         // Get the embedding parameters
         var embeddingParameters = builder.Configuration.GetSection("EmbeddingParameters").Get<EmbeddingParameters>();
+        ServiceHandler serviceHandler = new ServiceHandler();
+        serviceHandler.PreLoad(builder);
 
         var app = builder.Build();
+        
+        serviceHandler.Start(app);
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())

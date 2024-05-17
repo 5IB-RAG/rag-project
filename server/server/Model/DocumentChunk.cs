@@ -2,10 +2,10 @@ namespace client.Model;
 
 public class DocumentChunk
 {
-    public string[] Metadata { get; set; } //could use another model (Metadata)
+    public List<string> Metadata { get; set; } //could use another model (Metadata)
     public string Text { get; set; }
 
-    public DocumentChunk(string[] metadata, string text)
+    public DocumentChunk(List<string> metadata, string text)
     {
         this.Metadata = metadata;
         this.Text = text;
@@ -19,10 +19,10 @@ public class DocumentChunk
 
 public class DocumentChunkBuilder
 {
-    private string[] metadata;
+    private List<string> metadata;
     private string text;
 
-    public DocumentChunkBuilder Metadata(string[] metadata)
+    public DocumentChunkBuilder Metadata(List<string> metadata)
     {
         this.metadata = metadata;
         return this;
