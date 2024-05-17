@@ -1,4 +1,5 @@
-﻿using client.Parsing;
+﻿using client.Embedding;
+using client.Parsing;
 
 namespace client.Services;
 
@@ -6,7 +7,7 @@ public class ServiceHandler
 {
     private static List<Type> _services = new()
     {
-        typeof(ParsingService)
+        typeof(EmbeddingService)
     };
 
     private ServiceProvider _serviceProvider;
@@ -15,11 +16,7 @@ public class ServiceHandler
 
     public void PreLoad(WebApplicationBuilder builder)
     {
-        _services.ForEach(service =>
-        {
-            if (service.IsAssignableFrom(typeof(IService))) //Check if service extend IService
-                builder.Services.AddSingleton(service);
-        });
+        _services.ForEach(service => builder.Services.AddSingleton(service));
         _serviceProvider = builder.Services.BuildServiceProvider();
         
         _services.ForEach(service => ((IService) _serviceProvider.GetService(service)).PreLoad(builder));

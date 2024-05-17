@@ -20,8 +20,6 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        // Get the embedding parameters
-        var embeddingParameters = builder.Configuration.GetSection("EmbeddingParameters").Get<EmbeddingParameters>();
         ServiceHandler serviceHandler = new ServiceHandler();
         serviceHandler.PreLoad(builder);
 
@@ -39,34 +37,6 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
-        app.MapGet("/embedding", async (HttpContext httpContext) =>
-        {
-            string urlEmbedding = $"https://{embeddingParameters.ResourceName}.openai.azure.com/openai/deployments/{embeddingParameters.DeploymentId}/embeddings?api-version={embeddingParameters.ApiVersion}";
-            
-            client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
-            List<string> inputList = new List<string> { "iphone", "apple" };
-            var requestBody = new
-            {
-                input = inputList  //TODO: qui andranno messi i chunk del parsing
-            };
-            var json = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await client.PostAsync(urlEmbedding, content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var resultJson = JsonSerializer.Serialize(JsonDocument.Parse(responseContent).RootElement, new JsonSerializerOptions { WriteIndented = true });
-                return Results.Content(resultJson, "application/json");
-            }
-            else
-            {
-                return Results.StatusCode((int)response.StatusCode);
-            }
-
-        }).WithName("Embedding");
 
         app.Run();
     }
