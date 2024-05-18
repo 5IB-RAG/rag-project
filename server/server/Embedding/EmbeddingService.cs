@@ -21,7 +21,7 @@ namespace client.Embedding
             {
                 var result = await GetChunkEmbeddingAsync([DocumentChunk.Builder().Text("ciao a tutti").Build()]);
 
-                return Results.Content(result[0][0].ToString());
+                return Results.Content(result[0][0].ToString()); //solo per test
             }).WithName("Embedding");
         }
 
@@ -30,7 +30,7 @@ namespace client.Embedding
             client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
             var requestBody = new
             {
-                input = chunks.Select(chunk => chunk.Text)  //TODO: qui andranno messi i chunk del parsing
+                input = chunks.Select(chunk => chunk.Text)
             };
             var json = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
