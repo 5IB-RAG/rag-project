@@ -1,32 +1,38 @@
-Consegna su Teams
+# Rag Project 5IB
 
-Gruppi:
+## Descrizione
 
-Embeddings:
-- Citterioo
-- Colombo
-- Passoni
-- Cagliani
+> Chat (API): queste API permettono di recuperare le chat di un utente e di continuarle,
+> inviando messaggi e ricevendo risposte. Nel modulo viene gestito, oltre al salvataggio
+> delle chat, il recupero del contesto dal database e le politiche di implementazione
+> dello storico dei messaggi (i messaggi precedenti per garantire contesto). In linea di
+> massima, per la parte di conversazione, in ingresso ci sono i messaggi dell’utente e in
+> uscita le risposte con contesto.
 
-Db:
-- Arosio
-- Fikri
-- Ertola
-- Rossetti
-Frontend:
-- Vaccarella
-- Locatelli
-- Ghisoni
-- Formenti
+---
 
-Chat:
+> [!NOTE] 
+> **Capo gruppo: Galimberti**
+> <br>
+
+## Gruppi
+
+<table>
+<tr>
+<th> Chat </th>
+</tr>
+<tr>
+<td>
+
+- **Galimberti**
 - Pozzi
 - Panzeri M
-- Galimberti
 - Motta
 
-Parsing:
-- Panzeri P
-- Adam
-- Viganò
-- Panzeri A
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
