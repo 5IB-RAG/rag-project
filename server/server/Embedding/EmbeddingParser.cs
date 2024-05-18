@@ -9,7 +9,7 @@ public abstract class EmbeddingParser : IService
     public abstract Task<float[]> GetChunkEmbeddingAsync(DocumentChunk chunk);
 
 
-    public async Task<float[][]> GetChunksEmbeddingAsync(DocumentChunk[] chunks)
+    public async Task<float[][]> GetChunksEmbeddingAsync(List<DocumentChunk> chunks)
     {
         List<Task<float[]>> embeddingChunk = new();
         chunks.ToList()

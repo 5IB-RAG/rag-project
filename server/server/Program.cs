@@ -1,5 +1,7 @@
 using client.Model;
+using client.Embedding;
 using client.Services;
+using client.Endponts;
 
 namespace client;
 
@@ -31,9 +33,7 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-        
-        
-        
+
         app.Run();
     }
 }

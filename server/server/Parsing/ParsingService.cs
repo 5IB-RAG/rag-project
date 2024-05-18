@@ -9,17 +9,17 @@ public class ParsingService : IParsingDocument
     {
         { ".pdf", new PdfConvertor() },
         { ".txt", new TxtConvertor() },
-        {".docx", new DocxConvertor() }
+        { ".docx", new DocxConvertor() },
+        { ".md", new MdConvertor() }
     };
     
-    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
+    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata, int chunkLenght)
     {
-        int chunklenght = 400; //Da modificare in base alle preferenze dell'utente
         string extention = documentStream.Name.Split(".").Last();
         string name = documentStream.Name.Remove(documentStream.Name.IndexOf(extention));
         string text =  await _convertors[extention].GetTextAsync(documentStream);
 
-        List<DocumentChunk> chunks = SplitText(text, chunklenght);
+        List<DocumentChunk> chunks = SplitText(text, chunkLenght);
 
         return Document.Builder()
             .Name(name)
@@ -67,6 +67,11 @@ public class ParsingService : IParsingDocument
     }
 
     public void Disable()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
     {
         throw new NotImplementedException();
     }
