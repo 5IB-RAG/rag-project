@@ -4,30 +4,44 @@ namespace client.Services;
 
 public class ServiceHandler
 {
-    private static List<Type> _services = new()
+    private static readonly List<Type> _services = new()
     {
         typeof(ParsingService)
     };
 
-    private ServiceProvider _serviceProvider;
-    
-    public ServiceHandler() { }
+    private readonly IServiceProvider _serviceProvider;
+
+    public ServiceHandler(WebApplicationBuilder builder)
+    {
+        // Register services
+        _services.ForEach(service => builder.Services.AddSingleton(service));
+        _serviceProvider = builder.Services.BuildServiceProvider();
+    }
 
     public void PreLoad(WebApplicationBuilder builder)
     {
-        _services.ForEach(service => builder.Services.AddSingleton(service));
-        _serviceProvider = builder.Services.BuildServiceProvider();
-        
-        _services.ForEach(service => ((IService) _serviceProvider.GetService(service)).PreLoad(builder));
+        foreach (var serviceType in _services)
+        {
+            var service = _serviceProvider.GetService(serviceType) as IService;
+            service?.PreLoad(builder);
+        }
     }
 
     public void Start(WebApplication app)
     {
-        _services.ForEach(service => ((IService) _serviceProvider.GetService(service)).Enable(app));
+        foreach (var serviceType in _services)
+        {
+            var service = _serviceProvider.GetService(serviceType) as IService;
+            service?.Enable(app);
+        }
     }
 
     public void Stop()
     {
-        _services.ForEach(service => ((IService) _serviceProvider.GetService(service)).Disable());
+        foreach (var serviceType in _services)
+        {
+            var service = _serviceProvider.GetService(serviceType) as IService;
+            service?.Disable();
+        }
     }
 }
