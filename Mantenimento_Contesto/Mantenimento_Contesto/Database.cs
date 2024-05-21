@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.WellKnownTypes;
+using Mantenimento_Contesto.Model;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace Mantenimento_Contesto
             Console.WriteLine("Chiusura della connessione!");
         }
 
-        public async Task Select()
+        public async Task GetAll()
         {
             using var cmd4 = new NpgsqlCommand("SELECT * FROM cleanrequest", conn);
             using var reader2 = await cmd4.ExecuteReaderAsync();
@@ -47,6 +48,12 @@ namespace Mantenimento_Contesto
             {
                 Console.WriteLine($"ID: {reader2.GetInt32(0)}, Name: {reader2.GetString(1)}");
             }
+        }
+
+        public async Task Create(string request)
+        {
+            var query = "INSERT INTO cleanrequest (text) VALUES @request";
+            await using var cmd = new NpgsqlCommand(query, conn);
         }
     }
 }

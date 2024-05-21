@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Mantenimento_Contesto.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -42,9 +44,16 @@ namespace Mantenimento_Contesto
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
                 Console.WriteLine(content.Headers);
                 var response = await client.PostAsync(azureEndpoint, content);
+
+                Console.WriteLine("STATUS CODE");
                 Console.WriteLine(response);
+                Console.WriteLine("------------------------------------------------------------------------");
+                Console.WriteLine("CONTENT");
+                Console.WriteLine("------------------------------------------------------------------------");
+
                 if (response.IsSuccessStatusCode)
                 {
+                    var obj = response.Content.ReadFromJsonAsync<Response>();
                     Console.WriteLine(await response.Content.ReadAsStringAsync());
                 }
                 else
