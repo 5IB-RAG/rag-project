@@ -1,9 +1,11 @@
 ﻿using client.Model;
 using System.Text.Json;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace client.Embedding
 {
+    [Authorize]
     public class EmbeddingService : EmbeddingParser
     {
         private HttpClient client = new();
