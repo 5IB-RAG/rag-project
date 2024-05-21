@@ -59,38 +59,6 @@ namespace Mantenimento_Contesto
         //}
         #endregion
 
-        public void DockerConnection()
-        {
-            var connString = "Host=localhost;Username=postgres;Password=example;Database=mydatabase";
-
-            // Creazione della connessione
-            using (var conn = new NpgsqlConnection(connString))
-            {
-                conn.Open();
-                // Esecuzione di un comando semplice
-                using (var cmd = new NpgsqlCommand("SELECT version()", conn))
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        Console.WriteLine(reader.GetString(0));
-                    }
-                }
-
-                // Esecuzione di un comando per inserire e leggere vettori
-                using (var cmd = new NpgsqlCommand("SELECT * FROM items", conn))
-                using (var reader = cmd.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        var id = reader.GetInt32(0);
-                        var vector = reader.GetFieldValue<float[]>(1);
-                        Console.WriteLine($"ID: {id}, Vector: [{string.Join(", ", vector)}]");
-                    }
-                }
-            }
-        }
-
         public async Task RichiestaEmbedding(string testText)
         {
             if (testText is null || testText == "")
@@ -121,7 +89,30 @@ namespace Mantenimento_Contesto
 
         static async Task Main(string[] args)
         {
-            
+            var connString = "Host=localhost;Username=postgres;Password=Embedding2024@;Database=embeddingdb";
+
+            // Crea una connessione al database
+            using var conn = new NpgsqlConnection(connString);
+            Console.WriteLine("Tentativo di Connessione...");
+            await conn.OpenAsync();
+            Console.WriteLine("Connesso al Database");
+            //// Esegui un'altra query (esempio di creazione tabella)
+            //using var cmd2 = new NpgsqlCommand("CREATE TABLE IF NOT EXISTS test_table (id SERIAL PRIMARY KEY, name VARCHAR(50))", conn);
+            //cmd2.ExecuteNonQuery();
+
+            //// Esegui un'istruzione di inserimento
+            //using var cmd3 = new NpgsqlCommand("INSERT INTO test_table (name) VALUES (@name)", conn);
+            //cmd3.Parameters.AddWithValue("name", "John Doe");
+            //cmd3.ExecuteNonQuery();
+
+            // Esegui una query di selezione
+            using var cmd4 = new NpgsqlCommand("SELECT * FROM chiaro", conn);
+            using var reader2 = await cmd4.ExecuteReaderAsync();
+            while (reader2.Read())
+            {
+                Console.WriteLine($"ID: {reader2.GetInt32(0)}, Name: {reader2.GetString(1)}");
+            }
+            await conn.CloseAsync();
         }
     }
 }
