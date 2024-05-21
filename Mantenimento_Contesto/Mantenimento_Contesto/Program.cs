@@ -62,7 +62,7 @@ namespace Mantenimento_Contesto
             #endregion
 
             Database d = new Database();
-            await d.Connection("Host=localhost;Username=postgres;Password=postgres;Database=postgres");
+            await d.Connection("Host=89.168.20.39;Username=postgres;Password=postgres;Database=postgres");
             await d.Select();
             await d.Select();
         }
