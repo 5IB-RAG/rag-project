@@ -16,20 +16,31 @@ services:
 
   client:
     container_name: client
-    build:
-      context: ./client
-      target: dev
-    restart: always
-    command: yarn dev
+    build: ./client
     environment:
-      - NODE_ENV=development
-      - WATCHPACK_POLLING=true #Need for hot-reload windows
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://*:3000
+    ports:
+      - "3000:3000"
+    command:
+      [
+        "dotnet",
+        "watch",
+        "run",
+        -v,
+        "--non-interactive",
+        "--project",
+        "client/client.csproj",
+        "--urls",
+        "http://0.0.0.0:3000"
+      ]
     volumes:
       - ./client/:/app
-      - /app/node_modules
-      - /app/.next
-    ports:
-      - 3000:3000
+      - /app/obj/ # <- directory won't be mounted
+      - /app/bin/ # <- directory won't be mounted
+      - /app/client/obj/ # <- directory won't be mounted
+      - /app/client/bin/ # <- directory won't be mounted
+      - ~/.aspnet/https:/https:ro
 
   server:
     container_name: server
@@ -40,8 +51,8 @@ services:
       #- ASPNETCORE_Kestrel__Certificates__Default__Password=123
       #- ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     ports:
-      - "5000:80"
-      - "5001:443"
+      - "5001:80"
+      - "5002:443"
     command:
       [
         "dotnet",
