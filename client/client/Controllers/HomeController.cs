@@ -1,9 +1,11 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using client.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace client.Controllers;
 
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -15,7 +17,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        return View();
+        return View(User);
     }
 
     public IActionResult Privacy()
