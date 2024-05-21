@@ -5,6 +5,7 @@ using Renci.SshNet;
 using System.Data;
 using System.Text.Json;
 using System.Text;
+using Npgsql;
 
 namespace Mantenimento_Contesto
 {
@@ -25,34 +26,68 @@ namespace Mantenimento_Contesto
         public string azureEndpoint = "https://Passoni-Embedding.openai.azure.com/openai/deployments/ada-embedding/embeddings?api-version=2023-03-15-preview";
         #endregion
 
-        public async Task InterfacciaDb()
+        #region dbOracle
+        //public async Task InterfacciaDb()
+        //{
+        //    var privateKeyFile = new PrivateKeyFile(sshKeyFilePath);
+        //    var authenticationMethod = new PrivateKeyAuthenticationMethod(sshUsername, privateKeyFile);
+        //    var connectionInfo = new ConnectionInfo(sshHost, sshPort, sshUsername, authenticationMethod);
+
+        //    using (var client = new SshClient(connectionInfo))
+        //    {
+        //        client.Connect();
+        //        var portForwarded = new ForwardedPortLocal("127.0.0.1", (uint)localPort, dbHost, (uint)dbPort);
+        //        client.AddForwardedPort(portForwarded);
+        //        portForwarded.Start();
+
+        //        // Ora puoi connetterti al database tramite localhost:3307
+        //        string connectionString = $"Server=127.0.0.1;Port={localPort};Database={database};User Id={username};Password={password};";
+        //        using (var connection = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
+        //        {
+        //            Console.WriteLine("tentativo di connessione...");
+        //            connection.Open();
+        //            Console.WriteLine("tentativo riuscito!");
+        //            string query = "INSERT testoinchiaro FROM chiaro"; // Sostituisci con una tua query
+        //            var count = await connection.QueryAsync<string>(query);
+
+        //            Console.WriteLine("il numero di righe sono: " + count.ToList()[0]);
+        //            // Esegui le operazioni sul database
+        //        }
+        //        portForwarded.Stop();
+        //        client.Disconnect();
+        //    }
+        //}
+        #endregion
+
+        public void DockerConnection()
         {
-            var privateKeyFile = new PrivateKeyFile(sshKeyFilePath);
-            var authenticationMethod = new PrivateKeyAuthenticationMethod(sshUsername, privateKeyFile);
-            var connectionInfo = new ConnectionInfo(sshHost, sshPort, sshUsername, authenticationMethod);
+            var connString = "Host=localhost;Username=postgres;Password=example;Database=mydatabase";
 
-            using (var client = new SshClient(connectionInfo))
+            // Creazione della connessione
+            using (var conn = new NpgsqlConnection(connString))
             {
-                client.Connect();
-                var portForwarded = new ForwardedPortLocal("127.0.0.1", (uint)localPort, dbHost, (uint)dbPort);
-                client.AddForwardedPort(portForwarded);
-                portForwarded.Start();
-
-                // Ora puoi connetterti al database tramite localhost:3307
-                string connectionString = $"Server=127.0.0.1;Port={localPort};Database={database};User Id={username};Password={password};";
-                using (var connection = new MySql.Data.MySqlClient.MySqlConnection(connectionString))
+                conn.Open();
+                // Esecuzione di un comando semplice
+                using (var cmd = new NpgsqlCommand("SELECT version()", conn))
+                using (var reader = cmd.ExecuteReader())
                 {
-                    Console.WriteLine("tentativo di connessione...");
-                    connection.Open();
-                    Console.WriteLine("tentativo riuscito!");
-                    string query = "INSERT testoinchiaro FROM chiaro"; // Sostituisci con una tua query
-                    var count = await connection.QueryAsync<string>(query);
-
-                    Console.WriteLine("il numero di righe sono: " + count.ToList()[0]);
-                    // Esegui le operazioni sul database
+                    while (reader.Read())
+                    {
+                        Console.WriteLine(reader.GetString(0));
+                    }
                 }
-                portForwarded.Stop();
-                client.Disconnect();
+
+                // Esecuzione di un comando per inserire e leggere vettori
+                using (var cmd = new NpgsqlCommand("SELECT * FROM items", conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var id = reader.GetInt32(0);
+                        var vector = reader.GetFieldValue<float[]>(1);
+                        Console.WriteLine($"ID: {id}, Vector: [{string.Join(", ", vector)}]");
+                    }
+                }
             }
         }
 
