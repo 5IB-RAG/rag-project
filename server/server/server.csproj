@@ -13,6 +13,9 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
         <PackageReference Include="Microsoft.Identity.Web" Version="2.18.1" />
+        <PackageReference Include="Microsoft.Identity.Web.Diagnostics" Version="2.18.2" />
+        <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="2.18.2" />
+        <PackageReference Include="Microsoft.Identity.Web.UI" Version="2.18.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     </ItemGroup>
 
