@@ -5,10 +5,12 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>client</RootNamespace>
-      <UserSecretsId>411b5b07-758d-4cab-bf64-a17857feffe9</UserSecretsId>
+    <UserSecretsId>6bc23820-8744-4dde-9264-ac017ced84ac</UserSecretsId>
   </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.5" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.3" />
         <PackageReference Include="Microsoft.Identity.Web" Version="2.18.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />

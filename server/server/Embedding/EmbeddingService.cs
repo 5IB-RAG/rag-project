@@ -1,11 +1,9 @@
 ﻿using client.Model;
 using System.Text.Json;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
 
 namespace client.Embedding
 {
-    [Authorize]
     public class EmbeddingService : EmbeddingParser
     {
         private HttpClient client = new();
@@ -32,7 +30,7 @@ namespace client.Embedding
             client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
             var requestBody = new
             {
-                input = chunks.Select(chunk => chunk.Text)
+                input = chunks.Select(chunk => chunk.Text) //da controllare dimensioni ecc..
             };
             var json = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
