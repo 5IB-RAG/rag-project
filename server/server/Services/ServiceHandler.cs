@@ -1,8 +1,8 @@
-﻿using client.Db;
-using client.Parsing;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using server.Db;
+using server.Parsing;
 
-namespace client.Services;
+namespace server.Services;
 
 public class ServiceHandler
 {

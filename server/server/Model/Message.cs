@@ -1,6 +1,6 @@
-using client.Enum;
+using server.Enum;
 
-namespace client.Model;
+namespace server.Model;
 
 public class Message
 {

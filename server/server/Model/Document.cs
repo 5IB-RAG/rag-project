@@ -1,6 +1,6 @@
 using Pgvector;
 
-namespace client.Model;
+namespace server.Model;
 
 public class Document
 {

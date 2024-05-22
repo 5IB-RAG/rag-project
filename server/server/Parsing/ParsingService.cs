@@ -1,12 +1,12 @@
-﻿using System.Numerics;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using client.Db;
-using client.Model;
-using client.Parsing.Convertors;
+using server.Db;
+using server.Model;
+using server.Parsing;
+using server.Parsing.Convertors;
 using Vector = Pgvector.Vector;
 
-namespace client.Parsing;
+namespace server.Parsing;
 
 public class ParsingService : IParsingDocument
 {

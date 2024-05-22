@@ -1,8 +1,8 @@
-using client.Model;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
+using server.Model;
 
-namespace client.Db
+namespace server.Db
 {
     public class PgVectorContext : DbContext
     {

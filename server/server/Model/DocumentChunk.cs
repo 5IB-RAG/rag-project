@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Pgvector;
 
-namespace client.Model;
+namespace server.Model;
 
 public class DocumentChunk
 {

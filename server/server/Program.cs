@@ -1,9 +1,9 @@
-using client.Db;
-using client.Parsing;
-using client.Services;
+using server.Db;
+using server.Parsing;
 using Microsoft.EntityFrameworkCore;
+using server.Services;
 
-namespace client;
+namespace server;
 
 public class Program
 {

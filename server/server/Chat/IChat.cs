@@ -1,6 +1,6 @@
-using client.Model;
+using server.Model;
 
-namespace client.Chat;
+namespace server.Chat;
 
 public interface IChat
 {
