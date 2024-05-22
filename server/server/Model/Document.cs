@@ -2,13 +2,15 @@ namespace client.Model;
 
 public class Document
 {
+    public int Id { get; set; }
     public string Name { get; set; }
     public string Extension { get; set; }
     private List<string> Metadata { get; set; }
-    
+    public int UserId { get; set; }
+    public User User { get; set; }
     //Probably need an user
 
-    public List<DocumentChunk> Chunks { get; set; }
+    public IEnumerable<DocumentChunk> Chunks { get; set; }
 
     public Document(string name, string extension, List<string> metadata, List<DocumentChunk> chunks)
     {

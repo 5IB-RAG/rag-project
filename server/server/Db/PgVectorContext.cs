@@ -19,9 +19,9 @@ namespace client.Db
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("", o => o.UseVector());
-
+            optionsBuilder.UseNpgsql("postgres", o => o.UseVector());
         }
+
     }
 
 }

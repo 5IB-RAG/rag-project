@@ -2,6 +2,7 @@ namespace client.Model;
 
 public class DocumentChunk
 {
+    public int Id { get; set; }
     public List<string> Metadata { get; set; } //could use another model (Metadata)
     public string Text { get; set; }
 
