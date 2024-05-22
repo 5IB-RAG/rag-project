@@ -1,5 +1,7 @@
+using client.Db;
 using client.Model;
 using client.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace client;
 
@@ -15,6 +17,9 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        
+        builder.Services.AddDbContext<PgVectorContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("PgVectorContext"), o => o.UseVector()));
 
         ServiceHandler serviceHandler = new ServiceHandler(builder);
         serviceHandler.PreLoad(builder);
