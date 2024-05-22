@@ -12,23 +12,13 @@ namespace Mantenimento_Contesto
     public class Embedding
     {
         #region variabili
-        public string sshHost = "158.180.235.79";
-        public string database = "embeddingdb";
-        public string username = "embedding";
-        public string password = "Embedding2024@";
-        public string sshUsername = "ubuntu";
-        public string sshKeyFilePath = "../../../ssh-key-2024-01-26.key";
-        public int sshPort = 22;
-        public string dbHost = "localhost";
-        public int dbPort = 3306;
-        public int localPort = 3307;
-        public string azureApiKey = "5619cf938d0241c2a7bc08eb7a692a83";
-        public string azureEndpoint = "https://Passoni-Embedding.openai.azure.com/openai/deployments/ada-embedding/embeddings?api-version=2023-03-15-preview";
+        public static readonly string azureApiKey = "5619cf938d0241c2a7bc08eb7a692a83";
+        public static readonly string azureEndpoint = "https://Passoni-Embedding.openai.azure.com/openai/deployments/ada-embedding/embeddings?api-version=2023-03-15-preview";
         #endregion
 
         public Embedding() { }
 
-        public async Task<Response> RichiestaEmbedding(string testText)
+        public static async Task<Response> RichiestaEmbedding(string testText)
         {
             if (testText is null || testText == "")
             {
@@ -47,9 +37,9 @@ namespace Mantenimento_Contesto
 
                 Console.WriteLine("STATUS CODE");
                 Console.WriteLine(response);
-                Console.WriteLine("------------------------------------------------------------------------");
-                Console.WriteLine("CONTENT");
-                Console.WriteLine("------------------------------------------------------------------------");
+                //Console.WriteLine("------------------------------------------------------------------------");
+                //Console.WriteLine("CONTENT");
+                //Console.WriteLine("------------------------------------------------------------------------");
 
                 if (response.IsSuccessStatusCode)
                 {
