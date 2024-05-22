@@ -65,8 +65,10 @@ namespace Mantenimento_Contesto
             Embedding e = new Embedding();
             await d.Connection("Host=89.168.20.39;Username=postgres;Password=postgres;Database=postgres");
             await d.GetAll();
-            await e.RichiestaEmbedding("prova 1, prova 2, prova3");
-            await d.Create("prova 1, prova 2, prova3");
+            //await e.RichiestaEmbedding("prova 1, prova 2, prova3");
+            //await d.Create("prova 1, prova 2, prova3");
+            await d.Delete(6);
+            await d.Delete(5);
             await d.GetAll();
         }
     }
