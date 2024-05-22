@@ -1,4 +1,4 @@
-﻿using client.Model;
+using client.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace client.Db
@@ -30,6 +30,7 @@ namespace client.Db
                 optionsBuilder.UseNpgsql(_connectionString, o => o.UseVector());
             }
         }
+
     }
 
 
