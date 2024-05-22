@@ -1,4 +1,5 @@
-﻿using client.Model;
+﻿using client.Data;
+using client.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ namespace client.Auth
     public class LoginController : ControllerBase
     {
         private IConfiguration _config;
+        private readonly ApplicationDbContext _db;
 
-        public LoginController(IConfiguration config)
+        public LoginController(IConfiguration config, ApplicationDbContext db)
         {
             _config = config;
+            _db = db;
         }
 
         [AllowAnonymous]
@@ -60,7 +63,7 @@ namespace client.Auth
 
         private UserAuth Authenticate(UserAuthLogin userLogin)
         {
-            var currentUser = UserAuthConstants.Users.FirstOrDefault(o => o.Username.ToLower() == userLogin.Username.ToLower() && o.Password == userLogin.Password);
+            var currentUser = _db.Users.FirstOrDefault(o => o.Username.ToLower() == userLogin.Username.ToLower() && o.Password == userLogin.Password);
 
             if (currentUser != null)
             {
