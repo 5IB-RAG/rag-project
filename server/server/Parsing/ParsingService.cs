@@ -27,16 +27,16 @@ public class ParsingService : IParsingDocument
 
     public void PreLoad(WebApplicationBuilder builder)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     public void Enable(WebApplication app)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 
     public void Disable()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }
