@@ -1,4 +1,6 @@
-﻿using client.Parsing;
+﻿using client.Db;
+using client.Parsing;
+using Microsoft.EntityFrameworkCore;
 
 namespace client.Services;
 
@@ -9,17 +11,23 @@ public class ServiceHandler
         typeof(ParsingService)
     };
 
-    private readonly IServiceProvider _serviceProvider;
+    private IServiceProvider _serviceProvider;
 
     public ServiceHandler(WebApplicationBuilder builder)
     {
+        builder.Services.AddDbContext<PgVectorContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("PgVectorContext"), o => o.UseVector()));
+        
         // Register services
         _services.ForEach(service => builder.Services.AddSingleton(service));
-        _serviceProvider = builder.Services.BuildServiceProvider();
+
+        // Register DbContext
     }
 
     public void PreLoad(WebApplicationBuilder builder)
     {
+        _serviceProvider = builder.Services.BuildServiceProvider();
+        
         foreach (var serviceType in _services)
         {
             var service = _serviceProvider.GetService(serviceType) as IService;
@@ -34,6 +42,14 @@ public class ServiceHandler
             var service = _serviceProvider.GetService(serviceType) as IService;
             service?.Enable(app);
         }
+
+        // Esegui eventuali operazioni di inizializzazione del DbContext qui
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<PgVectorContext>();
+            // Esegui eventuali operazioni di inizializzazione del DbContext, come migrazioni
+            dbContext.Database.Migrate();
+        }
     }
 
     public void Stop()
@@ -45,3 +61,4 @@ public class ServiceHandler
         }
     }
 }
+

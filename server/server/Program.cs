@@ -1,5 +1,5 @@
 using client.Db;
-using client.Model;
+using client.Parsing;
 using client.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,9 +18,6 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         
-        builder.Services.AddDbContext<PgVectorContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("PgVectorContext"), o => o.UseVector()));
-
         ServiceHandler serviceHandler = new ServiceHandler(builder);
         serviceHandler.PreLoad(builder);
 
@@ -39,8 +36,8 @@ public class Program
 
         app.UseAuthorization();
         
-        
-        
         app.Run();
+        
+        serviceHandler.Stop();
     }
 }

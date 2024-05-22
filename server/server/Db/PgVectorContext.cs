@@ -1,5 +1,6 @@
 using client.Model;
 using Microsoft.EntityFrameworkCore;
+using Pgvector.EntityFrameworkCore;
 
 namespace client.Db
 {
@@ -12,7 +13,7 @@ namespace client.Db
         public DbSet<DocumentChunk> DocumentChunks { get; set; }
 
         private readonly string _connectionString;
-
+        
         public PgVectorContext(DbContextOptions<PgVectorContext> options)
             : base(options)
         {

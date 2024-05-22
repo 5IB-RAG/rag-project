@@ -1,3 +1,5 @@
+using Pgvector;
+
 namespace client.Model;
 
 public class Document
@@ -10,8 +12,12 @@ public class Document
     public User User { get; set; }
     //Probably need an user
 
-    public IEnumerable<DocumentChunk> Chunks { get; set; }
+    public IEnumerable<DocumentChunk> Chunks { get; set; } = null!;
 
+    public Document()
+    {
+    }
+    
     public Document(string name, string extension, List<string> metadata, List<DocumentChunk> chunks)
     {
         this.Name = name;
@@ -60,6 +66,7 @@ public class DocumentBuilder
          
     public Document Build()
     {
-        return new Document(name, extension, metadata, chunks);
+        return new Document();
+        //return new Document(name, extension, metadata, chunks);
     }
 }
