@@ -11,20 +11,19 @@ namespace Mantenimento_Contesto
 {
     public class Database
     {
-        public string connString;
-        public NpgsqlConnection? conn;
+        public static NpgsqlConnection? conn;
 
         public Database()
         {
 
         }
 
-        public async Task Connection(string connectionString)
+        public static async Task<int> OpenConnection(string connectionString)
         {
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 Console.WriteLine("Stringa di connessione non valida.");
-                return;
+                return -1;
             }
 
             try
@@ -34,14 +33,16 @@ namespace Mantenimento_Contesto
                 Console.WriteLine("Tentativo di Connessione...");
                 await conn.OpenAsync();
                 Console.WriteLine("Connesso al Database");
+                return 1;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Errore durante la connessione: {ex.Message}");
+                return -1;
             }
         }
 
-        public async Task CloseConnection()
+        public static async Task CloseConnection()
         {
             if (conn != null)
             {
@@ -58,7 +59,7 @@ namespace Mantenimento_Contesto
             }
         }
 
-        public async Task GetAll()
+        public static async Task GetAll()
         {
             if (conn == null)
             {
@@ -72,7 +73,7 @@ namespace Mantenimento_Contesto
                 using var reader2 = await cmd4.ExecuteReaderAsync();
                 while (reader2.Read())
                 {
-                    Console.WriteLine($"ID: {reader2.GetInt32(0)}, Name: {reader2.GetString(1)}");
+                    Console.WriteLine($"ID: {reader2.GetInt32(0)}, Text: {reader2.GetString(1)}");
                 }
             }
             catch (Exception ex)
@@ -80,8 +81,29 @@ namespace Mantenimento_Contesto
                 Console.WriteLine($"Errore durante il recupero dei dati: {ex.Message}");
             }
         }
-
-        public async Task Create(string request)
+        public static async Task Get(int id)
+        {
+            if (conn is null)
+            {
+                Console.WriteLine("Connessione non inizializzata.");
+                return;
+            }
+            try
+            {
+                using var cmd = new NpgsqlCommand("SELECT * FROM cleanrequest WHERE id = @id", conn);
+                cmd.Parameters.AddWithValue("@id", id);
+                using var reader = await cmd.ExecuteReaderAsync();
+                while (reader.Read())
+                {
+                    Console.WriteLine($"ID: {reader.GetInt32(0)}, Text: {reader.GetString(1)}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Errore durante il recupero dei dati: {ex.Message}");
+            }
+        }
+        public static async Task Create(string request)
         {
             if (conn == null || string.IsNullOrWhiteSpace(request))
             {
@@ -103,7 +125,7 @@ namespace Mantenimento_Contesto
             }
         }
 
-        public async Task Delete(int id)
+        public static async Task Delete(int id)
         {
             if (conn == null)
             {

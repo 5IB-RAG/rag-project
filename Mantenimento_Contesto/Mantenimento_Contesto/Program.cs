@@ -46,6 +46,7 @@ namespace Mantenimento_Contesto
 
         static async Task Main(string[] args)
         {
+            string connectionString = "Host=89.168.20.39;Username=postgres;Password=postgres;Database=postgres";
             #region commenti
             //// Esegui un'altra query (esempio di creazione tabella)
             //using var cmd2 = new NpgsqlCommand("CREATE TABLE IF NOT EXISTS test_table (id SERIAL PRIMARY KEY, name VARCHAR(50))", conn);
@@ -60,16 +61,11 @@ namespace Mantenimento_Contesto
 
             // Esegui una query di selezione
             #endregion
-
-            Database d = new Database();
-            Embedding e = new Embedding();
-            await d.Connection("Host=89.168.20.39;Username=postgres;Password=postgres;Database=postgres");
-            await d.GetAll();
-            //await e.RichiestaEmbedding("prova 1, prova 2, prova3");
-            //await d.Create("prova 1, prova 2, prova3");
-            await d.Delete(6);
-            await d.Delete(5);
-            await d.GetAll();
+            var conn = await Database.OpenConnection(connectionString);
+            if (conn == 1)
+            {
+                await Database.Get(2);
+            }
         }
     }
 }
