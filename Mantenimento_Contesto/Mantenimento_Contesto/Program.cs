@@ -6,6 +6,7 @@ using System.Data;
 using System.Text.Json;
 using System.Text;
 using Npgsql;
+using Mantenimento_Contesto.Model;
 
 namespace Mantenimento_Contesto
 {
@@ -61,11 +62,14 @@ namespace Mantenimento_Contesto
 
             // Esegui una query di selezione
             #endregion
-            var conn = await Database.OpenConnection(connectionString);
-            if (conn == 1)
-            {
-                await Database.Get(2);
-            }
+            //var conn = await Database.OpenConnection(connectionString);
+            //if (conn == 1)
+            //{
+            //    await Database.Get(2);
+            //}
+            Embedding e = new Embedding();
+            Response data = await e.RichiestaEmbedding("ciao");
+            Console.WriteLine(data.ToString());
         }
     }
 }

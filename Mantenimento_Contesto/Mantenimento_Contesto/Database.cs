@@ -59,7 +59,7 @@ namespace Mantenimento_Contesto
             }
         }
 
-        public static async Task GetAll()
+        public static async Task GetAllTesto()
         {
             if (conn == null)
             {
@@ -81,7 +81,7 @@ namespace Mantenimento_Contesto
                 Console.WriteLine($"Errore durante il recupero dei dati: {ex.Message}");
             }
         }
-        public static async Task Get(int id)
+        public static async Task GetTesto(int id)
         {
             if (conn is null)
             {
@@ -103,7 +103,10 @@ namespace Mantenimento_Contesto
                 Console.WriteLine($"Errore durante il recupero dei dati: {ex.Message}");
             }
         }
-        public static async Task Create(string request)
+
+
+
+        public static async Task CreateTesto(string request)
         {
             if (conn == null || string.IsNullOrWhiteSpace(request))
             {
@@ -114,6 +117,28 @@ namespace Mantenimento_Contesto
             try
             {
                 var query = "INSERT INTO cleanrequest (text) VALUES (@request)";
+                await using var cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@request", request);
+                await cmd.ExecuteNonQueryAsync();
+                Console.WriteLine("Inserimento completato.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Errore durante l'inserimento dei dati: {ex.Message}");
+            }
+        }
+
+        public static async Task CreateEmbedding(string request)
+        {
+            if (conn == null || string.IsNullOrWhiteSpace(request))
+            {
+                Console.WriteLine("Connessione non inizializzata o richiesta non valida.");
+                return;
+            }
+
+            try
+            {
+                var query = "INSERT INTO  (text) VALUES (@request)";
                 await using var cmd = new NpgsqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@request", request);
                 await cmd.ExecuteNonQueryAsync();

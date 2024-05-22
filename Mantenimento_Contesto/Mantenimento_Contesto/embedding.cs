@@ -28,11 +28,11 @@ namespace Mantenimento_Contesto
 
         public Embedding() { }
 
-        public async Task RichiestaEmbedding(string testText)
+        public async Task<Response> RichiestaEmbedding(string testText)
         {
             if (testText is null || testText == "")
             {
-                return;
+                return null;
             }
             Console.WriteLine("richiesta partita");
             // Invia la richiesta e ottieni la risposta
@@ -53,12 +53,14 @@ namespace Mantenimento_Contesto
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var obj = response.Content.ReadFromJsonAsync<Response>();
+                    Response? obj = await response.Content.ReadFromJsonAsync<Response>();
                     Console.WriteLine(await response.Content.ReadAsStringAsync());
+                    return obj;
                 }
                 else
                 {
-                    // Handle the error
+                    Console.WriteLine("è andato male qualcosa nella richiesta alle Azure API");
+                    return null;
                 }
             }
         }
