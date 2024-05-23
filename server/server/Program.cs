@@ -17,7 +17,7 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
+        
         ServiceHandler serviceHandler = new ServiceHandler(builder);
         serviceHandler.PreLoad(builder);
 
@@ -39,5 +39,7 @@ public class Program
         app.UseEndpoints(ParsingEndpoint.MapParsingEndPoints);
 
         app.Run();
+        
+        serviceHandler.Stop();
     }
 }
