@@ -1,10 +1,12 @@
 using server.Enum;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace server.Model;
 
 public class Message
-{    
+{
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string? DataText { get; set; } //this can contain text that rag uses to give information to the ai
     public string Text { get; set; } = null!;

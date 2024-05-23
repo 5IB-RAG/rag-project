@@ -5,6 +5,7 @@ namespace server.Model;
 
 public class DocumentChunk
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public List<string> Metadata { get; set; } = null!; //could use another model (Metadata)
     public string Text { get; set; } = null!;

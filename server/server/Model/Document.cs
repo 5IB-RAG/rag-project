@@ -1,9 +1,11 @@
 using Pgvector;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace server.Model;
 
 public class Document
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string Name { get; set; } = null!;
     public string Extension { get; set; } = null!;
