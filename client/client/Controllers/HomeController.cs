@@ -5,6 +5,8 @@ using client.Model;
 using client.Enum;
 using client.Services;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text;
 
 namespace client.Controllers;
 
@@ -49,11 +51,12 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         // Richiesta nomi storia chat
+        var chats = ChatsGet();
 
         // Riciesta nomi storia documenti caricati
         var documents = DocumentsGet();
 
-        return View();
+        return View(chats, documents);
     }
 
     #region DOCUMENTI
@@ -69,7 +72,7 @@ public class HomeController : Controller
         {
             try
             {
-                HttpResponseMessage response = await client.GetAsync(ApiService.DocumentsGet);
+                HttpResponseMessage response = await client.GetAsync(ApiService.Documents);
                 response.EnsureSuccessStatusCode();
 
                 List<Document> documents = await response.Content.ReadFromJsonAsync<List<Document>>();
@@ -85,9 +88,25 @@ public class HomeController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> DocumentGetById(int id)
+    public async Task<Document> DocumentGetById(int id)
     {
         // richiesta API con id del documento che si vule riceve interamente
+        using (client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"{ApiService.Documents}/{id}");
+                response.EnsureSuccessStatusCode();
+
+                Document document = await response.Content.ReadFromJsonAsync<Document>();
+                return document;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
 
@@ -96,12 +115,45 @@ public class HomeController : Controller
     public async Task<IActionResult> DocumentPost()
     {
         // API per caricare un documento
+        using (client)
+        {
+            //var json = JsonSerializer.Serialize();
+            //var content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpContent content = new();
+
+            try
+            {
+                HttpResponseMessage response = await client.PostAsync(ApiService.Documents, content);
+                response.EnsureSuccessStatusCode();
+                return;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DocumentDelete(int id) { 
+    public async Task<IActionResult> DocumentDelete(int id) {
         // API per cancellare un documento dato id
+        using (client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.DeleteAsync($"{ApiService.Documents}/{id}");
+                response.EnsureSuccessStatusCode();
+
+                return null;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
     #endregion
@@ -112,16 +164,48 @@ public class HomeController : Controller
     // ---------
 
     [HttpGet]
-    public async Task<IActionResult> ChatsGet()
+    public async Task<List<UserChat>> ChatsGet()
     {
         // richiesta API pe ricevere le info generali di tutti i documenti caricati
+        using (client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(ApiService.Chats);
+                response.EnsureSuccessStatusCode();
+
+                List<UserChat> chats = await response.Content.ReadFromJsonAsync<List<UserChat>>();
+                return chats;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
 
     [HttpGet]
-    public async Task<IActionResult> ChatGetById(int id)
+    public async Task<UserChat> ChatGetById(int id)
     {
         // richiesta API con id della chat che si vule riceve completamente
+        using (client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync($"{ApiService.Chats}/{id}");
+                response.EnsureSuccessStatusCode();
+
+                UserChat chat = await response.Content.ReadFromJsonAsync<UserChat>();
+                return chat;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
 
@@ -129,6 +213,21 @@ public class HomeController : Controller
     public async Task<IActionResult> ChatDelete(int id)
     {
         // API per cancellare una chat dato id
+        using (client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.DeleteAsync($"{ApiService.Chats}/{id}");
+                response.EnsureSuccessStatusCode();
+
+                return null;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
     #endregion
@@ -143,7 +242,25 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> MessagePost(string text)
     {
-        //Mandre richista API con testo, token e id chat riferimento
+        //Mandre richista API con testo e id chat riferimento
+        using (client)
+        {
+            //var json = JsonSerializer.Serialize();
+            //var content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpContent content = new();
+
+            try
+            {
+                HttpResponseMessage response = await client.PostAsync(ApiService.Message, content);
+                response.EnsureSuccessStatusCode();
+                return;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
     #endregion
@@ -159,6 +276,23 @@ public class HomeController : Controller
     public async Task<IActionResult> LoginPost(string username, string password)
     {
         //Mandare API per essere autenticati
+        using (client)
+        {
+            var json = JsonSerializer.Serialize(new { username, password });
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
+            {
+                HttpResponseMessage response = await client.PostAsync(ApiService.Login, content);
+                response.EnsureSuccessStatusCode();
+                return;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
     #endregion
@@ -174,6 +308,23 @@ public class HomeController : Controller
     public async Task<IActionResult> SignUpPost(string username, string password)
     {
         //Mandare API per essere registrati
+        using (client)
+        {
+            var json = JsonSerializer.Serialize(new { username, password });
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
+            {
+                HttpResponseMessage response = await client.PostAsync(ApiService.SignUp, content);
+                response.EnsureSuccessStatusCode();
+                return;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
     #endregion
