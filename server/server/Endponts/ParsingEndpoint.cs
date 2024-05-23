@@ -1,8 +1,8 @@
-﻿using client.Embedding;
-using client.Model;
-using client.Parsing;
+﻿using server.Embedding;
+using server.Model;
+using server.Parsing;
 
-namespace client.Endponts
+namespace server.Endponts
 {
     public static class ParsingEndpoint
     {

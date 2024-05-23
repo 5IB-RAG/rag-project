@@ -3,7 +3,7 @@ using iTextSharp.text.pdf.parser;
 using System.IO;
 
 
-namespace client.Parsing.Convertors;
+namespace server.Parsing.Convertors;
 
 public class PdfConvertor : DocumentConvertor
 {

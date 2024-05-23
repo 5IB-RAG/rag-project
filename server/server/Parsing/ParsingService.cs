@@ -1,7 +1,7 @@
-﻿using client.Model;
-using client.Parsing.Convertors;
+﻿using server.Model;
+using server.Parsing.Convertors;
 
-namespace client.Parsing;
+namespace server.Parsing;
 
 public class ParsingService : IParsingDocument
 {

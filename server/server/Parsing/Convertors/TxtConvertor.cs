@@ -1,4 +1,4 @@
-﻿namespace client.Parsing.Convertors
+﻿namespace server.Parsing.Convertors
 {
     public class TxtConvertor : DocumentConvertor
     {

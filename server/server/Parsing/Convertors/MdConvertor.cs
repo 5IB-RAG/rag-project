@@ -1,5 +1,5 @@
 ﻿
-namespace client.Parsing.Convertors
+namespace server.Parsing.Convertors
 {
     public class MdConvertor : DocumentConvertor
     {

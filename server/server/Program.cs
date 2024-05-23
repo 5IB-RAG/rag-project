@@ -1,9 +1,9 @@
-using client.Model;
-using client.Embedding;
-using client.Services;
-using client.Endponts;
+using server.Model;
+using server.Embedding;
+using server.Services;
+using server.Endponts;
 
-namespace client;
+namespace server;
 
 public class Program
 {
@@ -33,6 +33,8 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
+
+        app.UseEndpoints(ParsingEndpoint.MapParsingEndPoints);
 
         app.Run();
     }

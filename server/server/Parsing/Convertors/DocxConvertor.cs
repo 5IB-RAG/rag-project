@@ -4,7 +4,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using iTextSharp.text;
 using System.Text;
 
-namespace client.Parsing.Convertors
+namespace server.Parsing.Convertors
 {
     public class DocxConvertor : DocumentConvertor
     {
