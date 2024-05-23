@@ -13,13 +13,13 @@ public class ParsingService : IParsingDocument
         { ".md", new MdConvertor() }
     };
     
-    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata, int chunkLenght)
+    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
     {
         string extention = documentStream.Name.Split(".").Last();
         string name = documentStream.Name.Remove(documentStream.Name.IndexOf(extention));
         string text =  await _convertors[extention].GetTextAsync(documentStream);
 
-        List<DocumentChunk> chunks = SplitText(text, chunkLenght);
+        List<DocumentChunk> chunks = SplitText(text, 400);
 
         return Document.Builder()
             .Name(name)
