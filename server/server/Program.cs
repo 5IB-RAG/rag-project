@@ -1,12 +1,13 @@
-using server.Db;
-using server.Parsing;
-using Microsoft.EntityFrameworkCore;
+using server.Model;
+using server.Embedding;
 using server.Services;
+using server.Endponts;
 
 namespace server;
 
 public class Program
 {
+    static HttpClient client = new HttpClient();
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -35,7 +36,9 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-        
+
+        app.UseEndpoints(ParsingEndpoint.MapParsingEndPoints);
+
         app.Run();
         
         serviceHandler.Stop();
