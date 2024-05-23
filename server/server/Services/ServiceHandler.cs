@@ -8,7 +8,7 @@ public class ServiceHandler
 {
     private static readonly List<Type> _services = new()
     {
-        typeof(ParsingService)
+        typeof(EmbeddingService)
     };
 
     private IServiceProvider _serviceProvider;
