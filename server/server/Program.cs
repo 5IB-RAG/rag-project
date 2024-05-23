@@ -1,7 +1,9 @@
-using client.Model;
-using client.Services;
+using server.Db;
+using server.Parsing;
+using Microsoft.EntityFrameworkCore;
+using server.Services;
 
-namespace client;
+namespace server;
 
 public class Program
 {
@@ -15,7 +17,7 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
+        
         ServiceHandler serviceHandler = new ServiceHandler(builder);
         serviceHandler.PreLoad(builder);
 
@@ -34,8 +36,8 @@ public class Program
 
         app.UseAuthorization();
         
-        
-        
         app.Run();
+        
+        serviceHandler.Stop();
     }
 }

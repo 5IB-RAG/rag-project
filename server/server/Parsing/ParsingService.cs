@@ -1,7 +1,12 @@
-﻿using client.Model;
-using client.Parsing.Convertors;
+﻿using System.Linq.Expressions;
+using System.Text;
+using System.Text.Json;
+using server.Db;
+using server.Model;
+using server.Parsing;
+using server.Parsing.Convertors;
 
-namespace client.Parsing;
+namespace server.Parsing;
 
 public class ParsingService : IParsingDocument
 {
@@ -9,6 +14,13 @@ public class ParsingService : IParsingDocument
     {
         { ".pdf", new PdfConvertor() }
     };
+
+    private PgVectorContext _context;
+
+    public ParsingService(IServiceProvider provider)
+    {
+        _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
+    }
     
     public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
     {
@@ -27,16 +39,13 @@ public class ParsingService : IParsingDocument
 
     public void PreLoad(WebApplicationBuilder builder)
     {
-        throw new NotImplementedException();
     }
 
-    public void Enable(WebApplication app)
+    public async void Enable(WebApplication app)
     {
-        throw new NotImplementedException();
     }
 
     public void Disable()
     {
-        throw new NotImplementedException();
     }
 }

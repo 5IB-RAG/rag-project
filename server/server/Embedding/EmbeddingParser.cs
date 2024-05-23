@@ -1,7 +1,7 @@
-using client.Model;
-using client.Services;
+using server.Model;
+using server.Services;
 
-namespace client.Embedding;
+namespace server.Embedding;
 
 public abstract class EmbeddingParser : IService
 {
