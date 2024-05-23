@@ -7,6 +7,7 @@ namespace server;
 
 public class Program
 {
+    static HttpClient client = new HttpClient();
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
