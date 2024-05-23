@@ -1,27 +1,13 @@
-﻿using client.Enum;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace client.Model
 {
-    public class UserAuth
+    public class UserAuthSignup
     {
-
-        [Key]
         public string Username { get; set; }
-
-        [Required]
         public string Password { get; set; }
-
-        [Required]
         public string EmailAddress { get; set; }
-
-        [Required]
-        public string Role { get; set; }
-
-        [Required]
         public string Surname { get; set; }
-
-        [Required]
         public string Name { get; set; }
     }
 }

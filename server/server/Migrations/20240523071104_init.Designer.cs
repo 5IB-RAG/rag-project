@@ -11,8 +11,8 @@ using client.Data;
 namespace client.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240522113305_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240523071104_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,7 @@ namespace client.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("GivenName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 

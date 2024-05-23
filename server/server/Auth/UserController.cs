@@ -1,7 +1,9 @@
-﻿using client.Model;
+﻿using client.Enum;
+using client.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using System.Security.Claims;
 
 namespace client.Auth
@@ -16,7 +18,7 @@ namespace client.Auth
         {
             var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.GivenName}, you are an {currentUser.Role}");
+            return Ok($"Hi {currentUser.Name}, you are an {currentUser.Role}");
         }
 
         [HttpGet("Sellers")]
@@ -25,7 +27,7 @@ namespace client.Auth
         {
             var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.GivenName}, you are a {currentUser.Role}");
+            return Ok($"Hi {currentUser.Name}, you are a {currentUser.Role}");
         }
 
         [HttpGet("AdminsAndSellers")]
@@ -34,7 +36,7 @@ namespace client.Auth
         {
             var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.GivenName}, you are an {currentUser.Role}");
+            return Ok($"Hi {currentUser.Name}, you are an {currentUser.Role}");
         }
 
         [HttpGet("Public")]
@@ -55,7 +57,7 @@ namespace client.Auth
                 {
                     Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
                     EmailAddress = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
-                    GivenName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
+                    Name = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
                     Surname = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname)?.Value,
                     Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value
                 };

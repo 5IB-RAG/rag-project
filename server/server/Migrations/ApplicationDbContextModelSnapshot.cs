@@ -30,7 +30,7 @@ namespace client.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("GivenName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
