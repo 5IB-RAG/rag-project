@@ -1,6 +1,9 @@
-﻿using client.Model;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text;
+using Pgvector;
+using server.Embedding;
+using server.Model;
+using Exception = System.Exception;
 
 namespace client.Embedding
 {
@@ -17,15 +20,9 @@ namespace client.Embedding
 
         public override void Enable(WebApplication app)
         {
-            app.MapGet("/embedding", async (HttpContext httpContext) =>
-            {
-                var result = await GetChunkEmbeddingAsync([DocumentChunk.Builder().Text("ciao a tutti").Build()]);
-
-                return Results.Content(result[0][0].ToString()); //solo per test
-            }).WithName("Embedding");
         }
 
-        public override async Task<float[][]> GetChunkEmbeddingAsync(DocumentChunk[] chunks)
+        public override async Task<List<Vector>> GetChunkEmbeddingAsync(DocumentChunk[] chunks)
         {
             client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
             var requestBody = new
@@ -40,9 +37,9 @@ namespace client.Embedding
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
-                List<float[]> embeddings = new List<float[]>();
-                responseContent.Data.ForEach(embedding => embeddings.Add(embedding.Embedding.ToArray()));
-                return embeddings.ToArray();
+                List<Vector> embeddings = new List<Vector>();
+                responseContent.Data.ForEach(embedding => embeddings.Add(new Vector(embedding.Embedding)));
+                return embeddings;
             }
             throw new Exception();
         }

@@ -1,4 +1,5 @@
-﻿using server.Embedding;
+﻿using Pgvector;
+using server.Embedding;
 using server.Model;
 using server.Parsing;
 
@@ -12,9 +13,9 @@ namespace server.Endponts
             {
                 try
                 {
-                    Document doc = await parsingService.ParseDocument(stream, metadata, chunkLenght);
+                    Document doc = await parsingService.ParseDocument(stream, metadata);
 
-                    float[][] docEmbeddings = await embeddingParser.GetChunksEmbeddingAsync(doc.Chunks);
+                    List<Vector> docEmbeddings = await embeddingParser.GetChunkEmbeddingAsync(doc.Chunks.ToArray());
 
                     //Caricare in db
 
