@@ -1,6 +1,6 @@
-﻿using client.Parsing;
+﻿using server.Parsing;
 
-namespace client.Services;
+namespace server.Services;
 
 public class ServiceHandler
 {

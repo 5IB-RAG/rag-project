@@ -1,4 +1,4 @@
-namespace client.Model;
+namespace server.Model;
 
 public class UserChat
 {

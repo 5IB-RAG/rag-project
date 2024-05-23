@@ -1,22 +1,31 @@
-﻿using client.Model;
-using client.Parsing.Convertors;
+﻿using server.Model;
+using server.Parsing.Convertors;
 
-namespace client.Parsing;
+namespace server.Parsing;
 
 public class ParsingService : IParsingDocument
 {
     private static Dictionary<string, DocumentConvertor> _convertors = new()
     {
-        { ".pdf", new PdfConvertor() }
+        { ".pdf", new PdfConvertor() },
+        { ".txt", new TxtConvertor() },
+        { ".docx", new DocxConvertor() },
+        { ".md", new MdConvertor() }
     };
     
-    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
+    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata, int chunkLenght)
     {
-        string text =  await _convertors[documentStream.Name.Split(".").Last()].GetTextAsync(documentStream);
+        string extention = documentStream.Name.Split(".").Last();
+        string name = documentStream.Name.Remove(documentStream.Name.IndexOf(extention));
+        string text =  await _convertors[extention].GetTextAsync(documentStream);
+
+        List<DocumentChunk> chunks = SplitText(text, chunkLenght);
 
         return Document.Builder()
-            .Name("c")
-            .Extension("c")
+            .Name(name)
+            .Extension(extention)
+            .Chunk(chunks)
+            .Metadata(metadata)
             .Build();
     }
 
@@ -24,19 +33,42 @@ public class ParsingService : IParsingDocument
     {
         throw new NotImplementedException();
     }
-
     public void PreLoad(WebApplicationBuilder builder)
     {
         throw new NotImplementedException();
     }
 
-    public void Enable(WebApplication app)
+    public void Enable(WebApplication app) { }
+    private List<DocumentChunk> SplitText(string text, int length)
     {
-        throw new NotImplementedException();
+        List<DocumentChunk> splitText = new List<DocumentChunk>();
+
+        int index = 0;
+        int nextIndex = length;
+        while (true)
+        {
+            while (true)
+            {
+                if (nextIndex >= text.Length || text[nextIndex] == '.')
+                    break;
+                nextIndex++;
+            }
+            splitText.Add(new DocumentChunk([], text.Substring(index, nextIndex - index)));
+            index = nextIndex + 1;
+            nextIndex = index + length;
+            if (nextIndex >= text.Length || index >= text.Length)
+                break;
+        }
+        if (splitText != null)
+        {
+            return splitText;
+        }
+        return new List<DocumentChunk>();
     }
 
     public void Disable()
     {
         throw new NotImplementedException();
     }
+
 }
