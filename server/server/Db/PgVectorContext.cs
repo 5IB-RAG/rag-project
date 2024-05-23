@@ -1,6 +1,6 @@
+using server.Model;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
-using server.Model;
 
 namespace server.Db
 {
@@ -22,6 +22,27 @@ namespace server.Db
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasPostgresExtension("vector");
+
+            modelBuilder.Entity<UserChat>()
+                .HasOne(uc => uc.User)
+                .WithMany(u => u.UserChats)
+                .HasForeignKey(uc => uc.UserId);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.UserChat)
+                .WithMany(uc => uc.Messages)
+                .HasForeignKey(m => m.ChatId);
+
+            modelBuilder.Entity<Document>()
+                .HasOne(d => d.User)
+                .WithMany(u => u.Documents)
+                .HasForeignKey(d => d.UserId);
+
+            modelBuilder.Entity<DocumentChunk>()
+                .HasOne(dc => dc.Document)
+                .WithMany(d => d.Chunks)
+                .HasForeignKey(dc => dc.DocumentId);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -7,10 +7,12 @@ public class DocumentChunk
 {
     public int Id { get; set; }
     public List<string> Metadata { get; set; } = null!; //could use another model (Metadata)
-    public string Text { get; set; }
+    public string Text { get; set; } = null!;
     
     [Column(TypeName = "vector(1536)")]
-    public Vector Embedding { get; set; }
+    public Vector Embedding { get; set; } 
+    public int DocumentId { get; set; }  
+    public Document Document { get; set; } = null!;
 
     public DocumentChunk(List<string> metadata, string text)
     {

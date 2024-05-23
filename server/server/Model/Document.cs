@@ -5,13 +5,12 @@ namespace server.Model;
 public class Document
 {
     public int Id { get; set; }
-    public string Name { get; set; }
-    public string Extension { get; set; }
-    private List<string> Metadata { get; set; }
+    public string Name { get; set; } = null!;
+    public string Extension { get; set; } = null!;
+    private List<string> Metadata { get; set; } = new List<string>();
     public int UserId { get; set; }
-    public User User { get; set; }
+    public User User { get; set; } = null!;
     //Probably need an user
-
     public IEnumerable<DocumentChunk> Chunks { get; set; } = null!;
 
     public Document()
