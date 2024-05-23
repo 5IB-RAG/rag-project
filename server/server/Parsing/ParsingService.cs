@@ -12,6 +12,13 @@ public class ParsingService : IParsingDocument
         { ".docx", new DocxConvertor() },
         { ".md", new MdConvertor() }
     };
+
+    private PgVectorContext _context;
+
+    public ParsingService(IServiceProvider provider)
+    {
+        _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
+    }
     
     public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
     {
@@ -35,7 +42,6 @@ public class ParsingService : IParsingDocument
     }
     public void PreLoad(WebApplicationBuilder builder)
     {
-        throw new NotImplementedException();
     }
 
     public void Enable(WebApplication app) { }
@@ -68,7 +74,6 @@ public class ParsingService : IParsingDocument
 
     public void Disable()
     {
-        throw new NotImplementedException();
     }
 
 }
