@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using client.Models;
 using client.Model;
 using client.Enum;
+using client.Services;
+using System.Text.Json;
 
 namespace client.Controllers;
 
@@ -33,10 +35,24 @@ namespace client.Controllers;
 //}
 public class HomeController : Controller
 {
+    HttpClient client = new HttpClient();
+    ApiService ApiService { get; set; }
+
+    public HomeController(TokenService tokenService, ApiService apiService)
+    {
+        client.DefaultRequestHeaders.Add("Bearer", tokenService.Token); 
+        
+        ApiService = apiService;
+        client.BaseAddress = new Uri(apiService.BaseAddress);
+    }
+
     public async Task<IActionResult> Index()
     {
         // Richiesta nomi storia chat
+
         // Riciesta nomi storia documenti caricati
+        var documents = DocumentsGet();
+
         return View();
     }
 
@@ -46,9 +62,25 @@ public class HomeController : Controller
     // -------------
 
     [HttpGet]
-    public async Task<IActionResult> DocumentsGet()
+    public async Task<List<Document>> DocumentsGet()
     {
         // richiesta API pe ricevere le info generali di tutti i documenti caricati
+        using (client)
+        {
+            try
+            {
+                HttpResponseMessage response = await client.GetAsync(ApiService.DocumentsGet);
+                response.EnsureSuccessStatusCode();
+
+                List<Document> documents = await response.Content.ReadFromJsonAsync<List<Document>>();
+                return documents;
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
+            }
+        }
         return null;
     }
 

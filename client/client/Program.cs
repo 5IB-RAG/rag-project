@@ -1,7 +1,14 @@
+using client.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add TokenService
+builder.Services.AddSingleton<TokenService>();
+// Add ApiService
+builder.Services.AddSingleton<ApiService>();
 
 var app = builder.Build();
 
