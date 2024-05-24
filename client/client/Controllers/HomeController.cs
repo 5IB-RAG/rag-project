@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using client.Models;
-using client.Model;
 using client.Enum;
 using client.Services;
 using System.Text.Json;
@@ -50,13 +49,17 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        // Richiesta nomi storia chat
-        var chats = ChatsGet();
+        ////Oggetto viewModel
+        //HomeModel homeModel = new HomeModel();
 
-        // Riciesta nomi storia documenti caricati
-        var documents = DocumentsGet();
+        //// Richiesta nomi storia chat
+        //homeModel.Chats = ChatsGet().Result;
 
-        return View(chats, documents);
+        //// Riciesta nomi storia documenti caricatiS
+        //homeModel.Documents = DocumentsGet().Result;
+
+        //return View(homeModel);
+        return View();
     }
 
     #region DOCUMENTI
@@ -117,15 +120,17 @@ public class HomeController : Controller
         // API per caricare un documento
         using (client)
         {
-            //var json = JsonSerializer.Serialize();
-            //var content = new StringContent(json, Encoding.UTF8, "application/json");
-            HttpContent content = new();
+            //@ToDO
+            var json = JsonSerializer.Serialize(1);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            //HttpContent content = new();
 
             try
             {
                 HttpResponseMessage response = await client.PostAsync(ApiService.Documents, content);
                 response.EnsureSuccessStatusCode();
-                return;
+                //@ToDO
+                return View();
             }
             catch (HttpRequestException e)
             {
@@ -245,15 +250,17 @@ public class HomeController : Controller
         //Mandre richista API con testo e id chat riferimento
         using (client)
         {
-            //var json = JsonSerializer.Serialize();
-            //var content = new StringContent(json, Encoding.UTF8, "application/json");
-            HttpContent content = new();
+            //@ToDO
+            var json = JsonSerializer.Serialize(1);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            //HttpContent content = new();
 
             try
             {
                 HttpResponseMessage response = await client.PostAsync(ApiService.Message, content);
                 response.EnsureSuccessStatusCode();
-                return;
+                //@ToDO
+                return View();
             }
             catch (HttpRequestException e)
             {
@@ -265,67 +272,4 @@ public class HomeController : Controller
     }
     #endregion
 
-    #region LOGIN
-    // ---------
-    // | LOGIN |
-    // ---------
-
-    //POST
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> LoginPost(string username, string password)
-    {
-        //Mandare API per essere autenticati
-        using (client)
-        {
-            var json = JsonSerializer.Serialize(new { username, password });
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            try
-            {
-                HttpResponseMessage response = await client.PostAsync(ApiService.Login, content);
-                response.EnsureSuccessStatusCode();
-                return;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
-        }
-        return null;
-    }
-    #endregion
-
-    #region REGISTRAZIONE
-    // ----------
-    // | SIGNUP |
-    // ----------
-
-    //POST
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> SignUpPost(string username, string password)
-    {
-        //Mandare API per essere registrati
-        using (client)
-        {
-            var json = JsonSerializer.Serialize(new { username, password });
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            try
-            {
-                HttpResponseMessage response = await client.PostAsync(ApiService.SignUp, content);
-                response.EnsureSuccessStatusCode();
-                return;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
-        }
-        return null;
-    }
-    #endregion
 }

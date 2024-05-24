@@ -1,6 +1,6 @@
 using client.Enum;
 
-namespace client.Model;
+namespace client.Models;
 
 public class User
 {

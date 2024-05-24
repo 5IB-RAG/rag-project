@@ -1,4 +1,4 @@
-namespace client.Model;
+namespace client.Models;
 
 public class Document
 {
