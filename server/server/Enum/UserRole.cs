@@ -1,7 +1,7 @@
-namespace client.Enum;
+namespace server.Enum;
 
 public enum UserRole
 {
-    ADMIN,
-    GUEST
+    Admin,
+    User
 }
