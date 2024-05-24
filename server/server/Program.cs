@@ -1,3 +1,7 @@
+using server.Model;
+using server.Embedding;
+using server.Services;
+using server.Endponts;
 using client.Data;
 using client.Model;
 using client.Services;
@@ -7,10 +11,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace client;
+namespace server;
 
 public class Program
 {
+    static HttpClient client = new HttpClient();
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +26,7 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        
 
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -62,6 +68,12 @@ public class Program
         app.UseRouting();
 
         app.UseAuthorization();
+
+        app.UseEndpoints(ParsingEndpoint.MapParsingEndPoints);
+
+        app.Run();
+        
+        serviceHandler.Stop();
 
         app.UseEndpoints(endpoints =>
         {

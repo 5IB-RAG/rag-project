@@ -1,15 +1,24 @@
-namespace client.Model;
+using Pgvector;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace server.Model;
 
 public class Document
 {
-    public string Name { get; set; }
-    public string Extension { get; set; }
-    private List<string> Metadata { get; set; }
-    
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string Extension { get; set; } = null!;
+    private List<string> Metadata { get; set; } = new List<string>();
+    public int UserId { get; set; }
+    public User User { get; set; } = null!;
     //Probably need an user
+    public IEnumerable<DocumentChunk> Chunks { get; set; } = null!;
 
-    public List<DocumentChunk> Chunks { get; set; }
-
+    public Document()
+    {
+    }
+    
     public Document(string name, string extension, List<string> metadata, List<DocumentChunk> chunks)
     {
         this.Name = name;
