@@ -1,0 +1,27 @@
+﻿@model client.Models.Login
+@{
+    ViewData["Title"] = "Login";
+}
+
+@* <div class="text-center">
+    <h1 class="display-4">Login</h1>
+    <input form="username" name="userame" placeholder="username"/><br/>
+    <input form="password" name="password" placeholder="password"/><br />
+    <input type="submit" name="Login" />
+</div> *@
+
+<form method="post">
+    <div>
+        <label asp-for="Username"></label>
+        <input asp-for="Username"/>
+    </div>
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password"/>
+    </div>
+    <button type="submit" asp-action="Login">Login</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
