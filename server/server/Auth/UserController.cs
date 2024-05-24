@@ -1,24 +1,24 @@
-﻿using client.Enum;
-using client.Model;
+﻿
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel;
 using System.Security.Claims;
+using Microsoft.OpenApi.Extensions;
+using server.Enum;
+using server.Model;
 
-namespace client.Auth
+namespace server.Auth
 {
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         [HttpGet("Admins")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Admin")]
         public IActionResult AdminsEndpoint()
         {
             var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.Name}, you are an {currentUser.Role}");
+            return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
         }
 
         [HttpGet("Sellers")]
@@ -27,25 +27,27 @@ namespace client.Auth
         {
             var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.Name}, you are a {currentUser.Role}");
+            return Ok($"Hi {currentUser.Username}, you are a {currentUser.Role}");
         }
 
         [HttpGet("AdminsAndSellers")]
-        [Authorize(Roles = "Administrator,Seller")]
+        [Authorize(Roles = "Admin,Seller")]
         public IActionResult AdminsAndSellersEndpoint()
         {
             var currentUser = GetCurrentUser();
 
-            return Ok($"Hi {currentUser.Name}, you are an {currentUser.Role}");
+            return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
         }
 
         [HttpGet("Public")]
         public IActionResult Public()
         {
-            return Ok("Hi, you're on public property");
+            var currentUser = GetCurrentUser();
+            
+            return Ok($"Hi {currentUser.Username}, you're on public property and you are an {currentUser.Role}");
         }
 
-        private UserAuth GetCurrentUser()
+        private User? GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
 
@@ -53,13 +55,15 @@ namespace client.Auth
             {
                 var userClaims = identity.Claims;
 
-                return new UserAuth
+                bool result = UserRole.TryParse(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value, out UserRole _role);
+
+                if (!result) return null;
+
+                return new User
                 {
                     Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
                     EmailAddress = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
-                    Name = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Name)?.Value,
-                    Surname = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname)?.Value,
-                    Role = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value
+                    Role = _role
                 };
             }
             return null;

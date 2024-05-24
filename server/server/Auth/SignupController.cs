@@ -1,20 +1,18 @@
-﻿using client.Data;
-using client.Enum;
-using client.Model;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using server.Db;
+using server.Enum;
+using server.Model;
 
-namespace client.Auth
+namespace server.Auth
 {
     [Route("auth/[controller]")]
     [ApiController]
     public class SignupController : ControllerBase
     {
-        private readonly ApplicationDbContext _db;
+        private readonly PgVectorContext _db;
 
-        public SignupController(ApplicationDbContext db)
+        public SignupController(PgVectorContext db)
         {
             _db = db;
         }
@@ -31,14 +29,12 @@ namespace client.Auth
 
             // add validation and other parameters
          
-            UserAuth user = new()
+            User user = new()
             {
                 Username = userSignup.Username,
-                Password = userSignup.Password,
+                Password = userSignup.Password, //Crittarla ASSOLUTAMENTE
                 EmailAddress = userSignup.EmailAddress,
-                Role = "User",
-                Surname = userSignup.Surname,
-                Name = userSignup.Name
+                Role = UserRole.User
             };
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
