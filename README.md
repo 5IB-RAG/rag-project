@@ -2,36 +2,31 @@
 
 ## Descrizione
 
-> Chat (API): queste API permettono di recuperare le chat di un utente e di continuarle,
-> inviando messaggi e ricevendo risposte. Nel modulo viene gestito, oltre al salvataggio
-> delle chat, il recupero del contesto dal database e le politiche di implementazione
-> dello storico dei messaggi (i messaggi precedenti per garantire contesto). In linea di
-> massima, per la parte di conversazione, in ingresso ci sono i messaggi dell’utente e in
-> uscita le risposte con contesto.
+> Parsing documenti (API): queste sono API che ricevono in ingresso un documento, e in
+> base al formato ne estraggono il testo e lo dividono in chunk (sezioni). Quindi
+> accettano in ingresso un form (quello di caricamento dei documenti) e restituiscono in
+> uscita (in realtà inoltrano al servizio successivo) i metadati del documento e una lista
+> di chunk.
 
 ---
 
-> [!NOTE] 
-> **Capo gruppo: Galimberti**
+> [!NOTE]
+> **Capo gruppo: Panzeri Pietro**
 > <br>
 
 ## Gruppi
 
 <table>
 <tr>
-<th> Chat </th>
+<th> Parsing </th>
 </tr>
 <tr>
 <td>
 
-- **Galimberti**
-- Pozzi
-- Panzeri M
-- Motta
-
-</td>
-</tr>
-</table>
+- **Panzeri P**
+- Adam
+- Viganò
+- Panzeri A
 
 </td>
 </tr>

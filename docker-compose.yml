@@ -1,17 +1,67 @@
-version: '3.8'
+version: "3.2"
 
 services:
-  db:
+  pgvector:
     image: pgvector/pgvector:pg16
+    container_name: database
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
+    #env_file:
+    #  - .env
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres-volume:/var/lib/postgresql
+      #- ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  client:
+    container_name: client
+    build:
+      context: ./client
+      target: dev
+    restart: always
+    command: yarn dev
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true #Need for hot-reload windows
+    volumes:
+      - ./client/:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - 3000:3000
+
+  server:
+    container_name: server
+    build: ./server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://*:80
+      #- ASPNETCORE_Kestrel__Certificates__Default__Password=123
+      #- ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    ports:
+      - "5001:80"
+      - "5002:443"
+    command:
+      [
+        "dotnet",
+        "watch",
+        "run",
+        -v,
+        "--non-interactive",
+        "--project",
+        "server/server.csproj",
+      ]
+    volumes:
+      - ./server/:/app
+      - /app/obj/ # <- directory won't be mounted
+      - /app/bin/ # <- directory won't be mounted
+      - /app/server/obj/ # <- directory won't be mounted
+      - /app/server/bin/ # <- directory won't be mounted
+      - ~/.aspnet/https:/https:ro
 
 volumes:
-  pgdata:
+  postgres-volume:
     external: true
