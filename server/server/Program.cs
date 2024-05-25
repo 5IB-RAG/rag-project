@@ -1,10 +1,14 @@
-using client.Model;
-using client.Services;
+using server.Services;
+using server.Endponts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
-namespace client;
+namespace server;
 
 public class Program
 {
+    static HttpClient client = new HttpClient();
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +20,25 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-        ServiceHandler serviceHandler = new ServiceHandler();
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                });
+        
+        builder.Services.AddMvc();
+        builder.Services.AddControllers();
+        builder.Services.AddRazorPages();
+
+        ServiceHandler serviceHandler = new ServiceHandler(builder);
         serviceHandler.PreLoad(builder);
 
         var app = builder.Build();
@@ -32,10 +54,20 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
+        app.UseRouting();
+
         app.UseAuthorization();
         
-        
-        
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapRazorPages();
+            ParsingEndpoint.MapParsingEndPoints(endpoints);
+        });
+
         app.Run();
+        
+        serviceHandler.Stop();
     }
 }
