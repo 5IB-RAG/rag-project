@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pgvector;
+using server.Db;
 using server.Embedding;
+using server.Helpers;
 using server.Model;
+using server.Model.Dto;
 using server.Parsing;
+using System.Security.Claims;
 
 namespace server.Endponts
 {
@@ -10,23 +14,40 @@ namespace server.Endponts
     {
         public static void MapParsingEndPoints(IEndpointRouteBuilder endpoint)
         {
-            endpoint.MapPost("/upload",
-                async ([FromServices] ParsingService parsingService, [FromServices] EmbeddingParser embeddingParser, [FromBody] UploadDTO upload) =>
+            endpoint.MapPost("/upload", 
+                async ([FromServices] PgVectorContext context ,[FromServices] ParsingService parsingService, [FromServices] EmbeddingParser embeddingParser, [FromServices] ClaimsPrincipal user, [FromForm] UploadDTO upload) =>
                 {
+
+                    User reqUser = UserHelper.GetCurrentUser(user.Identity);
+                    User dbUser = await context.Users.FindAsync(reqUser.Id);
+
                     try
                     {
-                        // Document doc = await parsingService.ParseDocument(upload, upload.Metadata);
+                        List<Document> documents = new List<Document>();
 
-                        //List<Vector> docEmbeddings = await embeddingParser.GetChunkEmbeddingAsync(doc.Chunks.ToArray());
-
-                        //Caricare in db
-
+                        foreach (var item in upload.FormFiles)
+                        {
+                            documents.Add(await parsingService.ParseDocument((FileStream)item.OpenReadStream(), upload.MetaData.Split(';').ToList(), reqUser.Id));
+                        }
+                        foreach (var document in documents)
+                        {
+                            var doc = context.Documents.Add(document);                            
+                            List<Vector> chunksEmbedding = await embeddingParser.GetChunkEmbeddingAsync(document.Chunks.ToArray());
+                            for (int i = 0; i < chunksEmbedding.Count() - 1; i++)
+                            {
+                                document.Chunks.ToList()[i].Embedding = chunksEmbedding[i];
+                                document.Chunks.ToList()[i].DocumentId = doc.Entity.Id;
+                                context.DocumentChunks.Add(document.Chunks.ToList()[i]);
+                            }  
+                            
+                        }
+                        await context.SaveChangesAsync();
                     }
                     catch (Exception ex)
                     {
                         throw new Exception(ex.Message);
                     }
-                });
+                }).RequireAuthorization();
         }
     }
 }

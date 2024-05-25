@@ -20,12 +20,13 @@ public class Document
     {
     }
     
-    public Document(string name, string extension, List<string> metadata, List<DocumentChunk> chunks)
+    public Document(string name, string extension, List<string> metadata, List<DocumentChunk> chunks, int userId)
     {
         this.Name = name;
         this.Extension = extension;
         this.Metadata = metadata;
         this.Chunks = chunks;
+        this.UserId = userId;
     }
 
     public DocumentDto ToDto()
@@ -44,6 +45,7 @@ public class DocumentBuilder
     private string name;
     private string extension;
     private List<string> metadata;
+    private int userId;
     
     private List<DocumentChunk> chunks;
 
@@ -52,7 +54,13 @@ public class DocumentBuilder
         this.name = name;
         return this;
     }
-        
+
+    public DocumentBuilder UserId(int userId)
+    {
+        this.userId = userId;
+        return this;
+    }
+
     public DocumentBuilder Extension(string extension)
     {
         this.extension = extension;
@@ -73,6 +81,6 @@ public class DocumentBuilder
          
     public Document Build()
     {
-        return new Document(name, extension, metadata, chunks);
+        return new Document(name, extension, metadata, chunks, userId);
     }
 }

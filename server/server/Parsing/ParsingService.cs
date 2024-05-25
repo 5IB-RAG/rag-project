@@ -21,7 +21,7 @@ public class ParsingService : IParsingDocument
         _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
     }
     
-    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
+    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata, int userId)
     {
         string extention = documentStream.Name.Split(".").Last();
         string name = documentStream.Name.Remove(documentStream.Name.IndexOf(extention));
@@ -34,6 +34,7 @@ public class ParsingService : IParsingDocument
             .Extension(extention)
             .Chunk(chunks)
             .Metadata(metadata)
+            .UserId(userId)
             .Build();
     }
 
