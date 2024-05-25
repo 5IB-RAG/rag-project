@@ -11,7 +11,9 @@ public class ParsingService : IParsingDocument
         { ".pdf", new PdfConvertor() },
         { ".txt", new TxtConvertor() },
         { ".docx", new DocxConvertor() },
-        { ".md", new MdConvertor() }
+        { ".md", new MdConvertor() },
+        { ".json", new JsonConvertor() },
+        { ".css", new CssConvertor() }
     };
 
     private PgVectorContext _context;
