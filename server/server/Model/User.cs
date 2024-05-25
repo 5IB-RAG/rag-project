@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using server.Enum;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace server.Model;
 

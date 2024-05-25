@@ -1,5 +1,6 @@
 using Pgvector;
 using System.ComponentModel.DataAnnotations.Schema;
+using server.Model.Dto;
 
 namespace server.Model;
 
@@ -25,6 +26,11 @@ public class Document
         this.Extension = extension;
         this.Metadata = metadata;
         this.Chunks = chunks;
+    }
+
+    public DocumentDto ToDto()
+    {
+        return new DocumentDto() { Name = Name, Extension = Extension, UserId = UserId };
     }
     
     public static DocumentBuilder Builder()

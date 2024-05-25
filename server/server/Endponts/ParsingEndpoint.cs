@@ -10,22 +10,24 @@ namespace server.Endponts
     {
         public static void MapParsingEndPoints(IEndpointRouteBuilder endpoint)
         {
-            endpoint.MapPost("/upload", async ([FromServices] ParsingService parsingService, [FromServices] EmbeddingParser embeddingParser, [FromBody] UploadDto upload) =>
-            {
-                try
+            endpoint.MapPost("/upload",
+                async ([FromServices] ParsingService parsingService, [FromServices] EmbeddingParser embeddingParser,
+                    [FromBody] UploadDto upload) =>
                 {
-                   // Document doc = await parsingService.ParseDocument(upload, upload.Metadata);
+                    try
+                    {
+                        // Document doc = await parsingService.ParseDocument(upload, upload.Metadata);
 
-                    //List<Vector> docEmbeddings = await embeddingParser.GetChunkEmbeddingAsync(doc.Chunks.ToArray());
+                        //List<Vector> docEmbeddings = await embeddingParser.GetChunkEmbeddingAsync(doc.Chunks.ToArray());
 
-                    //Caricare in db
+                        //Caricare in db
 
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
-            });
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
+                    }
+                });
         }
     }
 }

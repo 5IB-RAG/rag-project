@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.OpenApi.Extensions;
 using server.Enum;
+using server.Helpers;
 using server.Model;
 
 namespace server.Auth
@@ -16,7 +17,7 @@ namespace server.Auth
         [Authorize(Roles = "Admin")]
         public IActionResult AdminsEndpoint()
         {
-            var currentUser = GetCurrentUser();
+            var currentUser = UserHelper.GetCurrentUser(HttpContext.User.Identity);
 
             return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
         }
@@ -25,7 +26,7 @@ namespace server.Auth
         [Authorize(Roles = "Seller")]
         public IActionResult SellersEndpoint()
         {
-            var currentUser = GetCurrentUser();
+            var currentUser = UserHelper.GetCurrentUser(HttpContext.User.Identity);
 
             return Ok($"Hi {currentUser.Username}, you are a {currentUser.Role}");
         }
@@ -34,7 +35,7 @@ namespace server.Auth
         [Authorize(Roles = "Admin,Seller")]
         public IActionResult AdminsAndSellersEndpoint()
         {
-            var currentUser = GetCurrentUser();
+            var currentUser = UserHelper.GetCurrentUser(HttpContext.User.Identity);
 
             return Ok($"Hi {currentUser.Username}, you are an {currentUser.Role}");
         }
@@ -42,31 +43,9 @@ namespace server.Auth
         [HttpGet("Public")]
         public IActionResult Public()
         {
-            var currentUser = GetCurrentUser();
+            var currentUser = UserHelper.GetCurrentUser(HttpContext.User.Identity);
             
             return Ok($"Hi {currentUser.Username}, you're on public property and you are an {currentUser.Role}");
-        }
-
-        private User? GetCurrentUser()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
-
-            if (identity != null)
-            {
-                var userClaims = identity.Claims;
-
-                bool result = UserRole.TryParse(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value, out UserRole _role);
-
-                if (!result) return null;
-
-                return new User
-                {
-                    Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
-                    EmailAddress = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
-                    Role = _role
-                };
-            }
-            return null;
         }
     }
 }
