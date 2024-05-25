@@ -8,12 +8,14 @@ public class ParsingService : IParsingDocument
 {
     private static Dictionary<string, DocumentConvertor> _convertors = new()
     {
-        { ".pdf", new PdfConvertor() },
-        { ".txt", new TxtConvertor() },
-        { ".docx", new DocxConvertor() },
-        { ".md", new MdConvertor() },
-        { ".json", new JsonConvertor() },
-        { ".css", new CssConvertor() }
+        { "pdf", new PdfConvertor() },
+        { "txt", new TxtConvertor() },
+        { "docx", new DocxConvertor() },
+        { "md", new MdConvertor() },
+        { "json", new JsonConvertor() },
+        { "css", new CssConvertor() },
+        { "html", new HtmlConvertor() },
+        { "js", new JsConvertor() }
     };
 
     private PgVectorContext _context;
