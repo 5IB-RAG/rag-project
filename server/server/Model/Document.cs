@@ -67,7 +67,6 @@ public class DocumentBuilder
          
     public Document Build()
     {
-        return new Document();
-        //return new Document(name, extension, metadata, chunks);
+        return new Document(name, extension, metadata, chunks);
     }
 }

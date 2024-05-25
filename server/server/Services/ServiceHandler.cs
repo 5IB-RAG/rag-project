@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using server.Embedding;
+using Microsoft.EntityFrameworkCore;
 using server.Db;
 using server.Parsing;
 
@@ -8,7 +9,8 @@ public class ServiceHandler
 {
     private static readonly List<Type> _services = new()
     {
-        typeof(ParsingService)
+        typeof(ParsingService),
+        typeof(EmbeddingService)
     };
 
     private IServiceProvider _serviceProvider;
