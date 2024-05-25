@@ -12,6 +12,12 @@ namespace client.Controllers
         HttpClient client = new HttpClient();
         ApiService ApiService { get; set; }
 
+        static JsonSerializerOptions jsonDeserializationOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
+
         public AuthController(TokenService tokenService, ApiService apiService)
         {
             client.DefaultRequestHeaders.Add("Bearer", tokenService.Token);
@@ -33,36 +39,42 @@ namespace client.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(Login login)
+        public async Task<IActionResult> Login(UserAuthLogin login)
         {
             if (!ModelState.IsValid)
             {
-                return View();
+                return NotFound();
             }
 
             var json = JsonSerializer.Serialize(login);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            Debug.WriteLine("CIAO");
+            
             //Mandare API per essere autenticati
             using (client)
             {
-
                 try
                 {
                     HttpResponseMessage response = await client.PostAsync(ApiService.Login, content);
-                    //response.EnsureSuccessStatusCode();
 
-                    //if (response.IsSuccessStatusCode)
-                    //{
-                    //    return RedirectToAction("Success");
-                    //}
-                    //else
-                    //{
-                    //    ModelState.AddModelError(string.Empty, "Login failed.");
-                    //    return View(login);
-                    //}
-                    return Result(response.StatusCode.ToString());
+                    AuthResult? authResult = JsonSerializer.Deserialize<AuthResult>(await response.Content.ReadAsStringAsync(), jsonDeserializationOptions);
+
+                    if (authResult != null)
+                    {
+                        if (authResult.Success)
+                        {
+                            TempData["authResult"] = authResult.Username;
+                        }
+                        else
+                        {
+                            TempData["authResult"] = authResult.Error;
+                            
+                        }
+                    }
+                    else
+                    {
+                        TempData["authResult"] = HttpRequestError.InvalidResponse;
+                    }
+                    return RedirectToAction(nameof(Result));
                 }
                 catch (HttpRequestException e)
                 {
@@ -70,12 +82,7 @@ namespace client.Controllers
                     Console.WriteLine($"Message :{e.Message}");
                 }
             }
-            return null;
-        }
-
-        public IActionResult Result(string result)
-        {
-            return View(result);
+            return NotFound();
         }
         #endregion
 
@@ -87,20 +94,41 @@ namespace client.Controllers
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignUp(string username, string password)
+        public async Task<IActionResult> SignUp(UserAuthSignup signup)
         {
+            if (!ModelState.IsValid)
+            {
+                return NotFound();
+            }
+
             //Mandare API per essere registrati
             using (client)
             {
-                var json = JsonSerializer.Serialize(new { username, password });
+                var json = JsonSerializer.Serialize(signup);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 try
                 {
                     HttpResponseMessage response = await client.PostAsync(ApiService.SignUp, content);
-                    response.EnsureSuccessStatusCode();
-                    //@ToDO
-                    return View();
+
+                    AuthResult? authResult = JsonSerializer.Deserialize<AuthResult>(await response.Content.ReadAsStringAsync(), jsonDeserializationOptions);
+
+                    if (authResult != null)
+                    {
+                        if (authResult.Success)
+                        {
+                            TempData["authResult"] = authResult.Username;
+                        }
+                        else
+                        {
+                            TempData["authResult"] = authResult.Error;
+                        }
+                    }
+                    else
+                    {
+                        TempData["authResult"] = HttpRequestError.InvalidResponse;
+                    }
+                    return RedirectToAction(nameof(Result));
                 }
                 catch (HttpRequestException e)
                 {
@@ -108,8 +136,13 @@ namespace client.Controllers
                     Console.WriteLine($"Message :{e.Message}");
                 }
             }
-            return null;
+            return NotFound();
         }
         #endregion
+
+        public IActionResult Result()
+        {
+            return View(TempData["authResult"]);
+        }
     }
 }

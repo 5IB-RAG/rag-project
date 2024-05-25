@@ -34,9 +34,9 @@ namespace server.Auth
                 var token = Generate(user);
                 return new JsonResult(new AuthResult { Username = user.Username, Token = token, Success = true});
             }
-
-            return new JsonResult(new JsonResult(new AuthResult
-                { Username = user.Username, Success = false, Error = "User not found" }));
+            
+            return new JsonResult(new AuthResult
+                {Success = false, Error = "User not found" });
         }
 
         private string Generate(User user)
