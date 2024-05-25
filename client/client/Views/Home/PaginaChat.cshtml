@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-
 <body>
     <div class="container">
         <aside class="sidebar">
@@ -46,13 +45,7 @@
                 </div>
             </div>
             <footer>
-                <form class="attach-button" runat="server">
-                    <div>
-                        <asp:FileUpload ID="FileUpload1" runat="server" AllowMultiple="true" />
-                        <asp:Button ID="UploadButton" runat="server" Text="Upload Files" OnClick="UploadButton_Click" />
-                        <asp:Label ID="StatusLabel" runat="server" Text="" />
-                    </div>
-                </form>
+                <button class="attach-button">📎</button>
                 <input type="text" placeholder="Invia un messaggio">
                 <button class="send-button">↥</button>
             </footer>
