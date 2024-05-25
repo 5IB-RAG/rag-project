@@ -19,12 +19,12 @@ namespace server.Auth
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] UserAuthSignup userSignup)
+        public async Task<JsonResult> Register([FromBody] UserAuthSignup userSignup)
         {
             if (_db.Users.Any(u => u.Username.ToLower() == userSignup.Username.ToLower() || 
                                    u.EmailAddress.ToLower() == userSignup.EmailAddress.ToLower()))
             {
-                return BadRequest("Username or email already exists");
+                return new JsonResult(new AuthResult { Username = userSignup.Username, Success = false, Error = "Username or email already exists"});
             }
 
             // add validation and other parameters
@@ -39,7 +39,7 @@ namespace server.Auth
             _db.Users.Add(user);
             await _db.SaveChangesAsync();
 
-            return Ok("User registered successfully");
+            return new JsonResult(new AuthResult { Username = userSignup.Username, Success = true});
         }
     }
 }

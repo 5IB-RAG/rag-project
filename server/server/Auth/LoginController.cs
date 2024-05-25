@@ -32,10 +32,11 @@ namespace server.Auth
             if (user != null)
             {
                 var token = Generate(user);
-                return new JsonResult(new TokenResult { Username = user.Username, Token = token });
+                return new JsonResult(new AuthResult { Username = user.Username, Token = token, Success = true});
             }
 
-            return new JsonResult(new {Error= "User not found"});
+            return new JsonResult(new JsonResult(new AuthResult
+                { Username = user.Username, Success = false, Error = "User not found" }));
         }
 
         private string Generate(User user)
