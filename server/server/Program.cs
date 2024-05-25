@@ -3,6 +3,7 @@ using server.Endponts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Claims;
 
 namespace server;
 
@@ -56,7 +57,6 @@ public class Program
 
         app.UseAuthentication();
         app.UseRouting();
-        app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
         app.UseAuthorization();
 
