@@ -11,8 +11,7 @@ namespace server.Endponts
         public static void MapParsingEndPoints(IEndpointRouteBuilder endpoint)
         {
             endpoint.MapPost("/upload",
-                async ([FromServices] ParsingService parsingService, [FromServices] EmbeddingParser embeddingParser,
-                    [FromBody] UploadDto upload) =>
+                async ([FromServices] ParsingService parsingService, [FromServices] EmbeddingParser embeddingParser, [FromBody] UploadDTO upload) =>
                 {
                     try
                     {

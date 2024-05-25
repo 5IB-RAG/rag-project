@@ -69,7 +69,8 @@ public class Program
         });
 
         app.Run();
-        
+
+        app.UseEndpoints(ParsingEndpoint.MapParsingEndPoints);
         serviceHandler.Stop();
     }
 }
