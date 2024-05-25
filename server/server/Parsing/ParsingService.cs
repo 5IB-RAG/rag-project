@@ -1,4 +1,4 @@
-﻿using server.Db;
+using server.Db;
 using server.Model;
 using server.Parsing.Convertors;
 

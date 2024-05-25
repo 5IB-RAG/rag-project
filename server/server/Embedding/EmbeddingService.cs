@@ -5,7 +5,7 @@ using server.Embedding;
 using server.Model;
 using Exception = System.Exception;
 
-namespace client.Embedding
+namespace server.Embedding
 {
     public class EmbeddingService : EmbeddingParser
     {

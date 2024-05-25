@@ -1,4 +1,4 @@
-﻿using client.Embedding;
+﻿using server.Embedding;
 using Microsoft.EntityFrameworkCore;
 using server.Db;
 using server.Parsing;
