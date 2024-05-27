@@ -94,6 +94,9 @@ namespace server.Migrations
                     b.Property<string>("DataText")
                         .HasColumnType("text");
 
+                    b.Property<Vector>("Embedding")
+                        .HasColumnType("vector(1536)");
+
                     b.Property<int>("Role")
                         .HasColumnType("integer");
 

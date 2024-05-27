@@ -4,8 +4,9 @@ using Pgvector;
 using server.Embedding;
 using server.Model;
 using Exception = System.Exception;
+using iTextSharp.text;
 
-namespace client.Embedding
+namespace server.Embedding
 {
     public class EmbeddingService : EmbeddingParser
     {
@@ -44,10 +45,27 @@ namespace client.Embedding
             throw new Exception();
         }
 
-        public override Task<DocumentChunk> GetContextChunk(Message message)
+        public override async Task<Vector> GetContextChunk(Message message)
         {
-            throw new NotImplementedException();
+            client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
+            var requestBody = new
+            {
+                input = message.Text
+            };
+            var json = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync(urlEmbedding, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
+                return new Vector(responseContent.Data[0].Embedding); ;
+            }
+            throw new Exception();
+            //save su db del messaggio???
         }
+
 
         public override void PreLoad(WebApplicationBuilder builder)
         {

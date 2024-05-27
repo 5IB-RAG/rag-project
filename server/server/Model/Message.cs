@@ -1,3 +1,4 @@
+using Pgvector;
 using server.Enum;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,4 +14,7 @@ public class Message
     public ChatRole Role { get; set; }
     public int ChatId { get; set; } 
     public UserChat UserChat { get; set; } = null!;
+
+    [Column(TypeName = "vector(1536)")]
+    public Vector? Embedding { get; set; }
 }

@@ -9,7 +9,7 @@ public abstract class EmbeddingParser : IService
     private IService _serviceImplementation;
     public abstract Task<List<Vector>> GetChunkEmbeddingAsync(DocumentChunk[] chunks);
 
-    public abstract Task<DocumentChunk> GetContextChunk(Message message);
+    public abstract Task<Vector> GetContextChunk(Message message);
 
     public abstract void PreLoad(WebApplicationBuilder builder);
     public abstract void Enable(WebApplication app);
