@@ -1,15 +1,8 @@
 ﻿namespace client.Services;
 
-public abstract class Service
+public interface IService
 {
-    private readonly IServiceProvider _provider;
-    
-    protected Service(IServiceProvider provider)
-    {
-        _provider = provider;
-    }
-    
-    public abstract void PreLoad(WebApplicationBuilder builder);
-    public abstract void Enable(WebApplication app);
-    public abstract void Disable();
+    public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider);
+    public void Enable(WebApplication app);
+    public void Disable();
 }
