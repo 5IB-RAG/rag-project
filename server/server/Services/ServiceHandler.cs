@@ -22,7 +22,7 @@ public class ServiceHandler
             options.UseNpgsql(builder.Configuration.GetConnectionString("PgVectorContext"), o => o.UseVector()));
         
         // Register services
-        _services.ForEach(service => builder.Services.AddSingleton(service, _provider => Activator.CreateInstance(service, _provider)));
+        _services.ForEach(service => builder.Services.AddSingleton(Activator.CreateInstance(service)));
     }
 
     public void PreLoad(WebApplicationBuilder builder)
@@ -32,8 +32,8 @@ public class ServiceHandler
         foreach (var serviceType in _services)
         {
             
-            var service = _serviceProvider.GetService(serviceType) as Service;
-            service?.PreLoad(builder);
+            var service = _serviceProvider.GetService(serviceType) as IService;
+            service?.PreLoad(builder, _serviceProvider);
         }
     }
 
@@ -41,7 +41,7 @@ public class ServiceHandler
     {
         foreach (var serviceType in _services)
         {
-            var service = _serviceProvider.GetService(serviceType) as Service;
+            var service = _serviceProvider.GetService(serviceType) as IService;
             service?.Enable(app);
         }
     }
@@ -50,7 +50,7 @@ public class ServiceHandler
     {
         foreach (var serviceType in _services)
         {
-            var service = _serviceProvider.GetService(serviceType) as Service;
+            var service = _serviceProvider.GetService(serviceType) as IService;
             service?.Disable();
         }
     }
