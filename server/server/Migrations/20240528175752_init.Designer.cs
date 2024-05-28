@@ -13,7 +13,7 @@ using server.Db;
 namespace server.Migrations
 {
     [DbContext(typeof(PgVectorContext))]
-    [Migration("20240523080754_init")]
+    [Migration("20240528175752_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -119,6 +119,10 @@ namespace server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("text");
@@ -142,6 +146,10 @@ namespace server.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("TokenUsed")
                         .HasColumnType("integer");

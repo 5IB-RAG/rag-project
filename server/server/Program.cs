@@ -1,7 +1,9 @@
-using server.Model;
-using server.Embedding;
 using server.Services;
 using server.Endponts;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Security.Claims;
 
 namespace server;
 
@@ -18,7 +20,25 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                });
         
+        builder.Services.AddMvc();
+        builder.Services.AddControllers();
+        builder.Services.AddRazorPages();
+
         ServiceHandler serviceHandler = new ServiceHandler(builder);
         serviceHandler.PreLoad(builder);
 
@@ -35,12 +55,24 @@ public class Program
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
+        app.UseRouting();
+
+
+
         app.UseAuthorization();
 
-        app.UseEndpoints(ParsingEndpoint.MapParsingEndPoints);
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapRazorPages();
+            ParsingEndpoint.MapParsingEndPoints(endpoints);
+            DocumentEndpoint.MapDocumentEndPoint(endpoints);
+            ChatEndPoint.MapChatEndpoint(endpoints);
+        });
 
         app.Run();
-        
+
         serviceHandler.Stop();
     }
 }

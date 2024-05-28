@@ -3,7 +3,7 @@ namespace server.Parsing.Convertors
 {
     public class MdConvertor : DocumentConvertor
     {
-        public override async Task<string> GetTextAsync(FileStream stream)
+        public override async Task<string> GetTextAsync(Stream stream)
         {
             try
             {

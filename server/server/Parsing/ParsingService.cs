@@ -1,4 +1,4 @@
-﻿using server.Db;
+using server.Db;
 using server.Model;
 using server.Parsing.Convertors;
 
@@ -20,16 +20,12 @@ public class ParsingService : IParsingDocument
 
     private PgVectorContext _context;
 
-    public ParsingService(IServiceProvider provider)
-    {
-        _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
-    }
     
-    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
+    public async Task<Document> ParseDocument(IFormFile formFile, List<string> metadata, int userId)
     {
-        string extention = documentStream.Name.Split(".").Last();
-        string name = documentStream.Name.Remove(documentStream.Name.IndexOf(extention));
-        string text =  await _convertors[extention].GetTextAsync(documentStream);
+        string extention = formFile.FileName.Split(".").Last();
+        string name = formFile.FileName.Remove(formFile.FileName.IndexOf(extention) - 1);
+        string text =  await _convertors[extention].GetTextAsync(formFile.OpenReadStream());
 
         List<DocumentChunk> chunks = SplitText(text, 400);
 
@@ -38,6 +34,7 @@ public class ParsingService : IParsingDocument
             .Extension(extention)
             .Chunk(chunks)
             .Metadata(metadata)
+            .UserId(userId)
             .Build();
     }
 
@@ -45,8 +42,9 @@ public class ParsingService : IParsingDocument
     {
         throw new NotImplementedException();
     }
-    public void PreLoad(WebApplicationBuilder builder)
+    public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
     {
+        _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
     }
 
     public void Enable(WebApplication app) { }

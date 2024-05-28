@@ -1,6 +1,7 @@
 using server.Enum;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using server.Model.Dto;
 
 namespace server.Model;
 
@@ -13,4 +14,9 @@ public class Message
     public ChatRole Role { get; set; }
     public int ChatId { get; set; } 
     public UserChat UserChat { get; set; } = null!;
+
+    public MessageDto ToDto()
+    {
+        return new MessageDto() { Text = Text, Role = Role, ChatId = ChatId };
+    }
 }
