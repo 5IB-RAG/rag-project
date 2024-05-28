@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
+using BCrypt.Net;
 using server.Db;
 using server.Model;
 
@@ -32,11 +32,10 @@ namespace server.Auth
             if (user != null)
             {
                 var token = Generate(user);
-                return new JsonResult(new AuthResult { Username = user.Username, Token = token, Success = true});
+                return new JsonResult(new AuthResult { Username = user.Username, Token = token, Success = true });
             }
 
-            return new JsonResult(new JsonResult(new AuthResult
-                { Username = user.Username, Success = false, Error = "User not found" }));
+            return new JsonResult(new AuthResult { Username = userLogin.Username, Success = false, Error = "User not found or password incorrect" });
         }
 
         private string Generate(User user)
@@ -62,9 +61,9 @@ namespace server.Auth
 
         private User Authenticate(UserAuthLogin userLogin)
         {
-            var currentUser = _db.Users.FirstOrDefault(o => o.Username.ToLower() == userLogin.Username.ToLower() && o.Password == userLogin.Password);
+            var currentUser = _db.Users.FirstOrDefault(o => o.Username.ToLower() == userLogin.Username.ToLower());
 
-            if (currentUser != null)
+            if (currentUser != null && BCrypt.Net.BCrypt.Verify(userLogin.Password, currentUser.Password))
             {
                 return currentUser;
             }
