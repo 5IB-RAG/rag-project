@@ -33,7 +33,7 @@ namespace server.Endponts
                         {
                             var doc = context.Documents.Add(document);                            
                             List<Vector> chunksEmbedding = await embeddingService.GetChunkEmbeddingAsync(document.Chunks.ToArray());
-                            for (int i = 0; i < chunksEmbedding.Count() - 1; i++)
+                            for (int i = 0; i < chunksEmbedding.Count(); i++)
                             {
                                 document.Chunks.ToList()[i].Embedding = chunksEmbedding[i];
                                 document.Chunks.ToList()[i].DocumentId = doc.Entity.Id;

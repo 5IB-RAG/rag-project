@@ -16,15 +16,11 @@ public class ParsingService : IParsingDocument
 
     private PgVectorContext _context;
 
-    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
-    {
-        _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
-    }
     
     public async Task<Document> ParseDocument(IFormFile formFile, List<string> metadata, int userId)
     {
         string extention = formFile.FileName.Split(".").Last();
-        string name = formFile.FileName.Remove(formFile.FileName.IndexOf(extention));
+        string name = formFile.FileName.Remove(formFile.FileName.IndexOf(extention) - 1);
         string text =  await _convertors[extention].GetTextAsync(formFile.OpenReadStream());
 
         List<DocumentChunk> chunks = SplitText(text, 400);
