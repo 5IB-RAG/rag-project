@@ -15,7 +15,7 @@ namespace server.Endponts
         public static void MapParsingEndPoints(IEndpointRouteBuilder endpoint)
         {
             endpoint.MapPost("/upload", 
-                async ([FromServices] PgVectorContext context ,[FromServices] ParsingService parsingService, [FromServices] EmbeddingParser embeddingParser, [FromServices] ClaimsPrincipal user, [FromForm] UploadDTO upload) =>
+                async ([FromServices] PgVectorContext context ,ParsingService parsingService, EmbeddingService embeddingService,  ClaimsPrincipal user, [FromForm] UploadDTO upload) =>
                 {
 
                     User reqUser = UserHelper.GetCurrentUser(user.Identity);
@@ -32,7 +32,7 @@ namespace server.Endponts
                         foreach (var document in documents)
                         {
                             var doc = context.Documents.Add(document);                            
-                            List<Vector> chunksEmbedding = await embeddingParser.GetChunkEmbeddingAsync(document.Chunks.ToArray());
+                            List<Vector> chunksEmbedding = await embeddingService.GetChunkEmbeddingAsync(document.Chunks.ToArray());
                             for (int i = 0; i < chunksEmbedding.Count() - 1; i++)
                             {
                                 document.Chunks.ToList()[i].Embedding = chunksEmbedding[i];
@@ -47,7 +47,7 @@ namespace server.Endponts
                     {
                         throw new Exception(ex.Message);
                     }
-                }).RequireAuthorization();
+                }).RequireAuthorization().DisableAntiforgery();
         }
     }
 }

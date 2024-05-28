@@ -44,14 +44,6 @@ public class ServiceHandler
             var service = _serviceProvider.GetService(serviceType) as IService;
             service?.Enable(app);
         }
-
-        // Esegui eventuali operazioni di inizializzazione del DbContext qui
-        using (var scope = app.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<PgVectorContext>();
-            // Esegui eventuali operazioni di inizializzazione del DbContext, come migrazioni
-            dbContext.Database.Migrate();
-        }
     }
 
     public void Stop()

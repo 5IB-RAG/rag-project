@@ -20,5 +20,15 @@ public static class DocumentEndpoint
             
             return Results.Json(document.ToDto());
         }).RequireAuthorization();
+        
+        endpoint.MapDelete("/document/{id}", async ([FromServices] PgVectorContext database, int id) =>
+        {
+            Document? document = await database.Documents.FindAsync(id);
+            if (document == null) return Results.NotFound();
+
+            database.Documents.Remove(document);
+
+            return Results.Ok();
+        }).RequireAuthorization();
     }
 }
