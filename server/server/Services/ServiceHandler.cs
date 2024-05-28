@@ -22,7 +22,7 @@ public class ServiceHandler
             options.UseNpgsql(builder.Configuration.GetConnectionString("PgVectorContext"), o => o.UseVector()));
         
         // Register services
-        _services.ForEach(service => builder.Services.AddSingleton(Activator.CreateInstance(service)));
+        _services.ForEach(service => builder.Services.AddSingleton(service, Activator.CreateInstance(service)));
     }
 
     public void PreLoad(WebApplicationBuilder builder)
