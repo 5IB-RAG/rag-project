@@ -8,10 +8,10 @@ public class ParsingService : IParsingDocument
 {
     private static Dictionary<string, DocumentConvertor> _convertors = new()
     {
-        { ".pdf", new PdfConvertor() },
-        { ".txt", new TxtConvertor() },
-        { ".docx", new DocxConvertor() },
-        { ".md", new MdConvertor() }
+        { "pdf", new PdfConvertor() },
+        { "txt", new TxtConvertor() },
+        { "docx", new DocxConvertor() },
+        { "md", new MdConvertor() }
     };
 
     private PgVectorContext _context;
@@ -21,11 +21,11 @@ public class ParsingService : IParsingDocument
         _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
     }
     
-    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata, int userId)
+    public async Task<Document> ParseDocument(IFormFile formFile, List<string> metadata, int userId)
     {
-        string extention = documentStream.Name.Split(".").Last();
-        string name = documentStream.Name.Remove(documentStream.Name.IndexOf(extention));
-        string text =  await _convertors[extention].GetTextAsync(documentStream);
+        string extention = formFile.FileName.Split(".").Last();
+        string name = formFile.FileName.Remove(formFile.FileName.IndexOf(extention));
+        string text =  await _convertors[extention].GetTextAsync(formFile.OpenReadStream());
 
         List<DocumentChunk> chunks = SplitText(text, 400);
 

@@ -2,7 +2,7 @@
 {
     public class TxtConvertor : DocumentConvertor
     {
-        public override async Task<string> GetTextAsync(FileStream stream)
+        public override async Task<string> GetTextAsync(Stream stream)
         {
             string text = "";
             try
