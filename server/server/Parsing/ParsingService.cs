@@ -1,4 +1,8 @@
+using DocumentFormat.OpenXml.InkML;
+using iTextSharp.testutils;
+using Pgvector;
 using server.Db;
+using server.Embedding;
 using server.Model;
 using server.Parsing.Convertors;
 
@@ -35,7 +39,20 @@ public class ParsingService : IParsingDocument
             .Chunk(chunks)
             .Metadata(metadata)
             .UserId(userId)
-            .Build();
+        .Build();
+    }
+
+    public async Task SaveDocumentAsync(Document document, PgVectorContext context, EmbeddingService embeddingService)
+    {
+        var doc = context.Documents.Add(document);
+        List<Vector> chunksEmbedding = await embeddingService.GetChunkEmbeddingAsync(document.Chunks.ToArray());
+        for (int i = 0; i < chunksEmbedding.Count(); i++)
+        {
+            document.Chunks.ToList()[i].Embedding = chunksEmbedding[i];
+            document.Chunks.ToList()[i].DocumentId = doc.Entity.Id;
+            context.DocumentChunks.Add(document.Chunks.ToList()[i]);
+        }
+        await context.SaveChangesAsync();
     }
 
     public Task<Document[]> GetUserDocuments(User user)
@@ -66,7 +83,10 @@ public class ParsingService : IParsingDocument
             index = nextIndex + 1;
             nextIndex = index + length;
             if (nextIndex >= text.Length || index >= text.Length)
+            {
+                splitText.Add(new DocumentChunk([], text.Substring(index, text.Length - index)));
                 break;
+            }
         }
         if (splitText != null)
         {
