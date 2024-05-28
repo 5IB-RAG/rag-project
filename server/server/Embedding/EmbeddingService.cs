@@ -11,7 +11,7 @@ namespace server.Embedding
     {
         private HttpClient client = new();
         private EmbeddingParameters? embeddingParameters = new();
-        private string? urlEmbedding;
+        public string? urlEmbedding { get; set; }
 
         public override void Disable()
         {

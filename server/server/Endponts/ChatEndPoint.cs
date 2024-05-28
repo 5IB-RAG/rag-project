@@ -11,32 +11,68 @@ public class ChatEndPoint
 {
     public static void MapChatEndpoint(IEndpointRouteBuilder endpoint)
     {
-        endpoint.MapGet("/chat", async (PgVectorContext database, ClaimsPrincipal user) =>
+        endpoint.MapGet("/chat", async (PgVectorContext database, ClaimsPrincipal claim) =>
         {
-            User reqUser = UserHelper.GetCurrentUser(user.Identity);
-            User dbUser = await database.Users.FindAsync(reqUser.Id);
-
-            if (dbUser == null) return Results.NotFound();
+            User user = UserHelper.GetCurrentUser(claim.Identity);
+            if (user == null) return Results.NotFound();
 
             List<UserChat> chats = database.UserChats.Include(chat => chat.Messages)
-                .Where(chat => chat.UserId == dbUser.Id).ToList();
+                .Where(chat => chat.UserId == user.Id).ToList();
             
-            return Results.Json(chats.Select(chat => chat.ToDto()));
+            return Results.Json(chats.Select(chat => chat.ToDto(true)));
         }).RequireAuthorization();
         
-        endpoint.MapGet("/chat/{id}", async ([FromServices] PgVectorContext database, ClaimsPrincipal user, int id) =>
+        endpoint.MapPost("/chat", async (PgVectorContext database, ClaimsPrincipal claim) =>
         {
-            User reqUser = UserHelper.GetCurrentUser(user.Identity);
-            User dbUser = await database.Users.FindAsync(reqUser.Id);
+            User user = UserHelper.GetCurrentUser(claim.Identity);
+            if (user == null) return Results.NotFound();
 
-            if (dbUser == null) return Results.NotFound();
+            var result = database.UserChats.Add(new UserChat() { Title = "New Chat", UserId = user.Id });
+            await database.SaveChangesAsync();
 
-            UserChat userChat = database.UserChats.Include(chat => chat.Messages)
-                .Where(chat => chat.UserId == dbUser.Id && chat.Id == id).FirstOrDefault();
+            return Results.Json(result.Entity);
+        }).RequireAuthorization();
+        
+        endpoint.MapGet("/chat/{id}", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
+        {
+            User user = UserHelper.GetCurrentUser(claim.Identity);
+            if (user == null) return Results.NotFound();
+
+            UserChat? userChat = database.UserChats
+                .Include(chat => chat.Messages)
+                .FirstOrDefault(chat => chat.UserId == user.Id && chat.Id == id);
 
             if (userChat == null) return Results.NotFound();
             
-            return Results.Json(userChat.ToDto());
+            return Results.Json(userChat.ToDto(false));
+        }).RequireAuthorization();
+        
+        endpoint.MapGet("/chat/{id}/rename", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
+        {
+            User user = UserHelper.GetCurrentUser(claim.Identity);
+            if (user == null) return Results.NotFound();
+
+            UserChat? userChat = database.UserChats
+                .Include(chat => chat.Messages)
+                .FirstOrDefault(chat => chat.UserId == user.Id && chat.Id == id);
+
+            if (userChat == null) return Results.NotFound();
+            
+            return Results.Json(userChat.ToDto(false));
+        }).RequireAuthorization();
+        
+        endpoint.MapGet("/chat/{id}", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
+        {
+            User user = UserHelper.GetCurrentUser(claim.Identity);
+            if (user == null) return Results.NotFound();
+
+            UserChat? userChat = database.UserChats
+                .Include(chat => chat.Messages)
+                .FirstOrDefault(chat => chat.UserId == user.Id && chat.Id == id);
+
+            if (userChat == null) return Results.NotFound();
+            
+            return Results.Json(userChat.ToDto(false));
         }).RequireAuthorization();
     }
 }
