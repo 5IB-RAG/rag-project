@@ -16,12 +16,12 @@ public class ParsingService : IParsingDocument
 
     private PgVectorContext _context;
 
-    public ParsingService(IServiceProvider provider)
+    public ParsingService(IServiceProvider provider) : base(provider)
     {
         _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
     }
     
-    public async Task<Document> ParseDocument(IFormFile formFile, List<string> metadata, int userId)
+    public override async Task<Document> ParseDocument(IFormFile formFile, List<string> metadata, int userId)
     {
         string extention = formFile.FileName.Split(".").Last();
         string name = formFile.FileName.Remove(formFile.FileName.IndexOf(extention));
@@ -38,15 +38,15 @@ public class ParsingService : IParsingDocument
             .Build();
     }
 
-    public Task<Document[]> GetUserDocuments(User user)
+    public override Task<Document[]> GetUserDocuments(User user)
     {
         throw new NotImplementedException();
     }
-    public void PreLoad(WebApplicationBuilder builder)
+    public override void PreLoad(WebApplicationBuilder builder)
     {
     }
 
-    public void Enable(WebApplication app) { }
+    public override void Enable(WebApplication app) { }
     private List<DocumentChunk> SplitText(string text, int length)
     {
         List<DocumentChunk> splitText = new List<DocumentChunk>();
@@ -74,7 +74,7 @@ public class ParsingService : IParsingDocument
         return new List<DocumentChunk>();
     }
 
-    public void Disable()
+    public override void Disable()
     {
     }
 

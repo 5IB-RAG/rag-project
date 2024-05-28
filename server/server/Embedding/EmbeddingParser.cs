@@ -1,17 +1,20 @@
+using client.Services;
 using Pgvector;
 using server.Model;
 using server.Services;
 
 namespace server.Embedding;
 
-public abstract class EmbeddingParser : IService
+public abstract class EmbeddingParser : Service
 {
-    private IService _serviceImplementation;
+    protected EmbeddingParser(IServiceProvider provider) : base(provider)
+    {
+    }
+    
     public abstract Task<List<Vector>> GetChunkEmbeddingAsync(DocumentChunk[] chunks);
-
     public abstract Task<DocumentChunk> GetContextChunk(Message message);
 
-    public abstract void PreLoad(WebApplicationBuilder builder);
-    public abstract void Enable(WebApplication app);
-    public abstract void Disable();
+    public abstract override void PreLoad(WebApplicationBuilder builder);
+    public abstract override void Enable(WebApplication app);
+    public abstract override void Disable();
 }

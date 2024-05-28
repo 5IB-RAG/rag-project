@@ -1,4 +1,5 @@
-﻿using server.Embedding;
+﻿using client.Services;
+using server.Embedding;
 using Microsoft.EntityFrameworkCore;
 using server.Db;
 using server.Parsing;
@@ -21,9 +22,7 @@ public class ServiceHandler
             options.UseNpgsql(builder.Configuration.GetConnectionString("PgVectorContext"), o => o.UseVector()));
         
         // Register services
-        _services.ForEach(service => builder.Services.AddSingleton(service));
-
-        // Register DbContext
+        _services.ForEach(service => builder.Services.AddSingleton(service, _provider => Activator.CreateInstance(service, _provider)));
     }
 
     public void PreLoad(WebApplicationBuilder builder)
@@ -32,7 +31,8 @@ public class ServiceHandler
         
         foreach (var serviceType in _services)
         {
-            var service = _serviceProvider.GetService(serviceType) as IService;
+            
+            var service = _serviceProvider.GetService(serviceType) as Service;
             service?.PreLoad(builder);
         }
     }
@@ -41,7 +41,7 @@ public class ServiceHandler
     {
         foreach (var serviceType in _services)
         {
-            var service = _serviceProvider.GetService(serviceType) as IService;
+            var service = _serviceProvider.GetService(serviceType) as Service;
             service?.Enable(app);
         }
     }
@@ -50,7 +50,7 @@ public class ServiceHandler
     {
         foreach (var serviceType in _services)
         {
-            var service = _serviceProvider.GetService(serviceType) as IService;
+            var service = _serviceProvider.GetService(serviceType) as Service;
             service?.Disable();
         }
     }
