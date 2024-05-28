@@ -29,19 +29,10 @@ namespace server.Endponts
                         {
                             documents.Add(await parsingService.ParseDocument(item, upload.MetaData.Split(';').ToList(), reqUser.Id));
                         }
-                        foreach (var document in documents)
+                        foreach (Document document in documents)
                         {
-                            var doc = context.Documents.Add(document);                            
-                            List<Vector> chunksEmbedding = await embeddingService.GetChunkEmbeddingAsync(document.Chunks.ToArray());
-                            for (int i = 0; i < chunksEmbedding.Count(); i++)
-                            {
-                                document.Chunks.ToList()[i].Embedding = chunksEmbedding[i];
-                                document.Chunks.ToList()[i].DocumentId = doc.Entity.Id;
-                                context.DocumentChunks.Add(document.Chunks.ToList()[i]);
-                            }  
-                            
+                            await parsingService.SaveDocumentAsync(document, context, embeddingService);                     
                         }
-                        await context.SaveChangesAsync();
                     }
                     catch (Exception ex)
                     {
