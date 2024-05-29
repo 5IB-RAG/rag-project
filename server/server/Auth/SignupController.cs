@@ -27,12 +27,13 @@ namespace server.Auth
                 return new JsonResult(new AuthResult { Username = userSignup.Username, Success = false, Error = "Username or email already exists"});
             }
 
-            // add validation and other parameters
-         
+            // add validation on email
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(userSignup.Password);
+
             User user = new()
             {
                 Username = userSignup.Username,
-                Password = userSignup.Password, //Crittarla ASSOLUTAMENTE
+                Password = hashedPassword,
                 EmailAddress = userSignup.EmailAddress,
                 Role = UserRole.User
             };

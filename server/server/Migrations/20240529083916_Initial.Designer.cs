@@ -13,7 +13,7 @@ using server.Db;
 namespace server.Migrations
 {
     [DbContext(typeof(PgVectorContext))]
-    [Migration("20240524155900_Initial")]
+    [Migration("20240529083916_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
