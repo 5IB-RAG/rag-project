@@ -1,0 +1,82 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2e2e2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.signup-box {
+    background-color: #4a4a4a;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    padding-top: 60px; /* spazio per il logo */
+    width: 300px; /* Aumenta la larghezza del form */
+}
+
+.logo {
+    position: absolute;
+    top: -16%; /* posizionare il logo verso l'alto */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+    .logo img {
+        width: 100px;
+        height: auto;
+    }
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+}
+
+label {
+    color: #fff;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #757575; /* Usa la classe .entry */
+    color: #fff; /* Assicurati che il testo sia visibile su sfondo scuro */
+}
+
+button.registration-button {
+    background-color: #757575;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px auto 0; /* Centratura del pulsante con margine superiore */
+}
+
+
+    button.registration-button:hover {
+        background-color: #E9CC70;
+        color: black;
+    }
+
+.entry {
+    background-color: #757575;
+    color: #fff; /* Assicurati che il testo sia visibile su sfondo scuro */
+}

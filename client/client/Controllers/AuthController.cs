@@ -91,6 +91,12 @@ namespace client.Controllers
         // | SIGNUP |
         // ----------
 
+        //GET
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
