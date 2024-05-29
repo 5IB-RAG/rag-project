@@ -36,9 +36,13 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
+        app.UseRouting();
 
-        app.UseEndpoints(ParsingEndpoint.MapParsingEndPoints);
-
+        //app.UseEndpoints(ParsingEndpoint.MapParsingEndPoints);
+        app.UseEndpoints(endpoints =>
+        {
+            ChatEndPoint.MapParsingEndPoints(endpoints);
+        });
         app.Run();
         
         serviceHandler.Stop();

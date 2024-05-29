@@ -1,4 +1,5 @@
-﻿using server.Chat;
+﻿using Microsoft.AspNetCore.Mvc;
+using server.Chat;
 using server.Db;
 using server.Embedding;
 using server.Model;
@@ -10,10 +11,16 @@ namespace server.Endponts
     {
         public static void MapParsingEndPoints(IEndpointRouteBuilder endpoint)
         {
-            endpoint.MapPost("/sendMessage", async(PgVectorContext context, ChatService chatService, Message message ) =>
+            //endpoint.MapPost("/sendMessage", async(PgVectorContext context, ChatService chatService,[FromBody] Message message ) =>
+            //{
+            //    chatService.Ciao();
+            //});
+            endpoint.MapGet("/sendMessage", async (PgVectorContext context, ChatService chatService) =>
             {
-                
+                chatService.Ciao();
+                return Results.Text("afijo");
             });
+
         }
     }
 }

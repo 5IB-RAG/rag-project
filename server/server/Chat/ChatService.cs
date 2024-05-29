@@ -26,20 +26,25 @@ namespace server.Chat
         }
         public void Disable()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public async void Enable(WebApplication app)
         {
+            
             //save sul db del messaggio
+            
+            //throw new NotImplementedException();
+        }
+        public async void Ciao()
+        {
             Message m = new Message();
-            m.Embedding = await embedding.GetContextChunk(m); 
+            m.Embedding = await embedding.GetContextChunk(m);
             var messageSalvato = _context.Messages.Add(m);
 
             await _context.SaveChangesAsync();
 
             string messageJsonChat = GenerateChatJson(await CreateChatContext(messageSalvato.Entity));
-            //throw new NotImplementedException();
         }
         public async Task<List<Message>?> CreateChatContext(Message userMessage)
         {
@@ -168,7 +173,7 @@ namespace server.Chat
 
         public void PreLoad(WebApplicationBuilder builder)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public Task SendAsync(User user, Message message)
