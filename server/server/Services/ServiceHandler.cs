@@ -1,4 +1,5 @@
-﻿using server.Embedding;
+using client.Services;
+using server.Embedding;
 using Microsoft.EntityFrameworkCore;
 using server.Chat;
 using server.Db;
@@ -23,9 +24,7 @@ public class ServiceHandler
             options.UseNpgsql(builder.Configuration.GetConnectionString("PgVectorContext"), o => o.UseVector()));
         
         // Register services
-        _services.ForEach(service => builder.Services.AddSingleton(service));
-
-        // Register DbContext
+        _services.ForEach(service => builder.Services.AddSingleton(service, Activator.CreateInstance(service)));
     }
 
     public void PreLoad(WebApplicationBuilder builder)
@@ -34,8 +33,9 @@ public class ServiceHandler
         
         foreach (var serviceType in _services)
         {
+            
             var service = _serviceProvider.GetService(serviceType) as IService;
-            service?.PreLoad(builder);
+            service?.PreLoad(builder, _serviceProvider);
         }
     }
 
@@ -45,14 +45,6 @@ public class ServiceHandler
         {
             var service = _serviceProvider.GetService(serviceType) as IService;
             service?.Enable(app);
-        }
-
-        // Esegui eventuali operazioni di inizializzazione del DbContext qui
-        using (var scope = app.Services.CreateScope())
-        {
-            var dbContext = scope.ServiceProvider.GetRequiredService<PgVectorContext>();
-            // Esegui eventuali operazioni di inizializzazione del DbContext, come migrazioni
-            dbContext.Database.Migrate();
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using server.Db;
+using server.Db;
 using server.Model;
 using server.Parsing.Convertors;
 
@@ -16,11 +16,6 @@ public class ParsingService : IParsingDocument
 
     private PgVectorContext _context;
 
-    public ParsingService(IServiceProvider provider)
-    {
-        _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
-    }
-    
     public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
     {
         string extention = documentStream.Name.Split(".").Last();
@@ -41,8 +36,9 @@ public class ParsingService : IParsingDocument
     {
         throw new NotImplementedException();
     }
-    public void PreLoad(WebApplicationBuilder builder)
+    public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
     {
+        _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
     }
 
     public void Enable(WebApplication app) { }
