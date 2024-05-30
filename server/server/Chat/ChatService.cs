@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.Office2010.ExcelAc;
+using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
 using server.Db;
 using server.Embedding;
 using server.Enum;
 using server.Model;
+using System.Runtime.InteropServices.Marshalling;
 using System.Text.Json;
 
 namespace server.Chat
@@ -19,11 +21,6 @@ namespace server.Chat
         private PgVectorContext _context;
         private EmbeddingService embedding;
 
-        public ChatService(IServiceProvider provider)
-        {
-            _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
-            embedding = provider.GetService<EmbeddingService>() ?? throw new ApplicationException();
-        }
         public void Disable()
         {
             //throw new NotImplementedException();
@@ -31,97 +28,125 @@ namespace server.Chat
 
         public async void Enable(WebApplication app)
         {
-            
+
             //save sul db del messaggio
-            
+
             //throw new NotImplementedException();
         }
+
         public async void Ciao()
         {
             Message m = new Message();
-            m.Embedding = await embedding.GetContextChunk(m);
+            m.Text = "no, non penso che lo farò";
+            m.ChatId = 1;
+            m.Embedding = (await embedding.GetChunkEmbeddingAsync([DocumentChunk.Builder().Text(m.Text).Build()]))[0];
             var messageSalvato = _context.Messages.Add(m);
 
-            await _context.SaveChangesAsync();
-
-            string messageJsonChat = GenerateChatJson(await CreateChatContext(messageSalvato.Entity));
+            //await _context.SaveChangesAsync();
+            string messageJsonChat = CreateChatContext(messageSalvato.Entity).Result;
+            _context.Messages.Remove(m);
         }
-        public async Task<List<Message>?> CreateChatContext(Message userMessage)
+        public async Task<string> CreateChatContext(Message userMessage)
         {
-            List<Message>? chatContext = new List<Message>();
-            List<Message>? similarMessages = GetSimilarMessages(userMessage);
-            if (similarMessages.Count!=0)
-            {
-                similarMessages.ForEach(chatContext.Add);
+            List<MessagePair>? chatContext = new List<MessagePair>();
+            List<MessagePair>? similarMessages = new List<MessagePair>();
+            List<MessagePair>? lastMessages = await GetLast3Messages(userMessage.ChatId);
+            if (lastMessages.Count != 0)
+                similarMessages = await GetSimilarMessages(userMessage,lastMessages);                
 
-                List<Message>? lastMessages = await GetLast3Messages(userMessage.ChatId);
-                lastMessages.ForEach(chatContext.Add);
-            }
-            
-            return chatContext;
+            similarMessages.ForEach(chatContext.Add);
+            lastMessages.ForEach(chatContext.Add);
+            MessagePair m = new MessagePair();
+            m.User = userMessage.Text;
+            chatContext.Add(m);
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+
+            return JsonSerializer.Serialize(chatContext, options);
         }
         /// <summary>
         /// Restituisce gli ultimi 3 messaggi (user e assistant) di una determinata chat id
         /// </summary>
         /// <param name="chatId"></param>
         /// <returns></returns>
-        public async Task<List<Message>?> GetLast3Messages(int chatId)
+        public async Task<List<MessagePair>> GetLast3Messages(int chatId)
         {
-            List<Message>? messaggi = (List<Message>?)(await _context.UserChats.FindAsync(chatId)).Messages.ToList().OrderByDescending(m => m.Id).Take(6);
-            return messaggi;
+            List<Message>? messages = await _context.Messages
+                .OrderByDescending(m => m.Id)
+                .Where(m => m.Role == ChatRole.USER && m.ChatId == chatId)
+                .Take(3)
+                .ToListAsync();
+
+            messages = messages.OrderBy(m => m.Id).ToList();
+            List<Message> messagesWithResponses = await AddResponseToMessage(messages, chatId);
+            List<MessagePair> messagePairs = GenerateChatJson(messagesWithResponses);
+
+            return messagePairs;
         }
 
         /// <summary>
-        /// Prende i 2 messaggi piu simili al messaggio passato al metodo
+        /// Prende i 2 messaggi piu simili al messaggio passato al metodo diversi dai 3 recenti
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public List<Message>? GetSimilarMessages(Message message)
+        public async Task<List<MessagePair>> GetSimilarMessages(Message message, List<MessagePair>? lastMessages)
         {
             if (message.Embedding == null)
                 throw new ArgumentException("The provided message does not have an embedding.");
-            
-            List<Message>? similarMessages = new List<Message>();
+
+            List<string> lastMessagesTexts = lastMessages.Select(lm => lm.User).ToList();
 
             List<Message>? similarUserMessages = _context.Messages
             .Where(mess => mess.ChatId == message.ChatId && mess.Id != message.Id && mess.Role == ChatRole.USER)
-            .Select(m => new { Message = m, Distance = m.Embedding.L2Distance(m.Embedding) })
+            .Select(m => new { Message = m, Distance = message.Embedding.L2Distance(m.Embedding) })
+            .Where(obj => !lastMessagesTexts.Contains(obj.Message.Text)) // Escludi i messaggi con lo stesso testo
             .OrderBy(obj => obj.Distance)
             .Take(2)
             .Select(obj => obj.Message)
             .ToList();
 
-            if (similarUserMessages.Count==0)//il messaggio non ha somiglianze
-                return similarMessages;
+            if (similarUserMessages.Count == 0)//il messaggio non ha somiglianze
+                return null;
+            List<Message> messagesWithResponses = await AddResponseToMessage(similarUserMessages, message.ChatId);
+            List<MessagePair> messagePairs = GenerateChatJson(messagesWithResponses);
 
-            var similarMessageIds = similarUserMessages.Select(m => m.Id).ToList();//prende gli id dei messaggi selezionati
-
-            //Trova le risposte immediate per ciascun messaggio simile
-            var responses = _context.Messages
-                .Where(m => m.ChatId == message.ChatId && m.Role == ChatRole.ASSISTANT && similarMessageIds.Contains(m.Id - 1))
-                .ToList();
-
-            foreach (Message? userMessage in similarUserMessages)
-            {
-                similarMessages.Add(userMessage);
-                var response = responses.FirstOrDefault(r => r.Id == userMessage.Id + 1);
-                if (response != null)
-                    similarMessages.Add(response);
-            }
-
-            return similarMessages;
+            return messagePairs;
         }
-        
+
+        private async Task<List<Message>> AddResponseToMessage(List<Message> userMessages, int chatId)
+        {
+            var userMessagesId = userMessages.Select(m => m.Id).ToList();
+
+            List<Message>? responses = await _context.Messages
+            .Where(m => m.ResponseId.HasValue && userMessagesId.Contains(m.ResponseId.Value) && m.ChatId == chatId)
+            .ToListAsync();
+
+            for (int i = 0; i < userMessages.Count; i++)
+            {
+                Message userMessage = userMessages[i];
+                Message? response = responses.FirstOrDefault(r => r.ResponseId == userMessage.Id);
+                if (response != null)
+                {
+                    userMessages.Insert(i + 1, response);
+                    i++;
+                }
+            }
+            
+            return userMessages;
+        }
+
         /// <summary>
-        /// Prende in ingresso la lista<message> e restituisce il json indentato come relazione "User":"Assistant"
+        /// Prende in ingresso la lista<message> e restituisce la lista indentato come relazione "User":"Assistant"
         /// </summary>
         /// <param name="chatContext"></param>
         /// <returns></returns>
-        public static string GenerateChatJson(List<Message>? chatContext)
+        public List<MessagePair> GenerateChatJson(List<Message> chatContext)
         {
-            if (chatContext.Count ==0)
-                return string.Empty;
+            if (chatContext.Count == 0)
+                return default;
 
             List<MessagePair> messagePairs = new List<MessagePair>();
 
@@ -143,12 +168,7 @@ namespace server.Chat
                 }
             }
 
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
-
-            return JsonSerializer.Serialize(messagePairs, options);
+            return messagePairs;
         }
 
         /// <summary>
@@ -171,8 +191,10 @@ namespace server.Chat
             return await _context.UserChats.Where(us => us.UserId == user.Id).ToListAsync();
         }
 
-        public void PreLoad(WebApplicationBuilder builder)
+        public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
         {
+            _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
+            embedding = provider.GetService<EmbeddingService>() ?? throw new ApplicationException();
             //throw new NotImplementedException();
         }
 

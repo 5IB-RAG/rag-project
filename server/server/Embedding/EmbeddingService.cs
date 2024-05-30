@@ -45,26 +45,26 @@ namespace server.Embedding
             throw new Exception();
         }
 
-        public override async Task<Vector> GetContextChunk(Message message)
-        {
-            client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
-            var requestBody = new
-            {
-                input = message.Text
-            };
-            var json = JsonSerializer.Serialize(requestBody);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+        //public async Task<Vector> GetContextChunk(Message message)
+        //{
+        //    client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
+        //    var requestBody = new
+        //    {
+        //        input = message.Text
+        //    };
+        //    var json = JsonSerializer.Serialize(requestBody);
+        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync(urlEmbedding, content);
+        //    var response = await client.PostAsync(urlEmbedding, content);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
-                return new Vector(responseContent.Data[0].Embedding); ;
-            }
-            throw new Exception();
-            //save su db del messaggio???
-        }
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var responseContent = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
+        //        return new Vector(responseContent.Data[0].Embedding); ;
+        //    }
+        //    throw new Exception();
+        //    //save su db del messaggio???
+        //}
 
 
         public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
@@ -73,5 +73,6 @@ namespace server.Embedding
             embeddingParameters = builder.Configuration.GetSection("EmbeddingParameters").Get<EmbeddingParameters>();
             urlEmbedding = $"https://{embeddingParameters.ResourceName}.openai.azure.com/openai/deployments/{embeddingParameters.DeploymentId}/embeddings?api-version={embeddingParameters.ApiVersion}";
         }
+
     }
 }
