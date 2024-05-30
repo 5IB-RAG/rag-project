@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text;
 using Pgvector;
 using server.Embedding;
@@ -8,22 +8,22 @@ using iTextSharp.text;
 
 namespace server.Embedding
 {
-    public class EmbeddingService : EmbeddingParser
+    public class EmbeddingService : IEmbeddingParser
     {
         private HttpClient client = new();
         private EmbeddingParameters? embeddingParameters = new();
         private string? urlEmbedding;
 
-        public override void Disable()
+        public void Disable()
         {
             throw new NotImplementedException();
         }
 
-        public override void Enable(WebApplication app)
+        public void Enable(WebApplication app)
         {
         }
 
-        public override async Task<List<Vector>> GetChunkEmbeddingAsync(DocumentChunk[] chunks)
+        public async Task<List<Vector>> GetChunkEmbeddingAsync(DocumentChunk[] chunks)
         {
             client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
             var requestBody = new
@@ -67,7 +67,7 @@ namespace server.Embedding
         }
 
 
-        public override void PreLoad(WebApplicationBuilder builder)
+        public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
         {
             // Get the embedding parameters
             embeddingParameters = builder.Configuration.GetSection("EmbeddingParameters").Get<EmbeddingParameters>();
