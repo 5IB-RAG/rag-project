@@ -66,7 +66,6 @@ public class Program
         {
             endpoints.MapControllers();
             endpoints.MapRazorPages();
-            ParsingEndpoint.MapParsingEndPoints(endpoints);
             DocumentEndpoint.MapDocumentEndPoint(endpoints);
             ChatEndPoint.MapChatEndpoint(endpoints);
         });
