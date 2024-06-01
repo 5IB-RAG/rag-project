@@ -1,9 +1,9 @@
 ﻿
 namespace server.Parsing.Convertors
 {
-    public class MdConvertor : DocumentConvertor
+    public class HtmlConvertor : DocumentConvertor
     {
-        public override async Task<string> GetTextAsync(Stream stream)
+        public async override Task<string> GetTextAsync(Stream stream)
         {
             try
             {

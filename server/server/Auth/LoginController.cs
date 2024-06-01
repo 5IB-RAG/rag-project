@@ -46,6 +46,7 @@ namespace server.Auth
 
             var claims = new[]
             {
+                new Claim(ClaimTypes.PrimarySid, user.Id.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Username),
                 new Claim(ClaimTypes.Email, user.EmailAddress),
                 new Claim(ClaimTypes.Role, user.Role.ToString())

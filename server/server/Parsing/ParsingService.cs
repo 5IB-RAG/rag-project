@@ -1,4 +1,8 @@
+using DocumentFormat.OpenXml.InkML;
+using iTextSharp.testutils;
+using Pgvector;
 using server.Db;
+using server.Embedding;
 using server.Model;
 using server.Parsing.Convertors;
 
@@ -8,24 +12,24 @@ public class ParsingService : IParsingDocument
 {
     private static Dictionary<string, DocumentConvertor> _convertors = new()
     {
-        { ".pdf", new PdfConvertor() },
-        { ".txt", new TxtConvertor() },
-        { ".docx", new DocxConvertor() },
-        { ".md", new MdConvertor() }
+        { "pdf", new PdfConvertor() },
+        { "txt", new TxtConvertor() },
+        { "docx", new DocxConvertor() },
+        { "md", new MdConvertor() },
+        { "json", new JsonConvertor() },
+        { "css", new CssConvertor() },
+        { "html", new HtmlConvertor() },
+        { "js", new JsConvertor() }
     };
 
     private PgVectorContext _context;
 
-    public ParsingService(IServiceProvider provider)
-    {
-        _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
-    }
     
-    public async Task<Document> ParseDocument(FileStream documentStream, List<string> metadata)
+    public async Task<Document> ParseDocument(IFormFile formFile, List<string> metadata, int userId)
     {
-        string extention = documentStream.Name.Split(".").Last();
-        string name = documentStream.Name.Remove(documentStream.Name.IndexOf(extention));
-        string text =  await _convertors[extention].GetTextAsync(documentStream);
+        string extention = formFile.FileName.Split(".").Last();
+        string name = formFile.FileName.Remove(formFile.FileName.IndexOf(extention) - 1);
+        string text =  await _convertors[extention].GetTextAsync(formFile.OpenReadStream());
 
         List<DocumentChunk> chunks = SplitText(text, 400);
 
@@ -34,15 +38,30 @@ public class ParsingService : IParsingDocument
             .Extension(extention)
             .Chunk(chunks)
             .Metadata(metadata)
-            .Build();
+            .UserId(userId)
+        .Build();
+    }
+
+    public async Task SaveDocumentAsync(Document document, PgVectorContext context, EmbeddingService embeddingService)
+    {
+        var doc = context.Documents.Add(document);
+        List<Vector> chunksEmbedding = await embeddingService.GetChunkEmbeddingAsync(document.Chunks.ToArray());
+        for (int i = 0; i < chunksEmbedding.Count(); i++)
+        {
+            document.Chunks.ToList()[i].Embedding = chunksEmbedding[i];
+            document.Chunks.ToList()[i].DocumentId = doc.Entity.Id;
+            context.DocumentChunks.Add(document.Chunks.ToList()[i]);
+        }
+        await context.SaveChangesAsync();
     }
 
     public Task<Document[]> GetUserDocuments(User user)
     {
         throw new NotImplementedException();
     }
-    public void PreLoad(WebApplicationBuilder builder)
+    public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
     {
+        _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
     }
 
     public void Enable(WebApplication app) { }
@@ -64,7 +83,10 @@ public class ParsingService : IParsingDocument
             index = nextIndex + 1;
             nextIndex = index + length;
             if (nextIndex >= text.Length || index >= text.Length)
+            {
+                splitText.Add(new DocumentChunk([], text.Substring(index, text.Length - index)));
                 break;
+            }
         }
         if (splitText != null)
         {
@@ -76,5 +98,4 @@ public class ParsingService : IParsingDocument
     public void Disable()
     {
     }
-
 }
