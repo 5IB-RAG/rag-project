@@ -47,32 +47,9 @@ public class ChatEndPoint
             return Results.Json(userChat.ToDto(false));
         }).RequireAuthorization();
         
-        endpoint.MapGet("/chat/{id}/rename", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
+        endpoint.MapPost("/chat/{id}/rename", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
         {
-            User user = UserHelper.GetCurrentUser(claim.Identity);
-            if (user == null) return Results.NotFound();
-
-            UserChat? userChat = database.UserChats
-                .Include(chat => chat.Messages)
-                .FirstOrDefault(chat => chat.UserId == user.Id && chat.Id == id);
-
-            if (userChat == null) return Results.NotFound();
-            
-            return Results.Json(userChat.ToDto(false));
-        }).RequireAuthorization();
-        
-        endpoint.MapGet("/chat/{id}", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
-        {
-            User user = UserHelper.GetCurrentUser(claim.Identity);
-            if (user == null) return Results.NotFound();
-
-            UserChat? userChat = database.UserChats
-                .Include(chat => chat.Messages)
-                .FirstOrDefault(chat => chat.UserId == user.Id && chat.Id == id);
-
-            if (userChat == null) return Results.NotFound();
-            
-            return Results.Json(userChat.ToDto(false));
+            //Da fare dopos
         }).RequireAuthorization();
     }
 }
