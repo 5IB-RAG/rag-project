@@ -4,7 +4,7 @@ namespace client.Services
 {
     public class ApiService
     {
-        public string BaseAddress { get; } = "https://localhost:5001";
+        public string BaseAddress { get; } = "http://localhost:5000";
 
         public string Documents { get; }
         public string Chats { get; }
@@ -13,7 +13,7 @@ namespace client.Services
         public string SignUp { get; }
 
         public ApiService() {
-            Documents = BaseAddress + "";
+            Documents = BaseAddress + "/document";
             Chats = BaseAddress + "";
             Message = BaseAddress + "";
             Login = BaseAddress + "/auth/login";

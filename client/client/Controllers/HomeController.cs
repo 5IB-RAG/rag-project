@@ -1,10 +1,8 @@
-using System.Diagnostics;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using client.Models;
-using client.Enum;
 using client.Services;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Text;
 
 namespace client.Controllers;
@@ -36,15 +34,14 @@ namespace client.Controllers;
 //}
 public class HomeController : Controller
 {
-    HttpClient client = new HttpClient();
-    ApiService ApiService { get; set; }
+    ApiService ApiService { get; set; } //Non ti serve piu'
 
-    public HomeController(TokenService tokenService, ApiService apiService)
+    private readonly RequestService _requestService;
+    
+    public HomeController(RequestService requestService, ApiService apiService)
     {
-        client.DefaultRequestHeaders.Add("Bearer", tokenService.Token); 
-        
+        _requestService = requestService;
         ApiService = apiService;
-        client.BaseAddress = new Uri(apiService.BaseAddress);
     }
 
     public async Task<IActionResult> Index()
@@ -68,47 +65,54 @@ public class HomeController : Controller
     // -------------
 
     [HttpGet]
-    public async Task<List<Document>> DocumentsGet()
+    public async Task<IActionResult> Documents()
     {
         // richiesta API pe ricevere le info generali di tutti i documenti caricati
-        using (client)
-        {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(ApiService.Documents);
-                response.EnsureSuccessStatusCode();
 
-                List<Document> documents = await response.Content.ReadFromJsonAsync<List<Document>>();
-                return documents;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
+        try
+        {
+            var documents = await _requestService.SendRequest<List<Document>>(
+                RequestType.GET,
+                RequestRoute.Documents,
+                Request.Cookies["authentication"]
+                );
+            
+            return Json(documents);
         }
-        return null;
+        catch (HttpRequestException e)
+        {
+            //TODO: Fofo ricordati che quando la richiesta fallisce per unauthorized ritorna questo cosi lo reindirizza al login
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
+        }
+
+        //Ritorna quello che vuoi
+        return Forbid();
     }
 
     [HttpGet]
-    public async Task<Document> DocumentGetById(int id)
+    public async Task<IActionResult> DocumentGetById(int id)
     {
         // richiesta API con id del documento che si vule riceve interamente
-        using (client)
+        try
         {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync($"{ApiService.Documents}/{id}");
-                response.EnsureSuccessStatusCode();
+            
+            var document = await _requestService.SendRequest<Document>(
+                RequestType.GET,
+                RequestRoute.Documents + "/" + id,
+                Request.Cookies["authentication"]
+            );
 
-                Document document = await response.Content.ReadFromJsonAsync<Document>();
-                return document;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
+            return Json(document);
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
         }
         return null;
     }
@@ -118,25 +122,30 @@ public class HomeController : Controller
     public async Task<IActionResult> DocumentPost()
     {
         // API per caricare un documento
-        using (client)
-        {
-            //@ToDO
-            var json = JsonSerializer.Serialize(1);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            //HttpContent content = new();
+        
+        //@ToDO
+        var json = JsonSerializer.Serialize(1);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        //HttpContent content = new();
 
-            try
-            {
-                HttpResponseMessage response = await client.PostAsync(ApiService.Documents, content);
-                response.EnsureSuccessStatusCode();
-                //@ToDO
-                return View();
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
+        try
+        {
+            await _requestService.SendRequest(
+                RequestType.POST,
+                RequestRoute.Documents,
+                Request.Cookies["authentication"],
+                content
+            );
+            
+            //@ToDO
+            return View();
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
         }
         return null;
     }
@@ -144,20 +153,23 @@ public class HomeController : Controller
     [HttpDelete]
     public async Task<IActionResult> DocumentDelete(int id) {
         // API per cancellare un documento dato id
-        using (client)
+        
+        try
         {
-            try
-            {
-                HttpResponseMessage response = await client.DeleteAsync($"{ApiService.Documents}/{id}");
-                response.EnsureSuccessStatusCode();
+            await _requestService.SendRequest(
+                RequestType.DELETE,
+                RequestRoute.Documents + "/" + id,
+                Request.Cookies["authentication"]
+            );
 
-                return null;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
+            return null;
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
         }
         return null;
     }
@@ -169,47 +181,51 @@ public class HomeController : Controller
     // ---------
 
     [HttpGet]
-    public async Task<List<UserChat>> ChatsGet()
+    public async Task<IActionResult> ChatsGet()
     {
         // richiesta API pe ricevere le info generali di tutti i documenti caricati
-        using (client)
+        
+        try
         {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync(ApiService.Chats);
-                response.EnsureSuccessStatusCode();
+            
+            var chats = await _requestService.SendRequest<List<UserChat>>(
+                RequestType.GET,
+                RequestRoute.Chats,
+                Request.Cookies["authentication"]
+            );
 
-                List<UserChat> chats = await response.Content.ReadFromJsonAsync<List<UserChat>>();
-                return chats;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
+            return Json(chats);
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
         }
         return null;
     }
 
     [HttpGet]
-    public async Task<UserChat> ChatGetById(int id)
+    public async Task<IActionResult> ChatGetById(int id)
     {
         // richiesta API con id della chat che si vule riceve completamente
-        using (client)
+        try
         {
-            try
-            {
-                HttpResponseMessage response = await client.GetAsync($"{ApiService.Chats}/{id}");
-                response.EnsureSuccessStatusCode();
-
-                UserChat chat = await response.Content.ReadFromJsonAsync<UserChat>();
-                return chat;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
+            var chat = await _requestService.SendRequest<UserChat>(
+                RequestType.GET,
+                RequestRoute.Chats + "/" + id,
+                Request.Cookies["authentication"]
+            );
+            
+            return Json(chat);
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
         }
         return null;
     }
@@ -218,20 +234,22 @@ public class HomeController : Controller
     public async Task<IActionResult> ChatDelete(int id)
     {
         // API per cancellare una chat dato id
-        using (client)
+        try
         {
-            try
-            {
-                HttpResponseMessage response = await client.DeleteAsync($"{ApiService.Chats}/{id}");
-                response.EnsureSuccessStatusCode();
+            await _requestService.SendRequest(
+                RequestType.DELETE,
+                RequestRoute.Documents + "/" + id,
+                Request.Cookies["authentication"]
+            );
 
-                return null;
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
+            return null;
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
         }
         return null;
     }
@@ -248,25 +266,28 @@ public class HomeController : Controller
     public async Task<IActionResult> MessagePost(string text)
     {
         //Mandre richista API con testo e id chat riferimento
-        using (client)
+        //@ToDO
+        var json = JsonSerializer.Serialize(1);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        try
         {
+            //Ritornare la chat o il messaggio?
+             await _requestService.SendRequest(
+                RequestType.POST,
+                RequestRoute.Chats,
+                Request.Cookies["authentication"],
+                content
+            );
+            
             //@ToDO
-            var json = JsonSerializer.Serialize(1);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            //HttpContent content = new();
-
-            try
-            {
-                HttpResponseMessage response = await client.PostAsync(ApiService.Message, content);
-                response.EnsureSuccessStatusCode();
-                //@ToDO
-                return View();
-            }
-            catch (HttpRequestException e)
-            {
-                Console.WriteLine("\nException Caught!");
-                Console.WriteLine($"Message :{e.Message}");
-            }
+            return View();
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
         }
         return null;
     }

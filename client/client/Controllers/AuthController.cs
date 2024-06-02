@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text;
 using client.Models;
-using System.Diagnostics;
 
 namespace client.Controllers
 {
     public class AuthController : Controller
     {
-        HttpClient client = new HttpClient();
+        private readonly RequestService _requestService;
         ApiService ApiService { get; set; }
+        
 
         static JsonSerializerOptions jsonDeserializationOptions = new JsonSerializerOptions
         {
@@ -18,12 +18,10 @@ namespace client.Controllers
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
-        public AuthController(TokenService tokenService, ApiService apiService)
+        public AuthController(RequestService requestService, ApiService apiService)
         {
-            client.DefaultRequestHeaders.Add("Bearer", tokenService.Token);
-
             ApiService = apiService;
-            client.BaseAddress = new Uri(apiService.BaseAddress);
+            _requestService = requestService;
         }
         public IActionResult Index()
         {
@@ -50,37 +48,42 @@ namespace client.Controllers
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             
             //Mandare API per essere autenticati
-            using (client)
+            try
             {
-                try
+                var authResult = await _requestService.SendRequest<AuthResult>(
+                    RequestType.POST,
+                    RequestRoute.Login,
+                    content: content,
+                    options: jsonDeserializationOptions
+                );
+                
+                if (authResult != null)
                 {
-                    HttpResponseMessage response = await client.PostAsync(ApiService.Login, content);
-
-                    AuthResult? authResult = JsonSerializer.Deserialize<AuthResult>(await response.Content.ReadAsStringAsync(), jsonDeserializationOptions);
-
-                    if (authResult != null)
+                    if (authResult.Success)
                     {
-                        if (authResult.Success)
-                        {
-                            TempData["authResult"] = authResult.Username;
-                        }
-                        else
-                        {
-                            TempData["authResult"] = authResult.Error;
-                            
-                        }
+                        TempData["authResult"] = authResult.Username;
+                        
+                        Response.Cookies.Append(
+                            "authentication",
+                            authResult.Token, new CookieOptions() { Path = "/", Expires = DateTimeOffset.Now.AddHours(12)}
+                            );
                     }
                     else
                     {
-                        TempData["authResult"] = HttpRequestError.InvalidResponse;
+                        TempData["authResult"] = authResult.Error;
+                        
                     }
-                    return RedirectToAction(nameof(Result));
                 }
-                catch (HttpRequestException e)
+                else
                 {
-                    Console.WriteLine("\nException Caught!");
-                    Console.WriteLine($"Message :{e.Message}");
+                    TempData["authResult"] = HttpRequestError.InvalidResponse;
                 }
+                return RedirectToAction(nameof(Result));
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
             }
             return NotFound();
         }
@@ -108,39 +111,39 @@ namespace client.Controllers
             }
 
             //Mandare API per essere registrati
-            using (client)
+            var json = JsonSerializer.Serialize(signup);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
             {
-                var json = JsonSerializer.Serialize(signup);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                var authResult = await _requestService.SendRequest<AuthResult>(
+                    RequestType.POST,
+                    RequestRoute.SignUp,
+                    content: content,
+                    options: jsonDeserializationOptions
+                );
 
-                try
+                if (authResult != null)
                 {
-                    HttpResponseMessage response = await client.PostAsync(ApiService.SignUp, content);
-
-                    AuthResult? authResult = JsonSerializer.Deserialize<AuthResult>(await response.Content.ReadAsStringAsync(), jsonDeserializationOptions);
-
-                    if (authResult != null)
+                    if (authResult.Success)
                     {
-                        if (authResult.Success)
-                        {
-                            TempData["authResult"] = authResult.Username;
-                        }
-                        else
-                        {
-                            TempData["authResult"] = authResult.Error;
-                        }
+                        TempData["authResult"] = authResult.Username;
                     }
                     else
                     {
-                        TempData["authResult"] = HttpRequestError.InvalidResponse;
+                        TempData["authResult"] = authResult.Error;
                     }
-                    return RedirectToAction(nameof(Result));
                 }
-                catch (HttpRequestException e)
+                else
                 {
-                    Console.WriteLine("\nException Caught!");
-                    Console.WriteLine($"Message :{e.Message}");
+                    TempData["authResult"] = HttpRequestError.InvalidResponse;
                 }
+                return RedirectToAction(nameof(Result));
+            }
+            catch (HttpRequestException e)
+            {
+                Console.WriteLine("\nException Caught!");
+                Console.WriteLine($"Message :{e.Message}");
             }
             return NotFound();
         }
