@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Creare un nuovo pulsante di chat
         const newChatButton = document.createElement('button');
-        newChatButton.textContent = `Nuova chat ${document.querySelectorAll('#chatSection .file').length + 1}`;
+        newChatButton.textContent = `Nuova chat ${document.querySelectorAll('#chatSection .file').length}`;
 
         // Aggiungere il pulsante alla nuova chat
         newChat.appendChild(newChatButton);

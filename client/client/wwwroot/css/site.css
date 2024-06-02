@@ -97,10 +97,21 @@ body {
 }
 
 .message {
-    align-self: flex-start;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
 }
 
 .response {
+    background-color: #d1ecf1;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
     align-self: flex-end;
 }
 
