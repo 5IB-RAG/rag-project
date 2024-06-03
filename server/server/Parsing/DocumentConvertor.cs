@@ -2,5 +2,5 @@
 
 public abstract class DocumentConvertor
 {
-    public abstract Task<string> GetTextAsync(FileStream stream);
+    public abstract Task<string> GetTextAsync(Stream stream);
 }

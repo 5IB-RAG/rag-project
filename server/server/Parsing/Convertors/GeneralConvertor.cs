@@ -1,8 +1,8 @@
 ﻿namespace server.Parsing.Convertors
 {
-    public class TxtConvertor : DocumentConvertor
+    public class GeneralConvertor : DocumentConvertor
     {
-        public override async Task<string> GetTextAsync(FileStream stream)
+        public override async Task<string> GetTextAsync(Stream stream)
         {
             string text = "";
             try

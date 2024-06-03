@@ -3,6 +3,7 @@ using server.Endponts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Security.Claims;
 
 namespace server;
 
@@ -56,17 +57,20 @@ public class Program
         app.UseAuthentication();
         app.UseRouting();
 
+
+
         app.UseAuthorization();
-        
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
             endpoints.MapRazorPages();
-            ParsingEndpoint.MapParsingEndPoints(endpoints);
+            DocumentEndpoint.MapDocumentEndPoint(endpoints);
+            ChatEndPoint.MapChatEndpoint(endpoints);
         });
 
         app.Run();
-        
+
         serviceHandler.Stop();
     }
 }

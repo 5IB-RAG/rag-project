@@ -7,6 +7,6 @@ namespace server.Parsing;
 public interface IParsingDocument : IService
 {
     
-    public Task<Document> ParseDocument(FileStream documentStream, List<string> metadata);
+    public Task<Document> ParseDocument(IFormFile formFile, List<string> metadata, int userId);
     public Task<Document[]> GetUserDocuments(User user);
 }

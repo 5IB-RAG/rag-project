@@ -7,7 +7,7 @@ namespace server.Parsing.Convertors;
 
 public class PdfConvertor : DocumentConvertor
 {
-    public override async Task<string> GetTextAsync(FileStream stream)
+    public override async Task<string> GetTextAsync(Stream stream)
     {
         try
         {
