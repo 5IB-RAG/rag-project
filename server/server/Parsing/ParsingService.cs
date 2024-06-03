@@ -13,21 +13,26 @@ public class ParsingService : IParsingDocument
     private static Dictionary<string, DocumentConvertor> _convertors = new()
     {
         { "pdf", new PdfConvertor() },
-        { "txt", new TxtConvertor() },
+        { "txt", new GeneralConvertor() },
         { "docx", new DocxConvertor() },
-        { "md", new MdConvertor() },
-        { "json", new JsonConvertor() },
-        { "css", new CssConvertor() },
-        { "html", new HtmlConvertor() },
-        { "js", new JsConvertor() }
+        { "md", new GeneralConvertor() },
+        { "json", new GeneralConvertor() },
+        { "css", new GeneralConvertor() },
+        { "html", new GeneralConvertor() },
+        { "js", new GeneralConvertor() },
+        { "", new GeneralConvertor() }
     };
 
     private PgVectorContext _context;
 
-    
     public async Task<Document> ParseDocument(IFormFile formFile, List<string> metadata, int userId)
     {
-        string extention = formFile.FileName.Split(".").Last();
+        string[] spitFileName = formFile.FileName.Split(".");
+        string extention;
+        if (spitFileName.Length > 1)
+            extention = spitFileName.Last();
+        else
+            extention = "";
         string name = formFile.FileName.Remove(formFile.FileName.IndexOf(extention) - 1);
         string text =  await _convertors[extention].GetTextAsync(formFile.OpenReadStream());
 
