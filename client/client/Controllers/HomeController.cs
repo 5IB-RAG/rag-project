@@ -125,11 +125,6 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DocumentPost(HomeModel model )
     {
-        //Dictionary<string, string> data = new Dictionary<string, string>();
-        //data.Add("FormFiles", model.UploadDocument.FormFiles);
-        //data.Add("MetaData", model.UploadDocument.MetaData);
-        //HttpContent httpContent = new FormUrlEncodedContent(data);
-
         var formData = new MultipartFormDataContent();
         foreach (var item in model.UploadDocument.FormFiles)
         {
@@ -137,12 +132,6 @@ public class HomeController : Controller
             formData.Add(file, "FormFiles", item.FileName);
         }
         formData.Add(new StringContent(model.UploadDocument.MetaData), "MetaData");
-
-        //var formData = new MultipartFormDataContent();
-        //formData.Add(new StringContent(model.UploadDocument.MetaData));
-
-        //var file = new StreamContent(model.UploadDocument.FormFiles.OpenReadStream());
-        //formData.Add(file);
 
 
         // API per caricare un documento
@@ -154,8 +143,6 @@ public class HomeController : Controller
                 Request.Cookies["authentication"],
                 formData
             );
-            
-            //@ToDO
             return RedirectToAction(nameof(Index));
         }
         catch (HttpRequestException e)
