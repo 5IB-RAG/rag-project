@@ -114,16 +114,34 @@
             <div/>
                 <footer class="p-3">
                     <div class="input-container">
-
-                        <input title="ciao" id="fileInput" type="file" name="files" multiple class="hidden" />
+                        @* <input title="ciao" id="fileInput" type="file" name="files" multiple class="hidden"> *@
                         <button id="attachButton" class="attach-button" type="button" aria-haspopup="menu"
-                                aria-expanded="false" data-state="closed">
+                                aria-expanded="false" data-state="closed" data-bs-toggle="modal" data-bs-target="#fileModal">
                             📎
                         </button>
                         <input type="text" placeholder="Invia un messaggio" class="input-field" />
                         <button class="send-button">↥</button>
                     </div>
                 </footer>
+            </div>
+        </div>
+    </div>
+
+   @*  POPUP PER APRIRE ESPLORA FILE *@
+    <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fileModalLabel">Seleziona File e Scrivi Messaggio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input id="modalFileInput" type="file" name="files" multiple class="form-control mb-3">
+                    <input id="modalTextInput" type="text" placeholder="Scrivi un messaggio" class="form-control">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="modalSubmitButton">Invia</button>
+                </div>
             </div>
         </div>
     </div>
