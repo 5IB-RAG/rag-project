@@ -1,6 +1,6 @@
 namespace server.Model;
 
-public class EmbeddingParameters
+public class OpenAiParameters
 {
     public string ResourceName { get; set; }
     public string ApiKey { get; set; }

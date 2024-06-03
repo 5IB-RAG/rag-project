@@ -65,7 +65,9 @@ public class Program
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+
             endpoints.MapRazorPages();
+            ChatEndPoint.MapChatEndpoint(endpoints);
             DocumentEndpoint.MapDocumentEndPoint(endpoints);
             ChatEndPoint.MapChatEndpoint(endpoints);
         });

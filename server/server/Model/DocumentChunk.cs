@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Pgvector;
+using server.Model.Dto;
 
 namespace server.Model;
 
@@ -25,6 +26,11 @@ public class DocumentChunk
     public DocumentChunk()
     {
         
+    }
+
+    public DocumentChunkDto ToDto()
+    {
+        return new DocumentChunkDto() { DocumentId = DocumentId, Id = Id, Metadata = Metadata, Text = Text };
     }
 
     public static DocumentChunkBuilder Builder()

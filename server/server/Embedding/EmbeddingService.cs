@@ -1,16 +1,17 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text;
 using Pgvector;
 using server.Embedding;
 using server.Model;
 using Exception = System.Exception;
+using iTextSharp.text;
 
 namespace server.Embedding
 {
     public class EmbeddingService : IEmbeddingParser
     {
         private HttpClient client = new();
-        private EmbeddingParameters? embeddingParameters = new();
+        private OpenAiParameters? embeddingParameters = new();
         private string? urlEmbedding;
 
         public void Disable()
@@ -44,16 +45,34 @@ namespace server.Embedding
             throw new Exception();
         }
 
-        public Task<DocumentChunk> GetContextChunk(Message message)
-        {
-            throw new NotImplementedException();
-        }
+        //public async Task<Vector> GetContextChunk(Message message)
+        //{
+        //    client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
+        //    var requestBody = new
+        //    {
+        //        input = message.Text
+        //    };
+        //    var json = JsonSerializer.Serialize(requestBody);
+        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+        //    var response = await client.PostAsync(urlEmbedding, content);
+
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var responseContent = await response.Content.ReadFromJsonAsync<EmbeddingResponse>();
+        //        return new Vector(responseContent.Data[0].Embedding); ;
+        //    }
+        //    throw new Exception();
+        //    //save su db del messaggio???
+        //}
+
 
         public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
         {
             // Get the embedding parameters
-            embeddingParameters = builder.Configuration.GetSection("EmbeddingParameters").Get<EmbeddingParameters>();
+            embeddingParameters = builder.Configuration.GetSection("EmbeddingParameters").Get<OpenAiParameters>();
             urlEmbedding = $"https://{embeddingParameters.ResourceName}.openai.azure.com/openai/deployments/{embeddingParameters.DeploymentId}/embeddings?api-version={embeddingParameters.ApiVersion}";
         }
+
     }
 }

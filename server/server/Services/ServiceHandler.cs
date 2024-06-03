@@ -1,6 +1,7 @@
-﻿using client.Services;
+
 using server.Embedding;
 using Microsoft.EntityFrameworkCore;
+using server.Chat;
 using server.Db;
 using server.Parsing;
 
@@ -11,7 +12,8 @@ public class ServiceHandler
     private static readonly List<Type> _services = new()
     {
         typeof(ParsingService),
-        typeof(EmbeddingService)
+        typeof(EmbeddingService),
+        typeof(ChatService)
     };
 
     private IServiceProvider _serviceProvider;
