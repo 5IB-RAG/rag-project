@@ -7,6 +7,7 @@ using server.Enum;
 using server.Model;
 using System.Text;
 using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
 
 namespace server.Chat
 {
@@ -15,6 +16,22 @@ namespace server.Chat
     {
         public string User { get; set; } = string.Empty;
         public string Assistant { get; set; } = string.Empty;
+    }
+    
+    public class ChatRequest {
+        public List<OpenAiMessage> messages { get; set; }
+    }
+
+    public class ChatContext
+    {
+        public ChatRequest ChatRequest { get; set; }
+        public List<DocumentChunk> UsedChunk { get; set; }
+    }
+
+    public class ChatEndPointResponse
+    {
+        public string assistantMessage { get; set; }
+        public List<DocumentChunk> documentChunks { get; set; } //Trasformarli in dto
     }
 
     public class ChatService : IChat
@@ -47,48 +64,49 @@ namespace server.Chat
             //throw new NotImplementedException();
         }
 
-        public async Task<string> SendRequest()
+        public async Task<ChatEndPointResponse> SendRequest(int chatId, int userId, string text)
         {
-            //questi 2 parametri vengono passati alla chiamata
-            int chatId = 1;
-            int userId = 1;
-            //------------
-            Message m = new Message();
-            m.Text = "no, non penso che lo farò";
-            m.ChatId = chatId;
-            m.Role = ChatRole.User;
-            m.Embedding = (await embedding.GetChunkEmbeddingAsync([DocumentChunk.Builder().Text(m.Text).Build()]))[0];
+            Message message = new ()
+            {
+                Text = text,
+                ChatId = chatId,
+                Role = ChatRole.User,
+                Embedding = (await embedding.GetChunkEmbeddingAsync([DocumentChunk.Builder().Text(text).Build()]))[0]
+            };
 
+            var savedMessage = _context.Messages.Add(message);
+            var dbSaving = _context.SaveChangesAsync();
 
-            var messageSalvato = _context.Messages.Add(m);
+            ChatContext chatContext = await CreateChatContext(savedMessage.Entity, userId);
+            string chatResponse = await SendRequestToChat(JsonSerializer.Serialize(chatContext.ChatRequest));
 
-            string messageJsonChat = CreateChatContext(messageSalvato.Entity, userId).Result;
-            int ciao = 0;
-            string chatResponse = await SendRequestToChat(messageJsonChat);
-
+            await dbSaving; //Sicurezza sicurosa
 
             //salvataggio sul db della risposta di chat
-            Message resposeChat = new Message();
-            m.Text = chatResponse;
-            m.ResponseId = messageSalvato.Entity.Id;
-            m.ChatId = chatId;
-            m.Role = ChatRole.Assistant;
+            Message responseChat = new()
+            {
+                Text = chatResponse,
+                ResponseId = savedMessage.Entity.Id,
+                ChatId = chatId,
+                Role = ChatRole.Assistant
+            };
 
-            //_context.Messages.Add(resposeChat);
-            //await _context.SaveChangesAsync();
-            _context.Messages.Remove(m);
+            _context.Messages.Add(responseChat);
+            await _context.SaveChangesAsync();
 
-            return chatResponse;
+            return new ChatEndPointResponse() { assistantMessage = chatResponse, documentChunks = chatContext.UsedChunk};
         }
-        public async Task<string> CreateChatContext(Message userMessage, int userId)
+        public async Task<ChatContext> CreateChatContext(Message userMessage, int userId)
         {
             List<MessagePair>? chatContext = new List<MessagePair>();
             List<MessagePair>? similarMessages = new List<MessagePair>();
             List<MessagePair>? lastMessages = await GetLast3Messages(userMessage.ChatId, userId);
             if (lastMessages.Count != 0)
+            {
                 similarMessages = await GetSimilarMessages(userMessage, lastMessages, userId);
-
-            similarMessages.ForEach(chatContext.Add);
+                if (similarMessages != null) similarMessages.ForEach(chatContext.Add);
+            }
+            
             lastMessages.ForEach(chatContext.Add);
             MessagePair m = new MessagePair();
             m.User = userMessage.Text;
@@ -115,9 +133,9 @@ namespace server.Chat
                     messages.Add(new OpenAiMessage { role = "assistant", content = messagePair.Assistant });
             }
 
+            var chatRequest = new ChatRequest() { messages = messages };
 
-            string context = JsonSerializer.Serialize(messages, new JsonSerializerOptions { WriteIndented = true });
-            return context;
+            return new ChatContext() { ChatRequest = chatRequest, UsedChunk = similarDocumentChunks };
 
         }
         private async Task<List<DocumentChunk>> GetSimilarDocumentChunks(Vector embedding, int userId)//ok
@@ -215,8 +233,8 @@ namespace server.Chat
         /// <returns></returns>
         public List<MessagePair> GenerateChatJson(List<Message> chatContext)
         {
-            if (chatContext.Count == 0)
-                return default;
+            if (chatContext.IsNullOrEmpty())
+                return new List<MessagePair>();
 
             List<MessagePair> messagePairs = new List<MessagePair>();
 
@@ -267,7 +285,7 @@ namespace server.Chat
 
             var content = new StringContent(chat, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(urlChat, content);
-
+            
             if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadFromJsonAsync<ChatResponse>();
