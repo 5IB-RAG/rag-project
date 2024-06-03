@@ -55,10 +55,10 @@ public class HomeController : Controller
         HomeModel homeModel = new HomeModel();
 
         // Richiesta nomi storia chat
-        homeModel.Chats = ChatsGet().Result;
+        homeModel.Chats = await ChatsGet();
 
         // Riciesta nomi storia documenti caricatiS
-        homeModel.Documents = DocumentsGet().Result;
+        homeModel.Documents = await DocumentsGet();
 
         return View(homeModel);
         //return View();
@@ -94,7 +94,7 @@ public class HomeController : Controller
 
         //Ritorna quello che vuoi
         //return Forbid();
-        return null;
+        return new List<Document>();
     }
 
     //public async Task<IActionResult> DocumentGetById(int id)
@@ -134,7 +134,7 @@ public class HomeController : Controller
         foreach (var item in model.UploadDocument.FormFiles)
         {
             var file = new StreamContent(item.OpenReadStream());
-            formData.Add(file, "FormFiles", "FormFiles");
+            formData.Add(file, "FormFiles", item.FileName);
         }
         formData.Add(new StringContent(model.UploadDocument.MetaData), "MetaData");
 
@@ -277,7 +277,7 @@ public class HomeController : Controller
     //POST
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> MessagePost(MessageDto message)
+    public async Task<IActionResult> MessagePost(Message message)
     {
         //Mandare richiesta API con testo e id chat riferimento
 

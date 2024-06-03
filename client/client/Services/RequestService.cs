@@ -19,6 +19,8 @@ public class RequestService
     {
         if (token != null) 
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        if (options == null) options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         
         try
         {
@@ -31,8 +33,7 @@ public class RequestService
             };
 
             response.EnsureSuccessStatusCode();
-
-
+            
             return await response.Content.ReadFromJsonAsync<T>(options);
         }
         finally
@@ -44,14 +45,17 @@ public class RequestService
 
     public async Task SendRequest(RequestType type, string url, string? token = null, HttpContent? content = null, JsonSerializerOptions? options = null)
     {
-        await SendRequest<object>(type, url, token, content, options);
+        try
+        {
+            await SendRequest<object>(type, url, token, content, options);
+        } catch (Exception ignore) {}
     }
 }
 
 
 public class RequestRoute
 {
-    private static readonly string BaseAddress = "http://localhost:5001";
+    private static readonly string BaseAddress = "http://localhost:5000";
 
     public static readonly string Documents = BaseAddress + "/document";
     
