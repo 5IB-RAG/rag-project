@@ -46,17 +46,21 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        ////Oggetto viewModel
-        //HomeModel homeModel = new HomeModel();
+        if (Request.Cookies["authentication"] == null)
+        {
+            return Unauthorized();
+        }
+        //Oggetto viewModel
+        HomeModel homeModel = new HomeModel();
 
-        //// Richiesta nomi storia chat
-        //homeModel.Chats = ChatsGet().Result;
+        // Richiesta nomi storia chat
+        homeModel.Chats = ChatsGet().Result;
 
-        //// Riciesta nomi storia documenti caricatiS
-        //homeModel.Documents = DocumentsGet().Result;
+        // Riciesta nomi storia documenti caricatiS
+        homeModel.Documents = DocumentsGet().Result;
 
-        //return View(homeModel);
-        return View();
+        return View(homeModel);
+        //return View();
     }
 
     #region DOCUMENTI
@@ -64,8 +68,7 @@ public class HomeController : Controller
     // | DOCUMENTI |
     // -------------
 
-    [HttpGet]
-    public async Task<IActionResult> Documents()
+    public async Task<List<Document>> DocumentsGet()
     {
         // richiesta API pe ricevere le info generali di tutti i documenti caricati
 
@@ -77,45 +80,45 @@ public class HomeController : Controller
                 Request.Cookies["authentication"]
                 );
             
-            return Json(documents);
+            return documents;
         }
         catch (HttpRequestException e)
         {
             //TODO: Fofo ricordati che quando la richiesta fallisce per unauthorized ritorna questo cosi lo reindirizza al login
-            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            //if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
             
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
 
         //Ritorna quello che vuoi
-        return Forbid();
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> DocumentGetById(int id)
-    {
-        // richiesta API con id del documento che si vule riceve interamente
-        try
-        {
-            
-            var document = await _requestService.SendRequest<Document>(
-                RequestType.GET,
-                RequestRoute.Documents + "/" + id,
-                Request.Cookies["authentication"]
-            );
-
-            return Json(document);
-        }
-        catch (HttpRequestException e)
-        {
-            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
-            
-            Console.WriteLine("\nException Caught!");
-            Console.WriteLine($"Message :{e.Message}");
-        }
+        //return Forbid();
         return null;
     }
+
+    //public async Task<IActionResult> DocumentGetById(int id)
+    //{
+    //    // richiesta API con id del documento che si vule riceve interamente
+    //    try
+    //    {
+            
+    //        var document = await _requestService.SendRequest<Document>(
+    //            RequestType.GET,
+    //            RequestRoute.Documents + "/" + id,
+    //            Request.Cookies["authentication"]
+    //        );
+
+    //        return Json(document);
+    //    }
+    //    catch (HttpRequestException e)
+    //    {
+    //        if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            
+    //        Console.WriteLine("\nException Caught!");
+    //        Console.WriteLine($"Message :{e.Message}");
+    //    }
+    //    return null;
+    //}
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -150,7 +153,6 @@ public class HomeController : Controller
         return null;
     }
 
-    [HttpDelete]
     public async Task<IActionResult> DocumentDelete(int id) {
         // API per cancellare un documento dato id
         
@@ -180,8 +182,7 @@ public class HomeController : Controller
     // | CHATS |
     // ---------
 
-    [HttpGet]
-    public async Task<IActionResult> ChatsGet()
+    public async Task<List<UserChat>> ChatsGet()
     {
         // richiesta API pe ricevere le info generali di tutti i documenti caricati
         
@@ -194,11 +195,11 @@ public class HomeController : Controller
                 Request.Cookies["authentication"]
             );
 
-            return Json(chats);
+            return chats;
         }
         catch (HttpRequestException e)
         {
-            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            //if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
             
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
@@ -206,8 +207,7 @@ public class HomeController : Controller
         return null;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> ChatGetById(int id)
+    public async Task<UserChat> ChatGetById(int id)
     {
         // richiesta API con id della chat che si vule riceve completamente
         try
@@ -218,11 +218,11 @@ public class HomeController : Controller
                 Request.Cookies["authentication"]
             );
             
-            return Json(chat);
+            return chat;
         }
         catch (HttpRequestException e)
         {
-            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            //if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
             
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
@@ -230,7 +230,6 @@ public class HomeController : Controller
         return null;
     }
 
-    [HttpDelete]
     public async Task<IActionResult> ChatDelete(int id)
     {
         // API per cancellare una chat dato id

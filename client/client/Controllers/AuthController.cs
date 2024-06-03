@@ -67,6 +67,7 @@ namespace client.Controllers
                             "authentication",
                             authResult.Token, new CookieOptions() { Path = "/", Expires = DateTimeOffset.Now.AddHours(12)}
                             );
+                        return RedirectToAction("Index", "Home");
                     }
                     else
                     {

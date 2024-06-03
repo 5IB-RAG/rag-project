@@ -50,7 +50,7 @@ public enum RequestType
 
 public class RequestRoute
 {
-    private static readonly string BaseAddress = "http://localhost:5000";
+    private static readonly string BaseAddress = "http://localhost:5001";
 
     public static readonly string Documents = BaseAddress + "/document";
     
