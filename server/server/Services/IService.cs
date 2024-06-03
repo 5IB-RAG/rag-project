@@ -1,4 +1,4 @@
-﻿namespace client.Services;
+﻿namespace server.Services;
 
 public interface IService
 {

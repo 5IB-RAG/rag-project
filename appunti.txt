@@ -1,0 +1,9 @@
+macchina virtuale oracle: 89.168.20.39
+attivare i servizi: docker-compose up -d
+disattivare: docker-compose down
+
+NON SPEGNERE NE LA MACCHINA NE I SERVIZI
+
+entrare nel db: psql -h localhost -U postgres -d postgres
+	PASSWORD: postgres
+visualizzare le tabelle: \dt
