@@ -315,9 +315,7 @@ public class HomeController : Controller
     public async Task<IActionResult> MessagePost(string message)
     {
         //Mandare richiesta API con testo e id chat riferimento
-
-        var json = JsonSerializer.Serialize(message);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var content = new StringContent(message);
         try
         {
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
