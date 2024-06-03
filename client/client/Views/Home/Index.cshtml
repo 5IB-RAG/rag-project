@@ -90,26 +90,29 @@
             <div class="col-md-9 d-flex flex-column p-0">
                 <main class="content flex-grow-1">
                             <div class="chat flex-grow-1 p-3">
-                                @* @foreach (var chat in Model.Chats)
+                        @if (Model.Chats != null)
+                        {
+                            foreach (var chat in Model.Chats)
+                            {
+                                for (int i = 0; i < chat.Messages.Length; i++)
                                 {
-                                    for (int i = 0; i < chat.Messages.Length; i++)
+                                    var message = chat.Messages[i];
+                                    if (message.Role == client.Enum.ChatRole.USER) // User message
                                     {
-                                        var message = chat.Messages[i];
-                                        if (message.Role == client.Enum.ChatRole.USER) // User message
-                                        {
-                                            <div class="message d-flex">
-                                                <span>@message.Text</span>
-                                            </div>
-                                        }
-                                        else // Bot message
-                                        {
-                                            <div class="response d-flex justify-content-end">
-                                                <span>@message.Text</span>
-                                            </div>
-                                        }
+                                        <div class="message d-flex">
+                                            <span>@message.Text</span>
+                                        </div>
                                     }
-                                } *@
-                            </div>
+                                    else // Bot message
+                                    {
+                                        <div class="response d-flex justify-content-end">
+                                            <span>@message.Text</span>
+                                        </div>
+                                    }
+                                }
+                            }
+                        }
+                    </div>
                 </main>
             <div/>
                 <footer class="p-3">
@@ -132,16 +135,18 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="fileModalLabel">Seleziona File e Scrivi Messaggio</h5>
+                    <h5 class="modal-title" id="fileModalLabel">Seleziona File e scrivi i tags</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <input id="modalFileInput" type="file" name="files" multiple class="form-control mb-3">
-                    <input id="modalTextInput" type="text" placeholder="Scrivi un messaggio" class="form-control">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="modalSubmitButton">Invia</button>
-                </div>
+                <form enctype="multipart/form-data" method="post" asp-action="DocumentPost">
+                    <div class="modal-body">
+                        <input asp-for="UploadDocument.FormFiles" type="file" class="form-control mb-3" multiple>
+                        <input asp-for="UploadDocument.MetaData" type="text" placeholder="Scrivi i tags" class="form-control">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="modalSubmitButton">Invia</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@ using client.Models;
 using client.Services;
 using System.Text.Json;
 using System.Text;
+using client.Model.Dto;
 
 namespace client.Controllers;
 
@@ -122,26 +123,40 @@ public class HomeController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DocumentPost()
+    public async Task<IActionResult> DocumentPost(HomeModel model )
     {
-        // API per caricare un documento
-        
-        //@ToDO
-        var json = JsonSerializer.Serialize(1);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
-        //HttpContent content = new();
+        //Dictionary<string, string> data = new Dictionary<string, string>();
+        //data.Add("FormFiles", model.UploadDocument.FormFiles);
+        //data.Add("MetaData", model.UploadDocument.MetaData);
+        //HttpContent httpContent = new FormUrlEncodedContent(data);
 
+        var formData = new MultipartFormDataContent();
+        foreach (var item in model.UploadDocument.FormFiles)
+        {
+            var file = new StreamContent(item.OpenReadStream());
+            formData.Add(file, "FormFiles", "FormFiles");
+        }
+        formData.Add(new StringContent(model.UploadDocument.MetaData), "MetaData");
+
+        //var formData = new MultipartFormDataContent();
+        //formData.Add(new StringContent(model.UploadDocument.MetaData));
+
+        //var file = new StreamContent(model.UploadDocument.FormFiles.OpenReadStream());
+        //formData.Add(file);
+
+
+        // API per caricare un documento
         try
         {
             await _requestService.SendRequest(
                 RequestType.POST,
                 RequestRoute.Documents,
                 Request.Cookies["authentication"],
-                content
+                formData
             );
             
             //@ToDO
-            return View();
+            return RedirectToAction(nameof(Index));
         }
         catch (HttpRequestException e)
         {
@@ -150,7 +165,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return null;
+        return Forbid();
     }
 
     public async Task<IActionResult> DocumentDelete(int id) {

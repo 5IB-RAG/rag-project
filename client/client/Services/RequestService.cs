@@ -4,11 +4,18 @@ using client.Models;
 
 namespace client.Services;
 
+public enum RequestType
+{
+    GET,
+    POST,
+    DELETE
+}
+
 public class RequestService
 {
     public readonly HttpClient Client = new();
 
-    public async Task<T?> SendRequest<T>(RequestType type, string url, string? token = null, StringContent? content = null, JsonSerializerOptions? options = null)
+    public async Task<T?> SendRequest<T>(RequestType type, string url, string? token = null, HttpContent? content = null, JsonSerializerOptions? options = null)
     {
         if (token != null) 
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -35,18 +42,12 @@ public class RequestService
         }
     }
 
-    public async Task SendRequest(RequestType type, string url, string? token = null, StringContent? content = null, JsonSerializerOptions? options = null)
+    public async Task SendRequest(RequestType type, string url, string? token = null, HttpContent? content = null, JsonSerializerOptions? options = null)
     {
         await SendRequest<object>(type, url, token, content, options);
     }
 }
 
-public enum RequestType
-{
-    GET,
-    POST,
-    DELETE
-}
 
 public class RequestRoute
 {
