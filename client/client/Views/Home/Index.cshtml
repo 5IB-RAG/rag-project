@@ -2,7 +2,8 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
 <body>
     <div class="container-fluid ">
@@ -89,12 +90,12 @@
             <div class="col-md-9 d-flex flex-column p-0">
                 <main class="content flex-grow-1">
                             <div class="chat flex-grow-1 p-3">
-                                @foreach (var chat in Model.Chats)
+                                @* @foreach (var chat in Model.Chats)
                                 {
                                     for (int i = 0; i < chat.Messages.Length; i++)
                                     {
                                         var message = chat.Messages[i];
-                                        if (i % 2 == 0) // User message
+                                        if (message.Role == client.Enum.ChatRole.USER) // User message
                                         {
                                             <div class="message d-flex">
                                                 <span>@message.Text</span>
@@ -107,12 +108,14 @@
                                             </div>
                                         }
                                     }
-                                }
+                                } *@
                             </div>
                 </main>
+            <div/>
                 <footer class="p-3">
                     <div class="input-container">
-                        <input title="ciao" id="fileInput" type="file" name="files" multiple class="hidden">
+
+                        <input title="ciao" id="fileInput" type="file" name="files" multiple class="hidden" />
                         <button id="attachButton" class="attach-button" type="button" aria-haspopup="menu"
                                 aria-expanded="false" data-state="closed">
                             📎
