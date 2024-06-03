@@ -325,13 +325,15 @@ public class HomeController : Controller
         {
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
             //Ritornare la chat o il messaggio?
-            await _requestService.SendRequest(
+            var response = await _requestService.SendRequest<ChatEndPointResponse>(
                 RequestType.POST,
                 RequestRoute.Chats + "/" + homeModel.SelectedChat.Id,
                 Request.Cookies["authentication"],
                 content
             );
-            
+            homeModel.Chats.Find(c => c.Id.Equals(homeModel.SelectedChat.Id)).Messages.Add(new Message {Text = response.assistantMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id});
+            TempData.Put("HomeModel", homeModel);
+
             return RedirectToAction(nameof(Index));
         }
         catch (HttpRequestException e)
