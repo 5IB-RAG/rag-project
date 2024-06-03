@@ -320,10 +320,11 @@ public class HomeController : Controller
             return Forbid();
         }
         //Mandare richiesta API con testo e id chat riferimento
-        var content = new StringContent(message);
+        var content = JsonContent.Create(message);
         try
         {
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
+            homeModel.SelectedChat.Messages.Add(new Message { Text = message, Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
             //Ritornare la chat o il messaggio?
             var response = await _requestService.SendRequest<ChatEndPointResponse>(
                 RequestType.POST,
@@ -331,7 +332,7 @@ public class HomeController : Controller
                 Request.Cookies["authentication"],
                 content
             );
-            homeModel.Chats.Find(c => c.Id.Equals(homeModel.SelectedChat.Id)).Messages.Add(new Message {Text = response.assistantMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id});
+            homeModel.SelectedChat.Messages.Add(new Message { Text = response.assistantMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id });
             TempData.Put("HomeModel", homeModel);
 
             return RedirectToAction(nameof(Index));

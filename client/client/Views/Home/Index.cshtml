@@ -132,11 +132,11 @@
             <div/>
                 <footer>
                     <div class="input-container">
+                        <button id="attachButton" class="attach-button" type="button" aria-haspopup="menu" aria-expanded="false" data-state="closed" data-bs-toggle="modal" data-bs-target="#fileModal">
+                            📎
+                        </button>
                         <form asp-action="MessagePost" method="post">
-                            <button id="attachButton" class="attach-button" type="button" aria-haspopup="menu" aria-expanded="false" data-state="closed" data-bs-toggle="modal" data-bs-target="#fileModal">
-                                📎
-                            </button>
-                            <input type="text" placeholder="Invia un messaggio" class="input-field"/>
+                            <input type="text" placeholder="Invia un messaggio" class="input-field" asp-for=Message/>
                             <button class="send-button">↥</button>
                         </form>
                     </div>
