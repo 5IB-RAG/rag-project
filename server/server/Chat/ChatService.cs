@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Pgvector;
 using Pgvector.EntityFrameworkCore;
 using server.Db;
 using server.Embedding;
@@ -48,15 +49,21 @@ namespace server.Chat
 
         public async Task<string> SendRequest()
         {
+            //questi 2 parametri vengono passati alla chiamata
             int chatId = 1;
+            int userId = 1;
+            //------------
             Message m = new Message();
             m.Text = "no, non penso che lo farò";
             m.ChatId = chatId;
             m.Role = ChatRole.User;
             m.Embedding = (await embedding.GetChunkEmbeddingAsync([DocumentChunk.Builder().Text(m.Text).Build()]))[0];
+
+
             var messageSalvato = _context.Messages.Add(m);
 
-            string messageJsonChat = CreateChatContext(messageSalvato.Entity).Result;
+            string messageJsonChat = CreateChatContext(messageSalvato.Entity, userId).Result;
+            int ciao = 0;
             string chatResponse = await SendRequestToChat(messageJsonChat);
 
 
@@ -73,13 +80,13 @@ namespace server.Chat
 
             return chatResponse;
         }
-        public async Task<string> CreateChatContext(Message userMessage)
+        public async Task<string> CreateChatContext(Message userMessage, int userId)
         {
             List<MessagePair>? chatContext = new List<MessagePair>();
             List<MessagePair>? similarMessages = new List<MessagePair>();
-            List<MessagePair>? lastMessages = await GetLast3Messages(userMessage.ChatId);
+            List<MessagePair>? lastMessages = await GetLast3Messages(userMessage.ChatId, userId);
             if (lastMessages.Count != 0)
-                similarMessages = await GetSimilarMessages(userMessage, lastMessages);
+                similarMessages = await GetSimilarMessages(userMessage, lastMessages, userId);
 
             similarMessages.ForEach(chatContext.Add);
             lastMessages.ForEach(chatContext.Add);
@@ -88,6 +95,17 @@ namespace server.Chat
             chatContext.Add(m);
 
             List<OpenAiMessage> messages = new List<OpenAiMessage>();
+            //
+
+            List<DocumentChunk> similarDocumentChunks = await GetSimilarDocumentChunks(userMessage.Embedding, userId);
+
+            if (similarDocumentChunks.Count > 0)
+            {
+                messages.Add(new OpenAiMessage { role = "system", content = "Sei un assistente che risponde alle domande con le informazioni a te fornite." });
+                string documentChunksText = string.Join("\n", similarDocumentChunks.Select(dc => dc.Text));
+                messages.Add(new OpenAiMessage { role = "system", content = documentChunksText });
+            }
+            //
 
             foreach (var messagePair in chatContext)
             {
@@ -102,21 +120,37 @@ namespace server.Chat
             return context;
 
         }
+        private async Task<List<DocumentChunk>> GetSimilarDocumentChunks(Vector embedding, int userId)//ok
+        {
+            if (embedding == null)
+                throw new ArgumentException("The provided embedding is null.");
+
+            List<DocumentChunk>? similarDocumentChunks = await _context.DocumentChunks
+                .Where(dc => dc.Document.UserId == userId)
+                .Select(dc => new { DocumentChunk = dc, Distance = embedding.L2Distance(dc.Embedding) })
+                .OrderBy(obj => obj.Distance)
+                .Take(5) // Prendi i 5 chunk più simili
+                .Select(obj => obj.DocumentChunk)
+                .ToListAsync();
+
+            return similarDocumentChunks;
+        }
+
         /// <summary>
         /// Restituisce gli ultimi 3 messaggi (user e assistant) di una determinata chat id
         /// </summary>
         /// <param name="chatId"></param>
         /// <returns></returns>
-        public async Task<List<MessagePair>> GetLast3Messages(int chatId)
+        public async Task<List<MessagePair>> GetLast3Messages(int chatId, int userId)//ok
         {
             List<Message>? messages = await _context.Messages
                 .OrderByDescending(m => m.Id)
-                .Where(m => m.Role == ChatRole.User && m.ChatId == chatId)
+                .Where(m => m.Role == ChatRole.User && m.ChatId == chatId && m.UserChat.UserId == userId)
                 .Take(3)
                 .ToListAsync();
 
             messages = messages.OrderBy(m => m.Id).ToList();
-            List<Message> messagesWithResponses = await AddResponseToMessage(messages, chatId);
+            List<Message> messagesWithResponses = await AddResponseToMessage(messages, chatId, userId);
             List<MessagePair> messagePairs = GenerateChatJson(messagesWithResponses);
 
             return messagePairs;
@@ -128,7 +162,7 @@ namespace server.Chat
         /// <param name="message"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public async Task<List<MessagePair>> GetSimilarMessages(Message message, List<MessagePair>? lastMessages)
+        public async Task<List<MessagePair>> GetSimilarMessages(Message message, List<MessagePair>? lastMessages, int userId)//ok
         {
             if (message.Embedding == null)
                 throw new ArgumentException("The provided message does not have an embedding.");
@@ -136,7 +170,7 @@ namespace server.Chat
             List<string> lastMessagesTexts = lastMessages.Select(lm => lm.User).ToList();
 
             List<Message>? similarUserMessages = _context.Messages
-            .Where(mess => mess.ChatId == message.ChatId && mess.Id != message.Id && mess.Role == ChatRole.User)
+            .Where(mess => mess.ChatId == message.ChatId && mess.Id != message.Id && mess.Role == ChatRole.User && mess.UserChat.UserId == userId)
             .Select(m => new { Message = m, Distance = message.Embedding.L2Distance(m.Embedding) })
             .Where(obj => !lastMessagesTexts.Contains(obj.Message.Text)) // Escludi i messaggi con lo stesso testo
             .OrderBy(obj => obj.Distance)
@@ -146,18 +180,18 @@ namespace server.Chat
 
             if (similarUserMessages.Count == 0)//il messaggio non ha somiglianze
                 return null;
-            List<Message> messagesWithResponses = await AddResponseToMessage(similarUserMessages, message.ChatId);
+            List<Message> messagesWithResponses = await AddResponseToMessage(similarUserMessages, message.ChatId, userId);
             List<MessagePair> messagePairs = GenerateChatJson(messagesWithResponses);
 
             return messagePairs;
         }
 
-        private async Task<List<Message>> AddResponseToMessage(List<Message> userMessages, int chatId)
+        private async Task<List<Message>> AddResponseToMessage(List<Message> userMessages, int chatId, int userId)//ok
         {
             var userMessagesId = userMessages.Select(m => m.Id).ToList();
 
             List<Message>? responses = await _context.Messages
-            .Where(m => m.ResponseId.HasValue && userMessagesId.Contains(m.ResponseId.Value) && m.ChatId == chatId)
+            .Where(m => m.ResponseId.HasValue && userMessagesId.Contains(m.ResponseId.Value) && m.ChatId == chatId && m.UserChat.UserId == userId)
             .ToListAsync();
 
             for (int i = 0; i < userMessages.Count; i++)
@@ -212,9 +246,9 @@ namespace server.Chat
         /// </summary>
         /// <param name="userId"></param>
         /// <returns></returns>
-        public async Task<List<Message>> GetConversation(int chatId)
+        public async Task<List<Message>> GetConversation(int chatId, int userId)//ok
         {
-            return await _context.UserChats.Where(c => c.Id == chatId).SelectMany(m => m.Messages).ToListAsync();
+            return await _context.UserChats.Where(c => c.Id == chatId && c.UserId == userId).SelectMany(m => m.Messages).ToListAsync();
         }
 
         /// <summary>
@@ -222,7 +256,7 @@ namespace server.Chat
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        public async Task<List<UserChat>?> GetUserChats(User user)
+        public async Task<List<UserChat>?> GetUserChats(User user)//ok
         {
             return await _context.UserChats.Where(us => us.UserId == user.Id).ToListAsync();
         }
