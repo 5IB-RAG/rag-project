@@ -73,12 +73,8 @@ public class ParsingService : IParsingDocument
         int nextIndex = length;
         while (true)
         {
-            while (true)
-            {
-                if (nextIndex >= text.Length || text[nextIndex] == '.')
-                    break;
+            while (nextIndex >= text.Length || text[nextIndex] == '.')
                 nextIndex++;
-            }
             splitText.Add(new DocumentChunk([], text.Substring(index, nextIndex - index)));
             index = nextIndex + 1;
             nextIndex = index + length;
