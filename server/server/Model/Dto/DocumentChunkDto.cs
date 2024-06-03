@@ -6,5 +6,5 @@ public class DocumentChunkDto
     public List<string> Metadata { get; set; } = null!;
     public string Text { get; set; } = null!;
     
-    public int DocumentId { get; set; }  
+    public DocumentDto Document { get; set; }
 }

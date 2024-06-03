@@ -50,10 +50,10 @@ namespace server.Endponts;
                 return Results.Json(userChat.ToDto(false));
             }).RequireAuthorization();
         
-            endpoint.MapPost("/chat/{id}/rename", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
+            /*endpoint.MapPost("/chat/{id}/rename", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
             {
                 //Da fare dopos
-            }).RequireAuthorization();
+            }).RequireAuthorization();*/
 
             endpoint.MapPost("chat/{id}", async([FromServices] ChatService chatService, ClaimsPrincipal claim, int id, [FromBody] string message) =>
             {

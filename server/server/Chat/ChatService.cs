@@ -76,12 +76,11 @@ namespace server.Chat
             };
 
             var savedMessage = _context.Messages.Add(message);
-            var dbSaving = _context.SaveChangesAsync();
 
             ChatContext chatContext = await CreateChatContext(savedMessage.Entity, userId);
             string chatResponse = await SendRequestToChat(JsonSerializer.Serialize(chatContext.ChatRequest));
 
-            await dbSaving; //Sicurezza sicurosa
+            await _context.SaveChangesAsync();
 
             //salvataggio sul db della risposta di chat
             Message responseChat = new()
@@ -146,9 +145,10 @@ namespace server.Chat
 
             List<DocumentChunk>? similarDocumentChunks = await _context.DocumentChunks
                 .Where(dc => dc.Document.UserId == userId)
+                .Include(dc => dc.Document)
                 .Select(dc => new { DocumentChunk = dc, Distance = embedding.L2Distance(dc.Embedding) })
                 .OrderBy(obj => obj.Distance)
-                .Take(5) // Prendi i 5 chunk più simili
+                .Take(3) // Prendi i 5 chunk più simili
                 .Select(obj => obj.DocumentChunk)
                 .ToListAsync();
 
