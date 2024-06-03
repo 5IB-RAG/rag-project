@@ -1,6 +1,11 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using server.Db;
+using server.Embedding;
+using server.Helpers;
 using server.Model;
+using server.Model.Dto;
+using server.Parsing;
 
 namespace server.Endponts;
 
@@ -30,5 +35,30 @@ public static class DocumentEndpoint
 
             return Results.Ok();
         }).RequireAuthorization();
+        
+        endpoint.MapPost("/document/upload", 
+            async ([FromServices] PgVectorContext context ,[FromServices] ParsingService parsingService, [FromServices] EmbeddingService embeddingService, ClaimsPrincipal claim, [FromForm] UploadDTO upload) =>
+            {
+
+                User user = UserHelper.GetCurrentUser(claim.Identity);
+
+                try
+                {
+                    List<Document> documents = new List<Document>();
+
+                    foreach (var item in upload.FormFiles)
+                    {
+                        documents.Add(await parsingService.ParseDocument(item, upload.MetaData.Split(';').ToList(), user.Id));
+                    }
+                    foreach (Document document in documents)
+                    {
+                        await parsingService.SaveDocumentAsync(document, context, embeddingService);                     
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }).RequireAuthorization().DisableAntiforgery();
     }
 }
