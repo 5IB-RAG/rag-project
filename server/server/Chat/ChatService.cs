@@ -8,6 +8,7 @@ using server.Model;
 using System.Text;
 using System.Text.Json;
 using Microsoft.IdentityModel.Tokens;
+using server.Model.Dto;
 
 namespace server.Chat
 {
@@ -31,7 +32,7 @@ namespace server.Chat
     public class ChatEndPointResponse
     {
         public string assistantMessage { get; set; }
-        public List<DocumentChunk> documentChunks { get; set; } //Trasformarli in dto
+        public List<DocumentChunkDto> documentChunks { get; set; }
     }
 
     public class ChatService : IChat
@@ -94,7 +95,7 @@ namespace server.Chat
             _context.Messages.Add(responseChat);
             await _context.SaveChangesAsync();
 
-            return new ChatEndPointResponse() { assistantMessage = chatResponse, documentChunks = chatContext.UsedChunk};
+            return new ChatEndPointResponse() { assistantMessage = chatResponse, documentChunks = chatContext.UsedChunk.Select(s => s.ToDto()).ToList()};
         }
         public async Task<ChatContext> CreateChatContext(Message userMessage, int userId)
         {
