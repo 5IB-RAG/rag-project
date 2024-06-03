@@ -316,6 +316,9 @@ public class HomeController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> MessagePost(string message)
     {
+        if (string.IsNullOrEmpty(message)) {
+            return Forbid();
+        }
         //Mandare richiesta API con testo e id chat riferimento
         var content = new StringContent(message);
         try
@@ -338,7 +341,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return null;
+        return Forbid();
     }
     #endregion
 }

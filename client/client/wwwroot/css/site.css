@@ -31,24 +31,24 @@ body {
     margin-top: 10px;
 }
 
-    .file button {
-        width: 100%;
-        padding: 10px;
-        border: none;
-        background-color: #333;
-        color: #fff;
-        border-radius: 4px;
-        text-align: left;
-        cursor: pointer;
-    }
+.file button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    border-radius: 4px;
+    text-align: left;
+    cursor: pointer;
+}
 
-        .file button:hover {
-            background-color: #555;
-        }
+.file button:hover {
+    background-color: #555;
+}
 
-        .file-selected button:hover {
-            background-color: #888
-        }
+.file-selected button:hover {
+    background-color: #888
+}
 
 .file-selected button {
     background-color: #888
@@ -80,9 +80,9 @@ body {
     transition: transform 0.3s ease;
 }
 
-    .sidebar-btn:hover {
-        background-color: #555;
-    }
+.sidebar-btn:hover {
+    background-color: #555;
+}
 
 .content {
     display: flex;
@@ -125,14 +125,16 @@ body {
 
 footer {
     border-top: 1px solid #333;
+    padding: 10px;
 }
 
 .input-container {
     display: flex;
-    align-items: center;
+    justify-content: center;
     background-color: #333;
     border-radius: 20px;
     padding: 5px;
+    font-size: 20px;
     width: 100%;
 }
 
@@ -141,8 +143,7 @@ footer {
     border: none;
     color: #fff;
     cursor: pointer;
-    font-size: 20px;
-    padding: 10px;
+    width: 5vh;
 }
 
 .attach-button {
@@ -156,17 +157,17 @@ footer {
 }
 
 .input-field {
-    flex-grow: 1;
     border: none;
+    outline: none;
     background: none;
     color: #fff;
-    padding: 10px;
-    outline: none; /* Rimuove il contorno dell'input */
+    width: 100vh;
 }
 
-    .input-field::placeholder {
-        color: #bbb;
-    }
+.input-field::placeholder {
+    color: #bbb;
+}
+
 
 .imgLogo {
     max-width: 50px;
