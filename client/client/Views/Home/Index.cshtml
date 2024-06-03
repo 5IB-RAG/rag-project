@@ -68,7 +68,12 @@
                         foreach (var chat in Model.Chats)
                         {
                             <div class="file">
-                                <button asp-action="ChatGetById" asp-route-id="@chat.Id">@chat.Title</button>
+                                <form asp-action="ChatGetById" method="get">
+                                    <input type="hidden" name="id" value="@chat.Id" />
+                                    <button class="btn btn-primary">@chat.Title</button>
+                                </form>
+
+                                @* <button asp-action="ChatGetById" asp-route-id="@chat.Id">@chat.Title</button> *@
                             </div>
                         }
                     }
@@ -94,9 +99,10 @@
             <div class="col-md-9 d-flex flex-column p-0">
                 <main class="content flex-grow-1">
                     <div class="chat flex-grow-1 p-3">
-                            @for (int i = 0; i < Model.selectedChata.Messages.Count; i++)
+                        @if (Model.SelectedChat != null){
+                            for (int i = 0; i < Model.SelectedChat.Messages.Count; i++)
                             {
-                                var message = Model.selectedChata.Messages[i];
+                                var message = Model.SelectedChat.Messages[i];
                                 if (message.Role == client.Enum.ChatRole.USER) // User message
                                 {
                                     <div class="message d-flex">
@@ -110,6 +116,7 @@
                                     </div>
                                 }
                             }
+                        }
                     </div>
                 </main>
             <div/>
@@ -120,8 +127,18 @@
                                 aria-expanded="false" data-state="closed" data-bs-toggle="modal" data-bs-target="#fileModal">
                             📎
                         </button>
-                        <input type="text" placeholder="Invia un messaggio" class="input-field" />
-                        <button class="send-button">↥</button>
+                        @* <input type="text" placeholder="Invia un messaggio" class="input-field" />
+                        <button class="send-button">↥</button> *@
+
+                        @* <form asp-action="MessagePost" method="post">
+                            <input type="text" placeholder="Invia un messaggio" class="input-field"/>
+                            <button class="send-button">↥</button>
+                        </form> *@
+
+                        <form asp-action="MessagePost" method="post">
+                            <input type="text" placeholder="Invia un messaggio" class="input-field" />
+                            <button class="send-button">↥</button>
+                        </form>
                     </div>
                 </footer>
             </div>

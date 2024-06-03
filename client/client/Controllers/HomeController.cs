@@ -238,7 +238,8 @@ public class HomeController : Controller
             );
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
             homeModel.Chats.Add(chat);
-            homeModel.selectedChat = chat.Id;
+            homeModel.SelectedChat = chat;
+            TempData.Put("HomeModel", homeModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -264,18 +265,19 @@ public class HomeController : Controller
                 Request.Cookies["authentication"]
             );
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
-            homeModel.selectedChata = chat;
+            homeModel.SelectedChat = chat;
             TempData.Put("HomeModel", homeModel);
+
             return RedirectToAction(nameof(Index));
         }
         catch (HttpRequestException e)
         {
-            //if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
             
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return null;
+        return Forbid();
     }
 
     public async Task<IActionResult> ChatDelete(int id)
@@ -310,25 +312,24 @@ public class HomeController : Controller
     //POST
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> MessagePost(Message message)
+    public async Task<IActionResult> MessagePost(string message)
     {
         //Mandare richiesta API con testo e id chat riferimento
 
-        //@ToDO
-        var json = JsonSerializer.Serialize(message.Text);
+        var json = JsonSerializer.Serialize(message);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         try
         {
+            HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
             //Ritornare la chat o il messaggio?
-             await _requestService.SendRequest(
+            await _requestService.SendRequest(
                 RequestType.POST,
-                RequestRoute.Chats + "/" + message.ChatId,
+                RequestRoute.Chats + "/" + homeModel.SelectedChat.Id,
                 Request.Cookies["authentication"],
                 content
             );
             
-            //@ToDO
-            return View();
+            return RedirectToAction(nameof(Index));
         }
         catch (HttpRequestException e)
         {
