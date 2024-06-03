@@ -150,7 +150,7 @@ public class HomeController : Controller
         {
             await _requestService.SendRequest(
                 RequestType.POST,
-                RequestRoute.Documents,
+                RequestRoute.Documents + "/upload",
                 Request.Cookies["authentication"],
                 formData
             );
@@ -277,18 +277,19 @@ public class HomeController : Controller
     //POST
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> MessagePost(string text)
+    public async Task<IActionResult> MessagePost(MessageDto message)
     {
-        //Mandre richista API con testo e id chat riferimento
+        //Mandare richiesta API con testo e id chat riferimento
+
         //@ToDO
-        var json = JsonSerializer.Serialize(1);
+        var json = JsonSerializer.Serialize(message.Text);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         try
         {
             //Ritornare la chat o il messaggio?
              await _requestService.SendRequest(
                 RequestType.POST,
-                RequestRoute.Chats,
+                RequestRoute.Chats + "/" + message.ChatId,
                 Request.Cookies["authentication"],
                 content
             );

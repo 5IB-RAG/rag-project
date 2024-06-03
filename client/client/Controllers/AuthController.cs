@@ -128,7 +128,7 @@ namespace client.Controllers
                 {
                     if (authResult.Success)
                     {
-                        TempData["authResult"] = authResult.Username;
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {
