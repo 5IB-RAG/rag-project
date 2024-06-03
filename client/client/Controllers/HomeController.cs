@@ -170,6 +170,7 @@ public class HomeController : Controller
         return Forbid();
     }
 
+    //@ToDo in index.cshtml
     public async Task<IActionResult> DocumentDelete(int id) {
         // API per cancellare un documento dato id
         
@@ -280,6 +281,7 @@ public class HomeController : Controller
         return Forbid();
     }
 
+    //@ToDo in index.cshtml
     public async Task<IActionResult> ChatDelete(int id)
     {
         // API per cancellare una chat dato id
@@ -338,21 +340,5 @@ public class HomeController : Controller
         }
         return null;
     }
-    #endregion
-
-
-    #region Test
-    //[HttpGet]
-    //public IActionResult Chat(int id)
-    //{
-    //    HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
-
-    //    // Set Model.SelectedChat to selectedChat
-    //    homeModel.selectedChat = id;
-
-    //    // Redirect back to the view or wherever you need
-    //    return RedirectToAction(nameof(Index));
-    //}
-
     #endregion
 }

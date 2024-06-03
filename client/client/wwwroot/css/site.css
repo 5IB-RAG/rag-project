@@ -46,6 +46,14 @@ body {
             background-color: #555;
         }
 
+        .file-selected button:hover {
+            background-color: #888
+        }
+
+.file-selected button {
+    background-color: #888
+}
+
 .sidebar-buttons {
     position: absolute;
     top: 0;

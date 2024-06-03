@@ -67,14 +67,24 @@
                     {
                         foreach (var chat in Model.Chats)
                         {
-                            <div class="file">
-                                <form asp-action="ChatGetById" method="get">
-                                    <input type="hidden" name="id" value="@chat.Id" />
-                                    <button class="btn btn-primary">@chat.Title</button>
-                                </form>
+                            if (Model.SelectedChat != null && Model.SelectedChat.Id == chat.Id)
+                            {
+                                <div class="file file-selected">
+                                    <form asp-action="ChatGetById" method="get">
+                                        <input type="hidden" name="id" value="@chat.Id" />
+                                        <button class="btn btn-primary">@chat.Title</button>
+                                    </form>
+                                </div>
+                            } else
+                            {
+                                <div class="file">
+                                    <form asp-action="ChatGetById" method="get">
+                                        <input type="hidden" name="id" value="@chat.Id" />
+                                        <button class="btn btn-primary">@chat.Title</button>
+                                    </form>
 
-                                @* <button asp-action="ChatGetById" asp-route-id="@chat.Id">@chat.Title</button> *@
-                            </div>
+                                </div>
+                            }
                         }
                     }
                 </div>
