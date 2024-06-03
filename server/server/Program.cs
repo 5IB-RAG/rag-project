@@ -69,7 +69,6 @@ public class Program
             endpoints.MapRazorPages();
             ChatEndPoint.MapChatEndpoint(endpoints);
             DocumentEndpoint.MapDocumentEndPoint(endpoints);
-            ChatEndPoint.MapChatEndpoint(endpoints);
         });
 
         app.Run();

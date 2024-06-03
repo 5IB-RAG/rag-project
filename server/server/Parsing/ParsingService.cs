@@ -42,7 +42,7 @@ public class ParsingService : IParsingDocument
         }
         string text =  await _convertors[extention].GetTextAsync(formFile.OpenReadStream());
 
-        List<DocumentChunk> chunks = SplitText(text, 400);
+        List<DocumentChunk> chunks = SplitText(text, 300);
 
         return Document.Builder()
             .Name(name)

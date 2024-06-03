@@ -28,7 +28,7 @@ namespace server.Embedding
             client.DefaultRequestHeaders.Add("api-key", embeddingParameters.ApiKey);
             var requestBody = new
             {
-                input = chunks.Select(chunk => chunk.Text)
+                input = chunks.Select(chunk => chunk.Text.Trim())
             };
             var json = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
