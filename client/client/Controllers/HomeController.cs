@@ -5,6 +5,7 @@ using client.Services;
 using System.Text.Json;
 using System.Text;
 using client.Model.Dto;
+using client.Extentions;
 
 namespace client.Controllers;
 
@@ -51,17 +52,31 @@ public class HomeController : Controller
         {
             return Unauthorized();
         }
-        //Oggetto viewModel
-        HomeModel homeModel = new HomeModel();
 
+        if (!TempData.ContainsKey("HomeModel"))
+        {
+            TempData.Put("HomeModel", new HomeModel());
+            TempData.Keep("HomeModel");
+        }
+
+        HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
         // Richiesta nomi storia chat
         homeModel.Chats = await ChatsGet();
+        if(homeModel.Chats == null)
+        {
+            homeModel.Chats = new();
+        }
 
         // Riciesta nomi storia documenti caricatiS
         homeModel.Documents = await DocumentsGet();
+        if (homeModel.Documents == null)
+        {
+            homeModel.Documents = new();
+        }
+
+        TempData.Put("HomeModel",homeModel);
 
         return View(homeModel);
-        //return View();
     }
 
     #region DOCUMENTI
@@ -209,7 +224,36 @@ public class HomeController : Controller
         return null;
     }
 
-    public async Task<UserChat> ChatGetById(int id)
+    [HttpPost]
+    public async Task<IActionResult> ChatPost()
+    {
+        // richiesta API per creare una nuova chat
+
+        try
+        {
+            var chat = await _requestService.SendRequest<UserChat>(
+                RequestType.POST,
+                RequestRoute.Chats,
+                Request.Cookies["authentication"]
+            );
+            HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
+            homeModel.Chats.Add(chat);
+            homeModel.selectedChat = chat.Id;
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
+        }
+        return Forbid();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> ChatGetById(int id)
     {
         // richiesta API con id della chat che si vule riceve completamente
         try
@@ -219,8 +263,10 @@ public class HomeController : Controller
                 RequestRoute.Chats + "/" + id,
                 Request.Cookies["authentication"]
             );
-            
-            return chat;
+            HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
+            homeModel.selectedChata = chat;
+            TempData.Put("HomeModel", homeModel);
+            return RedirectToAction(nameof(Index));
         }
         catch (HttpRequestException e)
         {
@@ -295,4 +341,19 @@ public class HomeController : Controller
     }
     #endregion
 
+
+    #region Test
+    //[HttpGet]
+    //public IActionResult Chat(int id)
+    //{
+    //    HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
+
+    //    // Set Model.SelectedChat to selectedChat
+    //    homeModel.selectedChat = id;
+
+    //    // Redirect back to the view or wherever you need
+    //    return RedirectToAction(nameof(Index));
+    //}
+
+    #endregion
 }

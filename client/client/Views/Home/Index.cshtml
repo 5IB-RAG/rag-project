@@ -54,31 +54,35 @@
         <div class="row no-gutters">
             <!-- Sidebar -->
             <div class="col-md p-25 sidebar d-none d-md-block">
-                <div class="newChat file text-center">
-                    <button class="btn" id="newChatBtn">
-                        <img class="imgLogo" src="/img/Logo_full_no_nome.svg" alt="ㅤ">
-                        Nuova chat
-                    </button>
-                </div>
+                <form method="post" asp-action="ChatPost">
+                    <div class="newChat file text-center">
+                        <button class="btn" id="newChatBtn">
+                            <img class="imgLogo" src="/img/Logo_full_no_nome.svg" alt="ㅤ">
+                            Nuova chat
+                        </button>
+                    </div>
+                </form>
                 <div class="cronologia mt-3" id="chatSection">
-                    <div class="file">
-                        <button>Saluto generale</button>
-                    </div>
-                    <div class="file">
-                        <button>Saluto generale 2</button>
-                    </div>
+                    @if (Model.Chats != null)
+                    {
+                        foreach (var chat in Model.Chats)
+                        {
+                            <div class="file">
+                                <button asp-action="ChatGetById" asp-route-id="@chat.Id">@chat.Title</button>
+                            </div>
+                        }
+                    }
                 </div>
                 <div class="files hidden" id="fileSection">
-                    <div class="file" onclick="openFile('file1.pdf')">
-                        <button>File 1</button>
-                    </div>
-                    <div class="file" onclick="openFile('file2.pdf')">
-                        <button>File 2</button>
-                    </div>
-                    <div class="file" onclick="openFile('file3.pdf')">
-                        <button>File 3</button>
-                    </div>
-
+                    @if (Model.Documents != null)
+                    {
+                        foreach (var file in Model.Documents)
+                        {
+                            <div class="file">
+                                <button>@file.Name</button>
+                            </div>
+                        }
+                    }
                 </div>
                 <div class="col-sm sidebar-buttons">
                     <button class="sidebar-btn" id="chatBtn">C</button>
@@ -89,29 +93,23 @@
 
             <div class="col-md-9 d-flex flex-column p-0">
                 <main class="content flex-grow-1">
-                            <div class="chat flex-grow-1 p-3">
-                        @if (Model.Chats != null)
-                        {
-                            foreach (var chat in Model.Chats)
+                    <div class="chat flex-grow-1 p-3">
+                            @for (int i = 0; i < Model.selectedChata.Messages.Count; i++)
                             {
-                                for (int i = 0; i < chat.Messages.Count; i++)
+                                var message = Model.selectedChata.Messages[i];
+                                if (message.Role == client.Enum.ChatRole.USER) // User message
                                 {
-                                    var message = chat.Messages[i];
-                                    if (message.Role == client.Enum.ChatRole.USER) // User message
-                                    {
-                                        <div class="message d-flex">
-                                            <span>@message.Text</span>
-                                        </div>
-                                    }
-                                    else // Bot message
-                                    {
-                                        <div class="response d-flex justify-content-end">
-                                            <span>@message.Text</span>
-                                        </div>
-                                    }
+                                    <div class="message d-flex">
+                                        <span>@message.Text</span>
+                                    </div>
+                                }
+                                else // Bot message
+                                {
+                                    <div class="response d-flex justify-content-end">
+                                        <span>@message.Text</span>
+                                    </div>
                                 }
                             }
-                        }
                     </div>
                 </main>
             <div/>

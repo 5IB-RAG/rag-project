@@ -65,34 +65,40 @@ public class ParsingService : IParsingDocument
     }
 
     public void Enable(WebApplication app) { }
-    private List<DocumentChunk> SplitText(string text, int length)
+    public List<DocumentChunk> SplitText(string text, int length)
     {
         List<DocumentChunk> splitText = new List<DocumentChunk>();
 
-        int index = 0;
-        int nextIndex = length;
-        while (true)
+        if (string.IsNullOrEmpty(text))
         {
-            while (true)
+            return splitText; // Return an empty list if text is null or empty
+        }
+
+        int index = 0;
+        while (index < text.Length)
+        {
+            int nextIndex = Math.Min(index + length, text.Length);
+            while (nextIndex < text.Length && text[nextIndex] != '.')
             {
-                if (nextIndex >= text.Length || text[nextIndex] == '.')
-                    break;
                 nextIndex++;
             }
-            splitText.Add(new DocumentChunk([], text.Substring(index, nextIndex - index)));
-            index = nextIndex + 1;
-            nextIndex = index + length;
-            if (nextIndex >= text.Length || index >= text.Length)
+            if (nextIndex < text.Length)
             {
-                splitText.Add(new DocumentChunk([], text.Substring(index, text.Length - index)));
+                nextIndex++; // Include the period
+            }
+
+            splitText.Add(new DocumentChunk(new List<string>(), text.Substring(index, nextIndex - index).Trim()));
+            index = nextIndex;
+
+            // If the remaining text length is less than the specified length, add it as the last chunk and break
+            if (index < text.Length && text.Length - index < length)
+            {
+                splitText.Add(new DocumentChunk(new List<string>(), text.Substring(index).Trim()));
                 break;
             }
         }
-        if (splitText != null)
-        {
-            return splitText;
-        }
-        return new List<DocumentChunk>();
+
+        return splitText;
     }
 
     public void Disable()
