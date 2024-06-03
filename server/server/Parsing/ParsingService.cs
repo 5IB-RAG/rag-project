@@ -28,12 +28,18 @@ public class ParsingService : IParsingDocument
     public async Task<Document> ParseDocument(IFormFile formFile, List<string> metadata, int userId)
     {
         string[] spitFileName = formFile.FileName.Split(".");
-        string extention;
+        string extention = "";
+        string name = "";
         if (spitFileName.Length > 1)
+        {
             extention = spitFileName.Last();
+            name = formFile.FileName.Remove(formFile.FileName.IndexOf(extention) - 1);
+        }
         else
+        {
             extention = "";
-        string name = formFile.FileName.Remove(formFile.FileName.IndexOf(extention) - 1);
+            name = spitFileName.First();
+        }
         string text =  await _convertors[extention].GetTextAsync(formFile.OpenReadStream());
 
         List<DocumentChunk> chunks = SplitText(text, 400);
@@ -75,10 +81,17 @@ public class ParsingService : IParsingDocument
         List<DocumentChunk> splitText = new List<DocumentChunk>();
 
         int index = 0;
-        int nextIndex = length;
+        int nextIndex = 0;
+        if (text.Length <= length)
+        {
+            splitText.Add(new DocumentChunk([], text.Substring(index, text.Length - index)));
+            return splitText;
+        }
+        else
+            nextIndex = length;
         while (true)
         {
-            while (nextIndex >= text.Length || text[nextIndex] == '.')
+            while (nextIndex < text.Length && text[nextIndex] != '.')
                 nextIndex++;
             splitText.Add(new DocumentChunk([], text.Substring(index, nextIndex - index)));
             index = nextIndex + 1;
