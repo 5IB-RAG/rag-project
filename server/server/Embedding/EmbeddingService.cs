@@ -11,7 +11,7 @@ namespace server.Embedding
     public class EmbeddingService : IEmbeddingParser
     {
         private HttpClient client = new();
-        private EmbeddingParameters? embeddingParameters = new();
+        private OpenAiParameters? embeddingParameters = new();
         private string? urlEmbedding;
 
         public void Disable()
@@ -70,7 +70,7 @@ namespace server.Embedding
         public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
         {
             // Get the embedding parameters
-            embeddingParameters = builder.Configuration.GetSection("EmbeddingParameters").Get<EmbeddingParameters>();
+            embeddingParameters = builder.Configuration.GetSection("EmbeddingParameters").Get<OpenAiParameters>();
             urlEmbedding = $"https://{embeddingParameters.ResourceName}.openai.azure.com/openai/deployments/{embeddingParameters.DeploymentId}/embeddings?api-version={embeddingParameters.ApiVersion}";
         }
 

@@ -17,8 +17,7 @@ namespace server.Endponts
             //});
             endpoint.MapGet("/sendMessage", async (PgVectorContext context, ChatService chatService) =>
             {
-                chatService.Ciao();
-                return Results.Text("afijo");
+                return Results.Text(await chatService.SendRequest());
             });
 
         }

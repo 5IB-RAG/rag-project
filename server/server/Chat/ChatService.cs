@@ -1,15 +1,15 @@
-﻿using DocumentFormat.OpenXml.Office2010.ExcelAc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
 using server.Db;
 using server.Embedding;
 using server.Enum;
 using server.Model;
-using System.Runtime.InteropServices.Marshalling;
+using System.Text;
 using System.Text.Json;
 
 namespace server.Chat
 {
+
     public class MessagePair
     {
         public string User { get; set; } = string.Empty;
@@ -18,6 +18,10 @@ namespace server.Chat
 
     public class ChatService : IChat
     {
+        private HttpClient client = new();
+        private OpenAiParameters? chatParameters = new();
+        private string? urlChat;
+
         private PgVectorContext _context;
         private EmbeddingService embedding;
 
@@ -25,7 +29,6 @@ namespace server.Chat
         {
             //throw new NotImplementedException();
         }
-
         public async void Enable(WebApplication app)
         {
 
@@ -33,18 +36,42 @@ namespace server.Chat
 
             //throw new NotImplementedException();
         }
-
-        public async void Ciao()
+        public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
         {
+            _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
+            embedding = provider.GetService<EmbeddingService>() ?? throw new ApplicationException();
+
+            chatParameters = builder.Configuration.GetSection("ChatParameters").Get<OpenAiParameters>();
+            urlChat = $"https://{chatParameters.ResourceName}.openai.azure.com/openai/deployments/{chatParameters.DeploymentId}/chat/completions?api-version={chatParameters.ApiVersion}";
+            //throw new NotImplementedException();
+        }
+
+        public async Task<string> SendRequest()
+        {
+            int chatId = 1;
             Message m = new Message();
             m.Text = "no, non penso che lo farò";
-            m.ChatId = 1;
+            m.ChatId = chatId;
+            m.Role = ChatRole.User;
             m.Embedding = (await embedding.GetChunkEmbeddingAsync([DocumentChunk.Builder().Text(m.Text).Build()]))[0];
             var messageSalvato = _context.Messages.Add(m);
 
-            //await _context.SaveChangesAsync();
             string messageJsonChat = CreateChatContext(messageSalvato.Entity).Result;
+            string chatResponse = await SendRequestToChat(messageJsonChat);
+
+
+            //salvataggio sul db della risposta di chat
+            Message resposeChat = new Message();
+            m.Text = chatResponse;
+            m.ResponseId = messageSalvato.Entity.Id;
+            m.ChatId = chatId;
+            m.Role = ChatRole.Assistant;
+
+            //_context.Messages.Add(resposeChat);
+            //await _context.SaveChangesAsync();
             _context.Messages.Remove(m);
+
+            return chatResponse;
         }
         public async Task<string> CreateChatContext(Message userMessage)
         {
@@ -52,19 +79,28 @@ namespace server.Chat
             List<MessagePair>? similarMessages = new List<MessagePair>();
             List<MessagePair>? lastMessages = await GetLast3Messages(userMessage.ChatId);
             if (lastMessages.Count != 0)
-                similarMessages = await GetSimilarMessages(userMessage,lastMessages);                
+                similarMessages = await GetSimilarMessages(userMessage, lastMessages);
 
             similarMessages.ForEach(chatContext.Add);
             lastMessages.ForEach(chatContext.Add);
             MessagePair m = new MessagePair();
             m.User = userMessage.Text;
             chatContext.Add(m);
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = true
-            };
 
-            return JsonSerializer.Serialize(chatContext, options);
+            List<OpenAiMessage> messages = new List<OpenAiMessage>();
+
+            foreach (var messagePair in chatContext)
+            {
+                if (!string.IsNullOrEmpty(messagePair.User))
+                    messages.Add(new OpenAiMessage { role = "user", content = messagePair.User });
+                if (!string.IsNullOrEmpty(messagePair.Assistant))
+                    messages.Add(new OpenAiMessage { role = "assistant", content = messagePair.Assistant });
+            }
+
+
+            string context = JsonSerializer.Serialize(messages, new JsonSerializerOptions { WriteIndented = true });
+            return context;
+
         }
         /// <summary>
         /// Restituisce gli ultimi 3 messaggi (user e assistant) di una determinata chat id
@@ -75,7 +111,7 @@ namespace server.Chat
         {
             List<Message>? messages = await _context.Messages
                 .OrderByDescending(m => m.Id)
-                .Where(m => m.Role == ChatRole.USER && m.ChatId == chatId)
+                .Where(m => m.Role == ChatRole.User && m.ChatId == chatId)
                 .Take(3)
                 .ToListAsync();
 
@@ -100,7 +136,7 @@ namespace server.Chat
             List<string> lastMessagesTexts = lastMessages.Select(lm => lm.User).ToList();
 
             List<Message>? similarUserMessages = _context.Messages
-            .Where(mess => mess.ChatId == message.ChatId && mess.Id != message.Id && mess.Role == ChatRole.USER)
+            .Where(mess => mess.ChatId == message.ChatId && mess.Id != message.Id && mess.Role == ChatRole.User)
             .Select(m => new { Message = m, Distance = message.Embedding.L2Distance(m.Embedding) })
             .Where(obj => !lastMessagesTexts.Contains(obj.Message.Text)) // Escludi i messaggi con lo stesso testo
             .OrderBy(obj => obj.Distance)
@@ -134,7 +170,7 @@ namespace server.Chat
                     i++;
                 }
             }
-            
+
             return userMessages;
         }
 
@@ -157,7 +193,7 @@ namespace server.Chat
                     Message userMessage = chatContext[i];
                     Message assistantMessage = chatContext[i + 1];
 
-                    if (userMessage.Role == ChatRole.USER && assistantMessage.Role == ChatRole.ASSISTANT)
+                    if (userMessage.Role == ChatRole.User && assistantMessage.Role == ChatRole.Assistant)
                     {
                         messagePairs.Add(new MessagePair
                         {
@@ -191,13 +227,22 @@ namespace server.Chat
             return await _context.UserChats.Where(us => us.UserId == user.Id).ToListAsync();
         }
 
-        public void PreLoad(WebApplicationBuilder builder, IServiceProvider provider)
+        public async Task<string> SendRequestToChat(string chat)
         {
-            _context = provider.GetService<PgVectorContext>() ?? throw new ApplicationException();
-            embedding = provider.GetService<EmbeddingService>() ?? throw new ApplicationException();
-            //throw new NotImplementedException();
-        }
+            client.DefaultRequestHeaders.Add("api-key", chatParameters.ApiKey);
 
+            var content = new StringContent(chat, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(urlChat, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadFromJsonAsync<ChatResponse>();
+                string riposta = responseContent.choices[0].message.content;
+                return riposta;
+            }
+
+            throw new Exception("pippo");
+        }
         public Task SendAsync(User user, Message message)
         {
             throw new NotImplementedException();
