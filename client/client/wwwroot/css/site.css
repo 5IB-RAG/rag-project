@@ -26,7 +26,6 @@ body {
 .sidebar-bot {
     background-color: #212121;
     height: 94vh;
-
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -108,10 +107,14 @@ body {
     background-color: #121212;
 }
 
+/*CSS PER CHAT SCROLLABILE*/
 .chat {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    height: 90vh; /* Full height */
+    overflow-y: auto; /* Vertical scrolling */
+    overflow-x: hidden; /* Hide horizontal scrolling */
+    position: fixed; /* Fixed position to prevent scrolling with the rest of the page */
 }
 
 .message, .response {
