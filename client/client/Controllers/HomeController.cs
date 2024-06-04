@@ -145,6 +145,7 @@ public class HomeController : Controller
         {
             var file = new StreamContent(item.OpenReadStream());
             formData.Add(file, "FormFiles", item.FileName);
+            formData.Add(new StringContent(item.FileName.Split(".").Last() + ";"), "MetaData");
         }
         formData.Add(new StringContent(model.UploadDocument.MetaData), "MetaData");
 
