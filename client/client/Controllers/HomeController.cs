@@ -171,7 +171,6 @@ public class HomeController : Controller
         return Forbid();
     }
 
-    //@ToDo in index.cshtml
     public async Task<IActionResult> DocumentDelete(int id) {
         // API per cancellare un documento dato id
         HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
@@ -267,13 +266,13 @@ public class HomeController : Controller
         HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
         try
         {
-            var chat = await _requestService.SendRequest<UserChatDto>(
+            JsonContent content = JsonContent.Create(newName);
+            await _requestService.SendRequest(
                 RequestType.POST,
                 RequestRoute.Chats + homeModel.SelectedChat.Id + "/rename",
-                Request.Cookies["authentication"]
+                Request.Cookies["authentication"],
+                content
             );
-
-            TempData.Put("HomeModel", homeModel);
 
             return RedirectToAction(nameof(Index));
         }
