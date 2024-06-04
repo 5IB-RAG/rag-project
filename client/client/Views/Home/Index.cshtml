@@ -193,7 +193,7 @@
             <div class="modal-content custom-modal-content">
                 <div class="modal-header custom-modal-header">
                     <img src="~/img/logo_full_no_nome.svg" alt="logo" class="logo">
-                    <h5 class="modal-title" id="fileModalLabel">Seleziona File e scrivi i tags</h5>
+                    <h5 class="modal-title" id="fileModalLabel">Seleziona il/i file e scrivi i tags</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form enctype="multipart/form-data" method="post" asp-action="DocumentPost">
@@ -202,7 +202,7 @@
                             <input asp-for="UploadDocument.FormFiles" type="file" class="form-control mb-3 custom-input" multiple>
                         </div>
                         <div class="custom-form">
-                            <div class="custom-label">Scrivi i tags</div>
+                            <div class="custom-label">Scrivi i tags (usa ; per separarli)</div>
                             <input asp-for="UploadDocument.MetaData" type="text" class="form-control custom-input">
                         </div>
                     </div>
