@@ -347,15 +347,17 @@ footer {
     width: 18vh;
 }
 
+    .custom-submit-button:hover {
+        background-color: #757575;
+    }
 
-/*.response span {
+    /*.response span {
     display: block;
 }*/
-
-.tag-group {
-    font-size: 15px;
-    display: block;
-}
+    .tag-group {
+        font-size: 15px;
+        display: block;
+    }
 
 .tag {
     background-color: #666;
