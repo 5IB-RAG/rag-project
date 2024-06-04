@@ -13,25 +13,41 @@ public static class DocumentEndpoint
 {
     public static void MapDocumentEndPoint(IEndpointRouteBuilder endpoint)
     {
-        endpoint.MapGet("/document", async ([FromServices] PgVectorContext database) =>
+        endpoint.MapGet("/document", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim) =>
         {
-            return Results.Json(database.Documents.Select(document => document.ToDto()));
+            User user = UserHelper.GetCurrentUser(claim.Identity);
+            if (user == null) return Results.NotFound();
+            
+            return Results.Json(database.Documents
+                .Where(document => document.UserId == user.Id)
+                .Select(document => document.ToDto())
+            );
         }).RequireAuthorization();
         
-        endpoint.MapGet("/document/{id}", async ([FromServices] PgVectorContext database, int id) =>
+        endpoint.MapGet("/document/{id}", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
         {
-            Document? document = await database.Documents.FindAsync(id);
+            User user = UserHelper.GetCurrentUser(claim.Identity);
+            if (user == null) return Results.NotFound();
+
+            Document? document =
+                database.Documents.FirstOrDefault(document => document.UserId == user.Id && document.Id == id);
             if (document == null) return Results.NotFound();
             
             return Results.Json(document.ToDto());
         }).RequireAuthorization();
         
-        endpoint.MapDelete("/document/{id}", async ([FromServices] PgVectorContext database, int id) =>
+        endpoint.MapDelete("/document/{id}", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
         {
-            Document? document = await database.Documents.FindAsync(id);
+            User user = UserHelper.GetCurrentUser(claim.Identity);
+            if (user == null) return Results.NotFound();
+
+            Document? document =
+                database.Documents.FirstOrDefault(document => document.UserId == user.Id && document.Id == id);
+            
             if (document == null) return Results.NotFound();
 
             database.Documents.Remove(document);
+            await database.SaveChangesAsync();
 
             return Results.Ok();
         }).RequireAuthorization();

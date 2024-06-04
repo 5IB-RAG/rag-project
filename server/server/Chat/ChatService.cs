@@ -117,9 +117,9 @@ namespace server.Chat
 
             List<DocumentChunk> similarDocumentChunks = await GetSimilarDocumentChunks(userMessage.Embedding, userId);
 
-            if (similarDocumentChunks.Count > 0)
+            if (!similarDocumentChunks.IsNullOrEmpty())
             {
-                messages.Add(new OpenAiMessage { role = "system", content = "Sei un assistente che risponde alle domande con le informazioni a te fornite." });
+                messages.Add(new OpenAiMessage { role = "system", content = "Sei un assistente che risponde alle domande con le informazioni a te fornite; il tuo nome è Ermes" });
                 string documentChunksText = string.Join("\n", similarDocumentChunks.Select(dc => dc.Text));
                 messages.Add(new OpenAiMessage { role = "system", content = documentChunksText });
             }
@@ -143,12 +143,15 @@ namespace server.Chat
             if (embedding == null)
                 throw new ArgumentException("The provided embedding is null.");
 
-            List<DocumentChunk>? similarDocumentChunks = await _context.DocumentChunks
+            float similitudine = 0.62F;
+
+            var similarDocumentChunks = await _context.DocumentChunks
                 .Where(dc => dc.Document.UserId == userId)
                 .Include(dc => dc.Document)
                 .Select(dc => new { DocumentChunk = dc, Distance = embedding.L2Distance(dc.Embedding) })
                 .OrderBy(obj => obj.Distance)
-                .Take(3) // Prendi i 5 chunk più simili
+                .Where(obj => obj.Distance < similitudine)
+                .Take(2) // Prendi i 2 chunk più simili
                 .Select(obj => obj.DocumentChunk)
                 .ToListAsync();
 

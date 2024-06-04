@@ -16,7 +16,6 @@ namespace server.Embedding
 
         public void Disable()
         {
-            throw new NotImplementedException();
         }
 
         public void Enable(WebApplication app)
