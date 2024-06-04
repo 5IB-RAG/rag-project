@@ -7,11 +7,11 @@ body {
     font-family: Arial, sans-serif;
     background-color: #121212;
     color: #fff;
+
 }
 
 .sidebar {
     padding: 0;
-    display: absolute;
     width: 350px;
 }
 
@@ -26,7 +26,7 @@ body {
 .sidebar-bot {
     background-color: #212121;
     height: 94vh;
-
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -102,16 +102,17 @@ body {
 }
 
 .content {
-    display: flex;
+    display: inline-block;
     flex-direction: column;
     justify-content: space-between;
     background-color: #121212;
+    
 }
 
 .chat {
-    display: flex;
-    flex-direction: column;
+    flex: 1;
     overflow-y: auto;
+    width: 100%;
 }
 
 .message, .response {
@@ -261,6 +262,14 @@ footer {
     margin-right: 10px;
     border-radius: 5px;
 }
+.container {
+    display: inline-flex;
+    padding: 0px;
+    flex-basis: 1000px;
+    flex-grow: 1;
+    flex-shrink: 0;
+
+}
 
 .entry {
     background-color: #555;
@@ -346,3 +355,26 @@ footer {
     padding: 5px;
     width: 100%;
 }
+
+.bottom-part{
+    width: 100%;
+    height: 2.5rem;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #212121;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #666;
+    border-radius: 10px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
