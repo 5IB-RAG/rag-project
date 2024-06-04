@@ -83,12 +83,12 @@
                             {
                                 if (Model.SelectedChat != null && Model.SelectedChat.Id == chat.Id)
                                 {
-                                    <div class="file file-selected">
+                                    <div class="file-selected">
                                         <form asp-action="ChatGetById" method="get" class="form-file">
                                             <input type="hidden" name="id" value="@chat.Id" />
-                                            <button class="btn btn-primary">@chat.Title</button>
+                                            <button>@chat.Title</button>
                                             <div class="dots-container">
-                                                <a>...</a>
+                                                <a>▪️▪️▪️</a>
                                                 <ul class="submenu">
                                                     <li class="submenu-item">
                                                         <a asp-action="ChatDelete" class="submenu-link text-danger ">Delete</a>
@@ -107,7 +107,7 @@
                                     <div class="file">
                                         <form asp-action="ChatGetById" method="get">
                                             <input type="hidden" name="id" value="@chat.Id" />
-                                            <button class="btn btn-primary">@chat.Title</button>
+                                            <button>@chat.Title</button>
                                         </form>
                                     </div>
                                 }

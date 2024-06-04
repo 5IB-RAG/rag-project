@@ -42,7 +42,7 @@ body {
     flex-grow: 1;
 }
 
-.file {
+.file , .file-selected{
     margin-bottom: 10px;
     margin-top: 10px;
 }
@@ -51,7 +51,7 @@ body {
         justify-content: flex-end;
     }
 
-    .file button, .file div {
+    .file button, .file div, .file-selected button{
         width: 100%;
         padding: 10px;
         border: none;
@@ -66,13 +66,22 @@ body {
         background-color: #555;
     }
 
-.file-selected button:hover {
-    background-color: #888
+.file-selected:hover {
+    background-color: #888;
 }
 
-.file-selected button {
-    background-color: #888
+.file-selected {
+    background-color: #888;
+    border-radius: 5px;
 }
+
+    .file-selected button {
+        background-color: transparent;
+    }
+
+    .file-selected button:hover {
+        background-color: transparent;
+    }
 
 .sidebar-buttons {
     position: absolute;
@@ -386,6 +395,7 @@ footer {
 .dots-container {
     position: relative;
     padding: 0px 20px;
+    align-self:center;
 }
 
 .dots-container:hover > .submenu {
@@ -406,8 +416,8 @@ footer {
     border-radius: 5px;
     opacity: 0;
     visibility: hidden;
-    -webkit-transition: all 0.3s ease-out 0s;
-    transition: all 0.3s ease-out 0s;
+    /*-webkit-transition: all 0.3s ease-out 0s;
+    transition: all 0.3s ease-out 0s;*/
     list-style-type: none;
 }
 
