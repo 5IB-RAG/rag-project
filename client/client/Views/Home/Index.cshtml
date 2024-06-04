@@ -1,4 +1,4 @@
-﻿@model client.Models.HomeModel
+@model client.Models.HomeModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -26,7 +26,7 @@
                     <button class="sidebar-btn" id="fileBtn1">F</button>
                 </div>
                 <button class="btn" id="newChatBtnOffcanvas">
-                    <img class="imgLogo" src="/img/Logo_full_no_nome.svg" alt="ㅤ">
+                    <img class="imgLogo" src="~/img/Logo_full_no_nome.svg" alt="ㅤ">
                     Nuova chat
                 </button>
                 <div class="cronologia mt-3" id="chatSection1">
@@ -131,68 +131,63 @@
             </div>
 
             <!---------------MESSAGGI CHAT--------->
-            <div class="col-md-6 d-flex flex-column p-0 chat">
-                <div class="h-100">
-                 <div class="d-flex justify-content-center">
-                <main class="content flex-grow-1 ">
-                    <div class="chat flex-grow-1 p-3">
-                        @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
-                        {
+                <div class="col-md d-flex flex-column p-0 chat-column">
+                    <div class="d-flex chat">
+                        <div class="flex-grow-1 p-3 message-container">
+                            @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
+                            {
                             for (int i = 0; i < Model.SelectedChat.Messages.Count; i++)
                             {
-                                var message = Model.SelectedChat.Messages[i];
-                                if (message.Role == client.Enum.ChatRole.USER) // User message
-                                {
-                                    <div class="message d-flex">
-                                        <span>@message.Text</span>
-                                    </div>
-                                }
-                                else // Bot message
-                                {
-                                    <div class="response d-flex">
-                                        <span>
-                                            @message.Text
-                                            <div class="tag-group">
-                                                @if (message.DocumentChunksUniqueNames != null)
-                                                {
-                                                    <div class="response">
-                                                        @foreach (var chunkName in message.DocumentChunksUniqueNames)
-                                                        {
-                                                            <div class="tag">
-                                                                @chunkName
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                }
-                                            </div>
-                                        </span>
-                                    </div>
-                                }
+                            var message = Model.SelectedChat.Messages[i];
+                            if (message.Role == client.Enum.ChatRole.USER) // User message
+                            {
+                            <div class="message d-flex">
+                                <span>@message.Text</span>
+                            </div>
                             }
-                        }
+                            else // Bot message
+                            {
+                            <div class="response d-flex">
+                                            <span>
+                                                @message.Text
+                                                <div class="tag-group">
+                                                    @if (message.DocumentChunksUniqueNames != null)
+                                                    {
+                                                    <div class="response">
+                                                            @foreach (var chunkName in message.DocumentChunksUniqueNames)
+                                                        {
+                                                        <div class="tag">
+                                                                    @chunkName
+                                                                </div>
+                                                        }
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </span>
+                            </div>
+                            }
+                            }
+                            }
+                        </div>
                     </div>
-                </main>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-center">
-                    <div class="bottom-part">
-                        <div class="input-container">
-                            <button id="attachButton" class="attach-button" type="button" aria-haspopup="menu" aria-expanded="false" data-state="closed" data-bs-toggle="modal" data-bs-target="#fileModal">
-                                <img src="img/attach_file_icon.svg" alt="File Icon">
-                            </button>
-                            <form asp-action="MessagePost" method="post" class="input-form">
-                                <input type="text" placeholder="Invia un messaggio" class="input-field" asp-for=Message />
-                                <button class="send-button">
-                                    <img src="img/top_arrow_icon.svg" alt="File Icon">
+                    <div class="d-flex justify-content-center mb-auto">
+                        <div class="bottom-part">
+                            <div class="input-container">
+                                <button id="attachButton" class="attach-button" type="button" aria-haspopup="menu" aria-expanded="false" data-state="closed" data-bs-toggle="modal" data-bs-target="#fileModal">
+                                    <img src="img/attach_file_icon.svg" alt="File Icon">
                                 </button>
-                            </form>
+                                <form asp-action="MessagePost" method="post" class="input-form">
+                                    <input type="text" placeholder="Invia un messaggio" class="input-field" asp-for=Message/>
+                                    <button class="send-button">
+                                        <img src="img/top_arrow_icon.svg" alt="File Icon">
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
     @*  POPUP PER APRIRE ESPLORA FILE *@
     <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
@@ -245,11 +240,11 @@
         </div>
     </div>
 
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     @* <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script> *@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous"></script>
     <script src="~/js/site.js"></script>
-</body>
+    </div>
+    </body>

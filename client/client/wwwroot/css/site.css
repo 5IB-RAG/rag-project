@@ -7,7 +7,6 @@ body {
     font-family: Arial, sans-serif;
     background-color: #121212;
     color: #fff;
-
 }
 
 .sidebar {
@@ -15,7 +14,7 @@ body {
     margin: 1rem;
     border-radius: 2rem;
     width: 300px;
-    height 90%;
+    height: 90%;
 }
 
 .sidebar-bot {
@@ -23,6 +22,7 @@ body {
     height: 90vh;
     border-radius: 0 0 1rem 1rem;
     overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -127,10 +127,20 @@ body {
 }
 
 /*CSS PER CHAT SCROLLABILE*/
+
+
+/*.message-container > :last-child { TODO Da sistemare per mettere spazio finale
+    margin-bottom: 5rem;
+}*/
+
+.chat-column {
+    height: 100vh;
+}
+
 .chat {
     flex: 1;
     overflow-y: auto;
-    width: 100%;
+    height: 100%;
 }
 
 .message, .response {
@@ -176,7 +186,7 @@ form {
 
 .input-container {
     display: flex;
-    background-color: #333;
+    background-color: #272626;
     border-radius: 2rem;
     font-size: 20px;
     height: 100%;
@@ -203,7 +213,6 @@ form {
     border: none;
     color: #fff;
     cursor: pointer;
-    width
 }
 
 .attach-button {
@@ -329,8 +338,7 @@ form {
 }
 
 .custom-input {
-    background: #555;   
-    background-color: #555;
+    background: #555;
     border: none;
     padding: 10px;
     color: white;
@@ -471,5 +479,5 @@ form {
     width: 70%;
     height: 4rem;
     padding: 0;
-    margin: 0.3rem;
+    margin: 0 .3rem .3rem .3rem;
 }
