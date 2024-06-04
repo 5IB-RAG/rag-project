@@ -193,6 +193,123 @@ footer {
     background-color: #121212;
 }
 
+.custom-modal-content {
+    background-color: #333;
+    color: #fff;
+    border-radius: 10px;
+}
+
+.custom-modal-header {
+    display: flex;
+    justify-content: center;
+    background-color: #444;
+    border-bottom: none;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.logo {
+    width: 50px; /* Adjust the size as needed */
+    height: 50px; /* Adjust the size as needed */
+    margin-right:5vh;
+}
+
+.custom-modal-body {
+    background-color: #333;
+    padding: 20px;
+}
+
+.custom-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-upload-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.file-upload-button {
+    background-color: #666;
+    border: none;
+    width: 15vh;
+    height: 6vh;
+    color: #fff;
+    cursor: pointer;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.entry {
+    background-color: #555;
+    border: none;
+    padding: 10px;
+    color: #fff;
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.custom-label {
+    align-self: flex-start;
+    margin-bottom: 10px;
+}
+
+.custom-input {
+    background: #555;   
+    background-color: #555;
+    border: none;
+    padding: 10px;
+    color: white;
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: center;
+    border-radius: 5px;
+    
+}
+    .custom-input:focus {
+        background-color: #555;
+        border-color: #666; 
+        color:white;
+    }
+
+    /*modo per costringere filter browser a fare l'input come lo vogliamo noi*/
+    .custom-input::-webkit-file-upload-button {
+        background-color: #666; /* Gray color */
+        color: white;
+        border: none;
+        border-color: #666;
+        border-radius: 5px; 
+        cursor: pointer; 
+    }
+
+        .custom-input::-webkit-file-upload-button:hover {
+            background-color: #666;
+            color: #555;
+            background: #555;
+        }
+
+.custom-modal-footer {
+    display: flex;
+    justify-content: center;
+    border-top: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.custom-submit-button {
+    background-color: #666;
+    border: none;
+    padding: 10px 20px;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 18vh;
+}
+
+
 /*.response span {
     display: block;
 }*/
