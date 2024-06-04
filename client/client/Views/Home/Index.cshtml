@@ -53,17 +53,20 @@
 
         <div class="row no-gutters">
             <!-- Sidebar -->
-            <div class="col-md p-25 sidebar d-none d-md-block">
+            <div class="col-md-10 d-none d-md-block sidebar">
+                <div class="sidebar-top">
+
+               
                 <div class="row">
                     <div class="col-sm w-50">
-                        <button class="sidebar-btn  w-100" id="chatBtn">Chat</button>
+                        <button class="sidebar-btn" id="chatBtn">Chat</button>
                     </div>
                     <div class="col-sm w-50">
-                        <button class="sidebar-btn  w-100" id="fileBtn">File</button>
+                        <button class="sidebar-btn" id="fileBtn">File</button>
                     </div>
                 </div>
-    
-                <div class="sidebar-top w-100">
+                </div>
+                <div class="sidebar-bot">
 
                 <form method="post" asp-action="ChatPost">
                     <div class="newChat file text-center">
@@ -113,8 +116,8 @@
             </div>
             <!---------------MESSAGGI CHAT--------->
 
-            <div class="col-md-9 d-flex flex-column p-0">
-                <main class="content flex-grow-1">
+            <div class="col-md-9 d-flex flex-column p-0 ">
+                <main class="content flex-grow-1 ">
                     <div class="chat flex-grow-1 p-3">
                         @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
                         {
@@ -138,7 +141,7 @@
                     </div>
                 </main>
             <div/>
-                <footer>
+                <footer >
                     <div class="input-container">
                         <button id="attachButton" class="attach-button" type="button" aria-haspopup="menu" aria-expanded="false" data-state="closed" data-bs-toggle="modal" data-bs-target="#fileModal">
                             📎

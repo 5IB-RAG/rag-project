@@ -10,17 +10,22 @@ body {
 }
 
 .sidebar {
+    padding: 0;
+    display: absolute;
+    width: 350px;
+}
+
+.sidebar-top {
     background-color: #1a1a1a;
-    height: 100vh;
-    display: flex;
+    height: 6vh;
     flex-direction: column;
     padding: 20px;
     position: relative;
 }
 
-.sidebar-top {
+.sidebar-bot {
     background-color: #212121;
-    height: 90vh;
+    height: 94vh;
 
     display: flex;
     flex-direction: column;
@@ -76,7 +81,7 @@ body {
 }
 
 .sidebar-btn {
-    width: 60px;
+    width: 140px;
     height: 40px;
     background-color: #212121;
     color: #fff;
@@ -88,6 +93,8 @@ body {
     align-items: center;
     justify-content: center;
     transition: transform 0.3s ease;
+    position: absolute;
+    bottom: 0px;
 }
 
 .sidebar-btn:hover {
@@ -146,7 +153,6 @@ footer {
     border-radius: 20px;
     padding: 5px;
     font-size: 20px;
-    width: 100%;
 }
 
 .attach-button, .send-button {
@@ -154,7 +160,7 @@ footer {
     border: none;
     color: #fff;
     cursor: pointer;
-    width: 5vh;
+    width
 }
 
 .attach-button {
@@ -179,6 +185,10 @@ footer {
     color: #bbb;
 }
 
+.footer{
+    width: auto;
+
+}
 
 .imgLogo {
     max-width: 50px;
