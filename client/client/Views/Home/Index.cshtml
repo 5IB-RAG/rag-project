@@ -119,7 +119,7 @@
                         foreach (var file in Model.Documents)
                         {
                             <div class="file">
-                                <button>@file.Name</button>
+                                <button asp-action="DocumentDelete" asp-route-id="@file.Id">@file.Name</button>
                             </div>
                         }
                     }

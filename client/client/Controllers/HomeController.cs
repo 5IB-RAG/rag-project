@@ -174,7 +174,7 @@ public class HomeController : Controller
     //@ToDo in index.cshtml
     public async Task<IActionResult> DocumentDelete(int id) {
         // API per cancellare un documento dato id
-        
+        HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
         try
         {
             await _requestService.SendRequest(
@@ -183,7 +183,10 @@ public class HomeController : Controller
                 Request.Cookies["authentication"]
             );
 
-            return null;
+            homeModel.Documents.RemoveAll(d => d.Id == id);
+            TempData.Put("HomeModel", homeModel);
+
+            return RedirectToAction(nameof(Index));
         }
         catch (HttpRequestException e)
         {
@@ -192,7 +195,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return null;
+        return Forbid();
     }
     #endregion
 
@@ -256,6 +259,34 @@ public class HomeController : Controller
         return Forbid();
     }
 
+    //@ToDo
+    [HttpPost]
+    public async Task<IActionResult> ChatRenamePost(string newName)
+    {
+        // richiesta API per creare una nuova chat
+        HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
+        try
+        {
+            var chat = await _requestService.SendRequest<UserChatDto>(
+                RequestType.POST,
+                RequestRoute.Chats + homeModel.SelectedChat.Id + "/rename",
+                Request.Cookies["authentication"]
+            );
+
+            TempData.Put("HomeModel", homeModel);
+
+            return RedirectToAction(nameof(Index));
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
+
+            Console.WriteLine("\nException Caught!");
+            Console.WriteLine($"Message :{e.Message}");
+        }
+        return Forbid();
+    }
+
     [HttpGet]
     public async Task<IActionResult> ChatGetById(int id)
     {
@@ -283,19 +314,23 @@ public class HomeController : Controller
         return Forbid();
     }
 
-    //@ToDo in index.cshtml
-    public async Task<IActionResult> ChatDelete(int id)
+    public async Task<IActionResult> ChatDelete()
     {
         // API per cancellare una chat dato id
         try
         {
+            HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
             await _requestService.SendRequest(
                 RequestType.DELETE,
-                RequestRoute.Documents + "/" + id,
+                RequestRoute.Chats + "/" + homeModel.SelectedChat.Id,
                 Request.Cookies["authentication"]
             );
 
-            return null;
+            homeModel.Chats.Remove(homeModel.SelectedChat);
+            homeModel.SelectedChat = null;
+            TempData.Put("HomeModel", homeModel);
+
+            return RedirectToAction(nameof(Index));
         }
         catch (HttpRequestException e)
         {
@@ -304,7 +339,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return null;
+        return Forbid();
     }
     #endregion
 
@@ -326,10 +361,11 @@ public class HomeController : Controller
         try
         {
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
-            //if(homeModel.SelectedChat == null)
-            //{
-            //    await ChatPost();
-            //}
+            if (homeModel.SelectedChat == null)
+            {
+                await ChatPost();
+            }
+
             homeModel.SelectedChat.Messages.Add(new MessageDto { Text = message, Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
             //Ritornare la chat o il messaggio?
             var response = await _requestService.SendRequest<ChatEndPointResponse>(
