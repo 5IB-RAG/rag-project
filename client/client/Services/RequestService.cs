@@ -19,7 +19,8 @@ public class RequestService
     {
         if (token != null) 
             Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
+        
+        
         if (options == null) options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         
         try

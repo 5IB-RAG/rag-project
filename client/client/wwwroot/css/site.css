@@ -74,34 +74,46 @@ body {
     flex-grow: 1;
 }
 
-.file {
+.file , .file-selected{
     margin-bottom: 10px;
     margin-top: 10px;
 }
 
-.file button {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    background-color: #333;
-    color: #fff;
-    border-radius: 4px;
-    text-align: left;
-    cursor: pointer;
+    .file a{
+        justify-content: flex-end;
+    }
+
+    .file button, .file div, .file-selected button{
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background-color: #333;
+        color: #fff;
+        border-radius: 4px;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .file button:hover, .file div:hover {
+        background-color: #555;
+    }
+
+.file-selected:hover {
+    background-color: #888;
 }
 
-.file button:hover {
-    background-color: #555;
+.file-selected {
+    background-color: #888;
+    border-radius: 5px;
 }
 
-.file-selected button:hover {
-    background-color: #888
-}
+    .file-selected button {
+        background-color: transparent;
+    }
 
-.file-selected button {
-    background-color: #888
-}
-
+        .file-selected button:hover {
+            background-color: transparent;
+        }
 
 .content {
     display: inline-block;
@@ -114,6 +126,7 @@ body {
     height:80%;
 }
 
+/*CSS PER CHAT SCROLLABILE*/
 .chat {
     flex: 1;
     overflow-y: auto;
@@ -367,15 +380,17 @@ form {
     width: 18vh;
 }
 
+    .custom-submit-button:hover {
+        background-color: #757575;
+    }
 
-/*.response span {
+    /*.response span {
     display: block;
 }*/
-
-.tag-group {
-    font-size: 15px;
-    display: block;
-}
+    .tag-group {
+        font-size: 15px;
+        display: block;
+    }
 
 .tag {
     background-color: #666;
@@ -385,17 +400,13 @@ form {
     width: 100%;
 }
 
-.bottom-part{
-    width: 70%;
-    height: 4rem;
-    padding: 0;
-    margin: 0.3rem;
-
+.logo {
+    width: 30px;
+    height: 30px;
 }
 
 ::-webkit-scrollbar {
     width: 10px;
-    height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -411,3 +422,54 @@ form {
         background: #555;
     }
 
+/*tre puntini chat*/
+.form-file{
+    display: flex;
+}
+
+.dots-container {
+    position: relative;
+    padding: 0px 20px;
+    align-self:center;
+}
+
+.dots-container:hover > .submenu {
+    opacity: 1;
+    visibility: visible;
+    top: 100%;
+    right: -10%;
+}
+
+.submenu {
+    position: absolute;
+    width: 110px;
+    background: #444;
+    top: 110%;
+    padding: 20px 30px;
+    -webkit-box-shadow: 0 15px 44px rgba(140, 140, 140, 0.18);
+    box-shadow: 0 15px 44px rgba(140, 140, 140, 0.18);
+    border-radius: 5px;
+    opacity: 0;
+    visibility: hidden;
+    /*-webkit-transition: all 0.3s ease-out 0s;
+    transition: all 0.3s ease-out 0s;*/
+    list-style-type: none;
+}
+
+.submenu .submenu-link {
+    color: gainsboro;
+    padding: 7px 0;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+    .submenu .submenu-link:hover {
+        color: #E9CD72;
+    }
+
+.bottom-part {
+    width: 70%;
+    height: 4rem;
+    padding: 0;
+    margin: 0.3rem;
+}

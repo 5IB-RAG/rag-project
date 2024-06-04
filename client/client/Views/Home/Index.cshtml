@@ -67,113 +67,126 @@
                     </div>
                     <div class="sidebar-bot">
 
-                        <form method="post" asp-action="ChatPost">
-                            <div class="newChat file text-center">
-                                <button class="btn" id="newChatBtn">
-                                    <img class="imgLogo" src="/img/Logo_full_no_nome.svg" alt="ㅤ">
-                                    Nuova chat
-                                </button>
-                            </div>
-                        </form>
-                        <div class="cronologia mt-3" id="chatSection">
-                            @if (Model.Chats != null)
-                            {
-                                foreach (var chat in Model.Chats)
-                                {
-                                    if (Model.SelectedChat != null && Model.SelectedChat.Id == chat.Id)
-                                    {
-                                        <div class="file file-selected">
-                                            <form asp-action="ChatGetById" method="get">
-                                                <input type="hidden" name="id" value="@chat.Id" />
-                                                <button class="btn btn-primary">@chat.Title</button>
-                                            </form>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <div class="file">
-                                            <form asp-action="ChatGetById" method="get">
-                                                <input type="hidden" name="id" value="@chat.Id" />
-                                                <button class="btn btn-primary">@chat.Title</button>
-                                            </form>
-                                        </div>
-                                    }
-                                }
-                            }
+                    <form method="post" asp-action="ChatPost">
+                        <div class="newChat file text-center">
+                            <button class="btn" id="newChatBtn">
+                                <img class="imgLogo" src="/img/Logo_full_no_nome.svg" alt="ㅤ">
+                                Nuova chat
+                            </button>
                         </div>
-                        <div class="files hidden" id="fileSection">
-                            @if (Model.Documents != null)
+                    </form>
+                    <div class="cronologia mt-3" id="chatSection">
+                        @if (Model.Chats != null)
+                        {
+                            foreach (var chat in Model.Chats)
                             {
-                                foreach (var file in Model.Documents)
+                                if (Model.SelectedChat != null && Model.SelectedChat.Id == chat.Id)
+                                {
+                                    <div class="file-selected">
+                                        <form asp-action="ChatGetById" method="get" class="form-file">
+                                            <input type="hidden" name="id" value="@chat.Id" />
+                                            <button>@chat.Title</button>
+                                            <div class="dots-container">
+                                                <a>▪️▪️▪️</a>
+                                                <ul class="submenu">
+                                                    <li class="submenu-item">
+                                                        <a asp-action="ChatDelete" class="submenu-link text-danger ">Delete</a>
+                                                    </li>
+                                                    <li class="submenu-item">
+                                                        <a class="submenu-link" data-state="closed" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                }
+                                else
                                 {
                                     <div class="file">
-                                        <button>@file.Name</button>
+                                        <form asp-action="ChatGetById" method="get">
+                                            <input type="hidden" name="id" value="@chat.Id" />
+                                            <button>@chat.Title</button>
+                                        </form>
                                     </div>
                                 }
                             }
-                        </div>
+                        }
+                    </div>
+                    <div class="files hidden" id="fileSection">
+                        @if (Model.Documents != null)
+                        {
+                            foreach (var file in Model.Documents)
+                            {
+                                <div class="file">
+                                    <div>
+                                        @file.Name 
+                                        <a asp-action="DocumentDelete" asp-route-id="@file.Id">🗑️</a>
+                                    </div>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
-                <!---------------MESSAGGI CHAT--------->
+            </div>
 
-                <div class="col-md-6 d-flex flex-column p-0 chat">
-
-                    <div class="h-100">
-                        <div class="d-flex justify-content-center">
-                            <main class="content ">
-                                <div class="chat flex-grow-1 p-3">
-                                    @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
-                                    {
-                                        for (int i = 0; i < Model.SelectedChat.Messages.Count; i++)
-                                        {
-                                            var message = Model.SelectedChat.Messages[i];
-                                            if (message.Role == client.Enum.ChatRole.USER) // User message
-                                            {
-                                                <div class="message d-flex">
-                                                    <span>@message.Text</span>
-                                                </div>
-                                            }
-                                            else // Bot message
-                                            {
-                                                <div class="response d-flex">
-                                                    <span>
-                                                        @message.Text
-                                                        <div class="tag-group">
-                                                            @if (message.DocumentChunksUniqueNames != null)
-                                                            {
-                                                                <div class="response">
-                                                                    @foreach (var chunkName in message.DocumentChunksUniqueNames)
-                                                                    {
-                                                                        <div class="tag">
-                                                                            @chunkName
-                                                                        </div>
-                                                                    }
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </span>
-                                                </div>
-                                            }
-                                        }
-                                    }
-                                </div>
-                            </main>
-                        </div>
+            <!---------------MESSAGGI CHAT--------->
+            <div class="col-md-6 d-flex flex-column p-0 chat">
+                <div class="h-100">
+                 <div class="d-flex justify-content-center">
+                <main class="content flex-grow-1 ">
+                    <div class="chat flex-grow-1 p-3">
+                        @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
+                        {
+                            for (int i = 0; i < Model.SelectedChat.Messages.Count; i++)
+                            {
+                                var message = Model.SelectedChat.Messages[i];
+                                if (message.Role == client.Enum.ChatRole.USER) // User message
+                                {
+                                    <div class="message d-flex">
+                                        <span>@message.Text</span>
+                                    </div>
+                                }
+                                else // Bot message
+                                {
+                                    <div class="response d-flex">
+                                        <span>
+                                            @message.Text
+                                            <div class="tag-group">
+                                                @if (message.DocumentChunksUniqueNames != null)
+                                                {
+                                                    <div class="response">
+                                                        @foreach (var chunkName in message.DocumentChunksUniqueNames)
+                                                        {
+                                                            <div class="tag">
+                                                                @chunkName
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </span>
+                                    </div>
+                                }
+                            }
+                        }
                     </div>
-                    
-                    <div class="d-flex justify-content-center">
-                        <div class="bottom-part">
-                            <div class="input-container">
-                                <button id="attachButton" class="attach-button" type="button" aria-haspopup="menu" aria-expanded="false" data-state="closed" data-bs-toggle="modal" data-bs-target="#fileModal">
-                                    <img src="img/attach_file_icon.svg" alt="File Icon">
+                </main>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <div class="bottom-part">
+                        <div class="input-container">
+                            <button id="attachButton" class="attach-button" type="button" aria-haspopup="menu" aria-expanded="false" data-state="closed" data-bs-toggle="modal" data-bs-target="#fileModal">
+                                <img src="img/attach_file_icon.svg" alt="File Icon">
+                            </button>
+                            <form asp-action="MessagePost" method="post" class="input-form">
+                                <input type="text" placeholder="Invia un messaggio" class="input-field" asp-for=Message />
+                                <button class="send-button">
+                                    <img src="img/top_arrow_icon.svg" alt="File Icon">
                                 </button>
-                                <form asp-action="MessagePost" method="post" class="input-form">
-                                    <input type="text" placeholder="Invia un messaggio" class="input-field" asp-for=Message />
-                                    <button class="send-button">
-                                        <img src="img/top_arrow_icon.svg" alt="File Icon">
-                                    </button>
-                                </form>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -181,13 +194,13 @@
         </div>
     </div>
 
-   @*  POPUP PER APRIRE ESPLORA FILE *@
+    @*  POPUP PER APRIRE ESPLORA FILE *@
     <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content custom-modal-content">
                 <div class="modal-header custom-modal-header">
                     <img src="~/img/logo_full_no_nome.svg" alt="logo" class="logo">
-                    <h5 class="modal-title" id="fileModalLabel">Seleziona File e scrivi i tags</h5>
+                    <h5 class="modal-title" id="fileModalLabel">Seleziona il/i file e scrivi i tags</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form enctype="multipart/form-data" method="post" asp-action="DocumentPost">
@@ -196,12 +209,36 @@
                             <input asp-for="UploadDocument.FormFiles" type="file" class="form-control mb-3 custom-input" multiple>
                         </div>
                         <div class="custom-form">
-                            <div class="custom-label">Scrivi i tags</div>
+                            <div class="custom-label">Scrivi i tags (usa ; per separarli)</div>
                             <input asp-for="UploadDocument.MetaData" type="text" class="form-control custom-input">
                         </div>
                     </div>
                     <div class="modal-footer custom-modal-footer">
                         <button type="submit" class="btn btn-primary custom-submit-button" id="modalSubmitButton">Invia</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @*  POPUP PER APRIRE RENAME DELLE CHAT *@
+    <div class="modal fade" id="renameModal" tabindex="-1" aria-labelledby="renameModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content custom-modal-content">
+                <div class="modal-header custom-modal-header">
+                    <img src="~/img/logo_full_no_nome.svg" alt="logo" class="logo">
+                    <h5 class="modal-title" id="renameModalLabel">Rinomina la chat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post" asp-action="ChatRenamePost">
+                    <div class="modal-body custom-modal-body">
+                        <div class="custom-form">
+                            <div class="custom-label">Scrivi il nuovo nome della chat</div>
+                            <input asp-for="NewChatName" type="text" class="form-control custom-input"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer custom-modal-footer">
+                        <button type="submit" class="btn btn-primary custom-submit-button">Invia</button>
                     </div>
                 </form>
             </div>
@@ -216,62 +253,3 @@
             crossorigin="anonymous"></script>
     <script src="~/js/site.js"></script>
 </body>
-
-@* CODICE VECCHIO DI FOFO *@
-@* <body>
-    <div class="container">
-        <aside class="sidebar">
-            <div class="logo">
-                <h2>ChatGPT</h2>
-            </div>
-            <div class="cronologia">
-                <div class="file">
-                    <button>Presentazione</button>
-                </div>
-                <div class="file">
-                    <button>Appunti scuola</button>
-                </div>
-                <div class="file">
-                    <button>aaaaaaaaaaaa</button>
-                </div>
-            </div>
-        </aside>
-        <div class="sidebar-buttons">
-            <button class="sidebar-btn" id="chatBtn">C</button>
-            <button class="sidebar-btn" id="fileBtn">F</button>
-        </div>
-        <main class="content">
-            <div class="chat" id="chatSection">
-                <div class="message">
-                    <span>Ciao, come va?</span>
-                </div>
-                <div class="response">
-                    <span>Va tutto bene, grazie. E tu, come stai? C'è qualcosa in particolare di cui vuoi parlare o su cui hai bisogno di aiuto?</span>
-                </div>
-            </div>
-            <div class="files" id="fileSection" style="display: none;">
-                <div class="file" onclick="openFile('file1.pdf')">
-                    <button>File 1</button>
-                </div>
-                <div class="file" onclick="openFile('file2.pdf')">
-                    <button>File 2</button>
-                </div>
-                <div class="file" onclick="openFile('file3.pdf')">
-                    <button>File 3</button>
-                </div>
-            </div>
-            <footer>
-                <form class="attach-button" runat="server">
-                    <div>
-                        <asp:FileUpload ID="FileUpload1" runat="server" AllowMultiple="true" />
-                        <asp:Button ID="UploadButton" runat="server" Text="Upload Files" OnClick="UploadButton_Click" />
-                        <asp:Label ID="StatusLabel" runat="server" Text="" />
-                    </div>
-                </form>
-                <input type="text" placeholder="Invia un messaggio">
-                <button class="send-button">↥</button>
-            </footer>
-        </main>
-    </div>
-    <script src="script.js"></script>
-</body> *@

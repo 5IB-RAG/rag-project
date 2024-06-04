@@ -50,10 +50,33 @@ namespace server.Endponts;
                 return Results.Json(userChat.ToDto(false));
             }).RequireAuthorization();
         
-            /*endpoint.MapPost("/chat/{id}/rename", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
+            endpoint.MapPost("/chat/{id}/rename", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id, [FromBody] string newTitle) =>
             {
-                //Da fare dopos
-            }).RequireAuthorization();*/
+                User user = UserHelper.GetCurrentUser(claim.Identity);
+                if (user == null) return Results.NotFound();
+
+                UserChat? userChat = database.UserChats.FirstOrDefault(chat => chat.UserId == user.Id && chat.Id == id);
+                if (userChat == null) return Results.NotFound();
+
+                userChat.Title = newTitle;
+                await database.SaveChangesAsync();
+
+                return Results.Json(userChat.ToDto(true));
+            }).RequireAuthorization();
+            
+            endpoint.MapDelete("/chat/{id}", async ([FromServices] PgVectorContext database, ClaimsPrincipal claim, int id) =>
+            {
+                User user = UserHelper.GetCurrentUser(claim.Identity);
+                if (user == null) return Results.NotFound();
+
+                UserChat? userChat = database.UserChats.FirstOrDefault(chat => user.Id == chat.UserId && id == chat.Id);
+                if (userChat == null) return Results.NotFound();
+
+                database.UserChats.Remove(userChat);
+                await database.SaveChangesAsync();
+
+                return Results.Ok();
+            }).RequireAuthorization();
 
             endpoint.MapPost("chat/{id}", async([FromServices] ChatService chatService, ClaimsPrincipal claim, int id, [FromBody] string message) =>
             {
