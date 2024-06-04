@@ -94,7 +94,7 @@
                                                         <a asp-action="ChatDelete" class="submenu-link text-danger ">Delete</a>
                                                     </li>
                                                     <li class="submenu-item">
-                                                        <a asp-action="ChatRename" class="submenu-link" data-state="closed" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a>
+                                                        <a class="submenu-link" data-state="closed" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -223,15 +223,15 @@
                     <h5 class="modal-title" id="renameModalLabel">Rinomina la chat</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form enctype="multipart/form-data" method="post" asp-action="DocumentPost">
+                <form method="post" asp-action="ChatRenamePost">
                     <div class="modal-body custom-modal-body">
                         <div class="custom-form">
                             <div class="custom-label">Scrivi il nuovo nome della chat</div>
-                            <input asp-for="UploadDocument.MetaData" type="text" class="form-control custom-input">
+                            <input asp-for="NewChatName" type="text" class="form-control custom-input"/>
                         </div>
                     </div>
                     <div class="modal-footer custom-modal-footer">
-                        <button type="submit" class="btn btn-primary custom-submit-button" id="modalSubmitButton">Invia</button>
+                        <button type="submit" class="btn btn-primary custom-submit-button">Invia</button>
                     </div>
                 </form>
             </div>

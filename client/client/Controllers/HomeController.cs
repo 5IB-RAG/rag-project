@@ -248,16 +248,17 @@ public class HomeController : Controller
 
     //@ToDo in index.cshtml
     [HttpPost]
-    public async Task<IActionResult> ChatRenamePost(string newName)
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChatRenamePost(HomeModel model)
     {
         // richiesta API per creare una nuova chat
-        HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
+        HomeModel homeModel = TempData.Get<HomeModel>("HomeModel"); //Questo è quello vero del client, model contiene solo i campi compilati dal form
         try
         {
-            JsonContent content = JsonContent.Create(newName);
+            JsonContent content = JsonContent.Create(model.NewChatName);
             await _requestService.SendRequest(
                 RequestType.POST,
-                RequestRoute.Chats + homeModel.SelectedChat.Id + "/rename",
+                RequestRoute.Chats +"/"+ homeModel.SelectedChat.Id + "/rename",
                 Request.Cookies["authentication"],
                 content
             );

@@ -427,6 +427,7 @@ footer {
     color: gainsboro;
     padding: 7px 0;
     font-size: 14px;
+    text-decoration: none;
 }
 
     .submenu .submenu-link:hover {

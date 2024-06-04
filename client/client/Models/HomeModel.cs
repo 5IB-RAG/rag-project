@@ -10,5 +10,6 @@ namespace client.Models
         public UploadDto UploadDocument { get; set; } 
         public UserChatDto SelectedChat { get; set; }
         public MessageDto Message { get; set; }
+        public string NewChatName { get; set; }
     }
 }
