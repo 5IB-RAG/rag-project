@@ -30,7 +30,10 @@ public class DocumentChunk
 
     public DocumentChunkDto ToDto()
     {
-        return new DocumentChunkDto() { Document = Document.ToDto() , Id = Id, Metadata = Metadata, Text = Text };
+        DocumentDto? documentDto = null;
+        if (Document != null) documentDto = Document.ToDto();
+        
+        return new DocumentChunkDto() { Document = documentDto , Id = Id, Metadata = Metadata, Text = Text };
     }
 
     public static DocumentChunkBuilder Builder()
