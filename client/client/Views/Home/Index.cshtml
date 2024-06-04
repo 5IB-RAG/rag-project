@@ -132,8 +132,23 @@
                                 }
                                 else // Bot message
                                 {
-                                    <div class="response d-flex justify-content-end">
-                                        <span>@message.Text</span>
+                                    <div class="response d-flex">
+                                        <span>
+                                            @message.Text
+                                            <div class="tag-group">
+                                                @if (message.DocumentChunksUniqueNames != null)
+                                                {
+                                                    <div class="response">
+                                                        @foreach (var chunkName in message.DocumentChunksUniqueNames)
+                                                        {
+                                                            <div class="tag">
+                                                                @chunkName
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </span>
                                     </div>
                                 }
                             }
@@ -159,23 +174,30 @@
    @*  POPUP PER APRIRE ESPLORA FILE *@
     <div class="modal fade" id="fileModal" tabindex="-1" aria-labelledby="fileModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
+            <div class="modal-content custom-modal-content">
+                <div class="modal-header custom-modal-header">
+                    <img src="~/img/logo_full_no_nome.svg" alt="logo" class="logo">
                     <h5 class="modal-title" id="fileModalLabel">Seleziona File e scrivi i tags</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form enctype="multipart/form-data" method="post" asp-action="DocumentPost">
-                    <div class="modal-body">
-                        <input asp-for="UploadDocument.FormFiles" type="file" class="form-control mb-3" multiple>
-                        <input asp-for="UploadDocument.MetaData" type="text" placeholder="Scrivi i tags" class="form-control">
+                    <div class="modal-body custom-modal-body">
+                        <div class="file-upload-container">
+                            <input asp-for="UploadDocument.FormFiles" type="file" class="form-control mb-3 custom-input" multiple>
+                        </div>
+                        <div class="custom-form">
+                            <div class="custom-label">Scrivi i tags</div>
+                            <input asp-for="UploadDocument.MetaData" type="text" class="form-control custom-input">
+                        </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" id="modalSubmitButton">Invia</button>
+                    <div class="modal-footer custom-modal-footer">
+                        <button type="submit" class="btn btn-primary custom-submit-button" id="modalSubmitButton">Invia</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     @* <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script> *@

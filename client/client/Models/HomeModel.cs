@@ -5,10 +5,10 @@ namespace client.Models
 {
     public class HomeModel
     {
-        public List<UserChat> Chats { get; set; }
-        public List<Document> Documents { get; set; }
-        public UploadDTO UploadDocument { get; set; } 
-        public UserChat SelectedChat { get; set; }
-        public Message Message { get; set; }
+        public List<UserChatDto> Chats { get; set; }
+        public List<DocumentDto> Documents { get; set; }
+        public UploadDto UploadDocument { get; set; } 
+        public UserChatDto SelectedChat { get; set; }
+        public MessageDto Message { get; set; }
     }
 }

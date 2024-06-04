@@ -84,13 +84,13 @@ public class HomeController : Controller
     // | DOCUMENTI |
     // -------------
 
-    public async Task<List<Document>> DocumentsGet()
+    public async Task<List<DocumentDto>> DocumentsGet()
     {
         // richiesta API pe ricevere le info generali di tutti i documenti caricati
 
         try
         {
-            var documents = await _requestService.SendRequest<List<Document>>(
+            var documents = await _requestService.SendRequest<List<DocumentDto>>(
                 RequestType.GET,
                 RequestRoute.Documents,
                 Request.Cookies["authentication"]
@@ -109,7 +109,7 @@ public class HomeController : Controller
 
         //Ritorna quello che vuoi
         //return Forbid();
-        return new List<Document>();
+        return new List<DocumentDto>();
     }
 
     //public async Task<IActionResult> DocumentGetById(int id)
@@ -118,7 +118,7 @@ public class HomeController : Controller
     //    try
     //    {
             
-    //        var document = await _requestService.SendRequest<Document>(
+    //        var document = await _requestService.SendRequest<DocumentDto>(
     //            RequestType.GET,
     //            RequestRoute.Documents + "/" + id,
     //            Request.Cookies["authentication"]
@@ -145,6 +145,7 @@ public class HomeController : Controller
         {
             var file = new StreamContent(item.OpenReadStream());
             formData.Add(file, "FormFiles", item.FileName);
+            formData.Add(new StringContent(item.FileName.Split(".").Last() + ";"), "MetaData");
         }
         formData.Add(new StringContent(model.UploadDocument.MetaData), "MetaData");
 
@@ -200,14 +201,14 @@ public class HomeController : Controller
     // | CHATS |
     // ---------
 
-    public async Task<List<UserChat>> ChatsGet()
+    public async Task<List<UserChatDto>> ChatsGet()
     {
         // richiesta API pe ricevere le info generali di tutti i documenti caricati
         
         try
         {
             
-            var chats = await _requestService.SendRequest<List<UserChat>>(
+            var chats = await _requestService.SendRequest<List<UserChatDto>>(
                 RequestType.GET,
                 RequestRoute.Chats,
                 Request.Cookies["authentication"]
@@ -232,12 +233,13 @@ public class HomeController : Controller
 
         try
         {
-            var chat = await _requestService.SendRequest<UserChat>(
+            var chat = await _requestService.SendRequest<UserChatDto>(
                 RequestType.POST,
                 RequestRoute.Chats,
                 Request.Cookies["authentication"]
             );
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
+            chat.Messages = new();
             homeModel.Chats.Add(chat);
             homeModel.SelectedChat = chat;
             TempData.Put("HomeModel", homeModel);
@@ -260,7 +262,7 @@ public class HomeController : Controller
         // richiesta API con id della chat che si vule riceve completamente
         try
         {
-            var chat = await _requestService.SendRequest<UserChat>(
+            var chat = await _requestService.SendRequest<UserChatDto>(
                 RequestType.GET,
                 RequestRoute.Chats + "/" + id,
                 Request.Cookies["authentication"]
@@ -324,7 +326,11 @@ public class HomeController : Controller
         try
         {
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
-            homeModel.SelectedChat.Messages.Add(new Message { Text = message, Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
+            //if(homeModel.SelectedChat == null)
+            //{
+            //    await ChatPost();
+            //}
+            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = message, Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
             //Ritornare la chat o il messaggio?
             var response = await _requestService.SendRequest<ChatEndPointResponse>(
                 RequestType.POST,
@@ -332,7 +338,19 @@ public class HomeController : Controller
                 Request.Cookies["authentication"],
                 content
             );
-            homeModel.SelectedChat.Messages.Add(new Message { Text = response.assistantMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id });
+
+            var distinctDocumentChunks = response.documentChunks
+                .GroupBy(dc => dc.Document.Name)
+                .Select(g => g.First())
+                .ToList();
+
+            List<string> distinctDocumentsName = new();
+            foreach(var document in distinctDocumentChunks)
+            {
+                distinctDocumentsName.Add(document.Document.Name);
+            }
+
+            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = response.assistantMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, DocumentChunks = response.documentChunks, DocumentChunksUniqueNames = distinctDocumentsName });
             TempData.Put("HomeModel", homeModel);
 
             return RedirectToAction(nameof(Index));
