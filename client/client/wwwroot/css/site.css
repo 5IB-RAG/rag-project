@@ -18,6 +18,16 @@ body {
     position: relative;
 }
 
+.sidebar-top {
+    background-color: #212121;
+    height: 90vh;
+
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: relative;
+}
+
 .newChat {
     margin-bottom: 20px;
 }
@@ -68,7 +78,7 @@ body {
 .sidebar-btn {
     width: 60px;
     height: 40px;
-    background-color: #333;
+    background-color: #212121;
     color: #fff;
     border: none;
     border-radius: 4px;
