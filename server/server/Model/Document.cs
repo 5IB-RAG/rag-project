@@ -31,7 +31,7 @@ public class Document
 
     public DocumentDto ToDto()
     {
-        return new DocumentDto() { Name = Name, Extension = Extension, UserId = UserId };
+        return new DocumentDto() { Id = Id, Name = Name, Extension = Extension, UserId = UserId };
     }
     
     public static DocumentBuilder Builder()
