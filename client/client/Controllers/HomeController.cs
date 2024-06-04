@@ -99,16 +99,11 @@ public class HomeController : Controller
             return documents;
         }
         catch (HttpRequestException e)
-        {
-            //TODO: Fofo ricordati che quando la richiesta fallisce per unauthorized ritorna questo cosi lo reindirizza al login
-            //if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
-            
+        {            
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
 
-        //Ritorna quello che vuoi
-        //return Forbid();
         return new List<DocumentDto>();
     }
 
@@ -173,7 +168,6 @@ public class HomeController : Controller
 
     public async Task<IActionResult> DocumentDelete(int id) {
         // API per cancellare un documento dato id
-        HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
         try
         {
             await _requestService.SendRequest(
@@ -181,9 +175,6 @@ public class HomeController : Controller
                 RequestRoute.Documents + "/" + id,
                 Request.Cookies["authentication"]
             );
-
-            homeModel.Documents.RemoveAll(d => d.Id == id);
-            TempData.Put("HomeModel", homeModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -205,11 +196,9 @@ public class HomeController : Controller
 
     public async Task<List<UserChatDto>> ChatsGet()
     {
-        // richiesta API pe ricevere le info generali di tutti i documenti caricati
-        
+        // Richiesta API pe ricevere le info generali di tutti i documenti caricati
         try
         {
-            
             var chats = await _requestService.SendRequest<List<UserChatDto>>(
                 RequestType.GET,
                 RequestRoute.Chats,
@@ -242,7 +231,6 @@ public class HomeController : Controller
             );
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
             chat.Messages = new();
-            homeModel.Chats.Add(chat);
             homeModel.SelectedChat = chat;
             TempData.Put("HomeModel", homeModel);
 
@@ -258,7 +246,7 @@ public class HomeController : Controller
         return Forbid();
     }
 
-    //@ToDo
+    //@ToDo in index.cshtml
     [HttpPost]
     public async Task<IActionResult> ChatRenamePost(string newName)
     {
@@ -315,7 +303,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> ChatDelete()
     {
-        // API per cancellare una chat dato id
+        // API per cancellare la chat selezionata
         try
         {
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
@@ -324,10 +312,6 @@ public class HomeController : Controller
                 RequestRoute.Chats + "/" + homeModel.SelectedChat.Id,
                 Request.Cookies["authentication"]
             );
-
-            homeModel.Chats.Remove(homeModel.SelectedChat);
-            homeModel.SelectedChat = null;
-            TempData.Put("HomeModel", homeModel);
 
             return RedirectToAction(nameof(Index));
         }
@@ -355,7 +339,8 @@ public class HomeController : Controller
         if (string.IsNullOrEmpty(message)) {
             return Forbid();
         }
-        //Mandare richiesta API con testo e id chat riferimento
+
+        // Mandare richiesta API con testo e id chat riferimento
         var content = JsonContent.Create(message);
         try
         {
@@ -366,6 +351,7 @@ public class HomeController : Controller
             }
 
             homeModel.SelectedChat.Messages.Add(new MessageDto { Text = message, Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
+
             //Ritornare la chat o il messaggio?
             var response = await _requestService.SendRequest<ChatEndPointResponse>(
                 RequestType.POST,
@@ -386,6 +372,7 @@ public class HomeController : Controller
             }
 
             homeModel.SelectedChat.Messages.Add(new MessageDto { Text = response.assistantMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, DocumentChunks = response.documentChunks, DocumentChunksUniqueNames = distinctDocumentsName });
+
             TempData.Put("HomeModel", homeModel);
 
             return RedirectToAction(nameof(Index));
