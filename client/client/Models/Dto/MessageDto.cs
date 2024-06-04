@@ -8,4 +8,5 @@ public class MessageDto
     public ChatRole Role { get; set; }
     public int ChatId { get; set; }
     public List<DocumentChunkDto>? DocumentChunks { get; set; }
+    public List<string>? DocumentChunksUniqueNames { get; set; }
 }

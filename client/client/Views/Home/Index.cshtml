@@ -121,8 +121,23 @@
                                 }
                                 else // Bot message
                                 {
-                                    <div class="response d-flex justify-content-end">
-                                        <span>@message.Text</span>
+                                    <div class="response d-flex">
+                                        <span>
+                                            @message.Text
+                                            <div class="tag-group">
+                                                @if (message.DocumentChunksUniqueNames != null)
+                                                {
+                                                    <div class="response">
+                                                        @foreach (var chunkName in message.DocumentChunksUniqueNames)
+                                                        {
+                                                            <div class="tag">
+                                                                @chunkName
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                }
+                                            </div>
+                                        </span>
                                     </div>
                                 }
                             }

@@ -192,3 +192,20 @@ footer {
 .offcanvas {
     background-color: #121212;
 }
+
+/*.response span {
+    display: block;
+}*/
+
+.tag-group {
+    font-size: 15px;
+    display: block;
+}
+
+.tag {
+    background-color: #666;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 5px;
+    width: 100%;
+}

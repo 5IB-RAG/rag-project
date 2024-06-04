@@ -238,6 +238,7 @@ public class HomeController : Controller
                 Request.Cookies["authentication"]
             );
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
+            chat.Messages = new();
             homeModel.Chats.Add(chat);
             homeModel.SelectedChat = chat;
             TempData.Put("HomeModel", homeModel);
@@ -324,6 +325,10 @@ public class HomeController : Controller
         try
         {
             HomeModel homeModel = TempData.Get<HomeModel>("HomeModel");
+            //if(homeModel.SelectedChat == null)
+            //{
+            //    await ChatPost();
+            //}
             homeModel.SelectedChat.Messages.Add(new MessageDto { Text = message, Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
             //Ritornare la chat o il messaggio?
             var response = await _requestService.SendRequest<ChatEndPointResponse>(
@@ -332,7 +337,19 @@ public class HomeController : Controller
                 Request.Cookies["authentication"],
                 content
             );
-            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = response.assistantMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, DocumentChunks = response.documentChunks });
+
+            var distinctDocumentChunks = response.documentChunks
+                .GroupBy(dc => dc.Document.Name)
+                .Select(g => g.First())
+                .ToList();
+
+            List<string> distinctDocumentsName = new();
+            foreach(var document in distinctDocumentChunks)
+            {
+                distinctDocumentsName.Add(document.Document.Name);
+            }
+
+            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = response.assistantMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, DocumentChunks = response.documentChunks, DocumentChunksUniqueNames = distinctDocumentsName });
             TempData.Put("HomeModel", homeModel);
 
             return RedirectToAction(nameof(Index));
