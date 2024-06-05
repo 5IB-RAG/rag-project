@@ -1,6 +1,6 @@
 @model client.Models.HomeModel
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = Model.SelectedChat.Title;
 }
 
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -132,8 +132,8 @@
             <!---------------MESSAGGI CHAT--------->
             
                 <div class="right-part col-md d-flex flex-column p-0 chat-column justify-content-center">
-                    <div class="d-flex chat">
-                        <div class="p-3 message-container  display-grid padding-chat">
+                    <div class="chat">
+                        <div class="p-3 d-flex flex-column padding-chat">
                             @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
                             {
                                 for (int i = 0; i < Model.SelectedChat.Messages.Count; i++)
@@ -141,33 +141,41 @@
                                     var message = Model.SelectedChat.Messages[i];
                                     if (message.Role == client.Enum.ChatRole.USER) // User message
                                     {
-                                        <div class="character-picture-user">
-                                            <img src="img/user-icon.jpg" alt="pupogelatoalcioccolato" />
-                                        </div>
-                                        <div class="message d-flex">
-                                            <span>@message.Text</span>
+                                        <div class="d-inline-flex flex-column align-self-end">
+                                            <div class="character-picture-user align-self-end">
+                                                <img src="img/user-icon.jpg" alt="pupogelatoalcioccolato" />
+                                            </div>
+                                            <div class="d-inline-flex">
+                                                <div class="message">
+                                                    <span>@Html.Raw(message.Text)</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     }
                                     else // Bot message
                                     {
-                                        <div class="character-picture-bot">
-                                            <img src="img/logo_full_no_nome.svg" alt="pupogelatoalcioccolato" />
-                                        </div>
-                                        <div class="response d-flex col">
+                                        <div class="d-flex flex-column">
+                                            <div class="character-picture-bot">
+                                                <img src="img/logo_full_no_nome.svg" alt="pupogelatoalcioccolato" />
+                                            </div>
+                                            <div class="d-inline-flex">
+                                                <div class="response">
                                             <span>
-                                                @message.Text
+                                                @Html.Raw(message.Text)
+                                                @if (message.UsedDocument != null && message.UsedDocument.Count > 0)
+                                                {
                                                 <div class="tag-group">
-                                                    @if (message.UsedDocument != null)
-                                                    {
                                                         @foreach (var document in message.UsedDocument)
-                                                        {
-                                                            <div class="tag">
+                                                    {
+                                                    <div class="tag">
                                                                 🗃️ @document.Name 
                                                             </div>
-                                                        }
                                                     }
-                                                </div>
+                                                    </div>
+                                                }
                                             </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     }
                                 }
@@ -243,6 +251,11 @@
             </div>
         </div>
     </div>
+        
+    <script>
+        var chatBody = document.querySelector('.chat');
+        chatBody.scrollTop = chatBody.scrollHeight - chatBody.clientHeight;
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     @* <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script> *@

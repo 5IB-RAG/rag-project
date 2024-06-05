@@ -109,13 +109,16 @@ body {
     border-radius: 2rem;
 }
 
-    .file-selected button {
-        background-color: transparent;
-    }
+.file-selected button {
+    background-color: transparent;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
-        .file-selected button:hover {
-            background-color: transparent;
-        }
+.file-selected button:hover {
+    background-color: transparent;
+}
 
 .content {
     display: inline-block;
@@ -129,13 +132,6 @@ body {
 }
 
 /*CSS PER CHAT SCROLLABILE*/
-
-
-.message-container {
-    display: inline-flex;
-    justify-content: flex-start;
-    align-items: flex-start;
-}
 
 .chat-column {
     height: 95vh;
@@ -184,20 +180,12 @@ body {
     height: 30px;
     border-radius: 15px;
 }
-    .message, .response {
-    background-color: #333;
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 10px;
-}
 
 .message {
     background-color: #222;
     padding: 0.7rem 1.2rem 0.7rem 1.2rem;
     border-radius: 2rem;
     margin-bottom: 10px;
-    max-width: 70%;
-    word-wrap: break-word;
     align-content: end;
     justify-self: right;
 }

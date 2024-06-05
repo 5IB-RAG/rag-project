@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text;
 using client.Model.Dto;
 using client.Extentions;
+using Markdig;
 
 namespace client.Controllers;
 
@@ -253,7 +254,7 @@ public class HomeController : Controller
     public async Task<IActionResult> ChatRenamePost(HomeModel model)
     {
         // richiesta API per creare una nuova chat
-        HomeModel homeModel = TempData.Get<HomeModel>("HomeModel"); //Questo è quello vero del client, model contiene solo i campi compilati dal form
+        HomeModel homeModel = TempData.Get<HomeModel>("HomeModel"); //Questo ï¿½ quello vero del client, model contiene solo i campi compilati dal form
         try
         {
             JsonContent content = JsonContent.Create(model.NewChatName);
@@ -354,7 +355,7 @@ public class HomeController : Controller
                 await ChatPost();
             }
 
-            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = message, Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
+            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = Markdown.ToHtml(message), Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
 
             //Ritornare la chat o il messaggio?
             var response = await _requestService.SendRequest<ChatEndPointResponse>(
@@ -364,7 +365,7 @@ public class HomeController : Controller
                 content
             );
 
-            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = response.responseMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, UsedDocument = response.usedDocuments });
+            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = Markdown.ToHtml(response.responseMessage), Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, UsedDocument = response.usedDocuments });
 
             TempData.Put("HomeModel", homeModel);
 

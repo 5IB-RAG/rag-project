@@ -119,12 +119,12 @@ namespace server.Chat
             //
 
             List<DocumentChunk> similarDocumentChunks = await GetSimilarDocumentChunks(userMessage.Embedding, userId);
-
+            messages.Add(new OpenAiMessage { role = "system", content = "Il tuo nome è Ermes e sei un assistente virtuale esperto. Il tuo obiettivo principale è fornire risposte accurate e utili basandoti sulle informazioni che ti vengono fornite dall'utente. Puoi ampliare le tue risposte utilizzando la tua conoscenza interna, ma assicurati sempre di dare priorità alle informazioni specifiche fornite dall'utente. Devi rispondere in modo chiaro, conciso e rispettoso, cercando di aiutare l'utente nel miglior modo possibile. Evita di fare supposizioni non supportate dalle informazioni disponibili e, se necessario, chiedi ulteriori dettagli all'utente per fornire una risposta completa." });
+            
             if (!similarDocumentChunks.IsNullOrEmpty())
             {
-                messages.Add(new OpenAiMessage { role = "system", content = "Sei un assistente che risponde alle domande con le informazioni a te fornite; il tuo nome è Ermes" });
                 string documentChunksText = string.Join("\n", similarDocumentChunks.Select(dc => dc.Text));
-                messages.Add(new OpenAiMessage { role = "system", content = documentChunksText });
+                messages.Add(new OpenAiMessage { role = "system", content = "Informazioni: " + documentChunksText });
             }
             //
 
