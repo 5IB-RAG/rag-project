@@ -20,8 +20,10 @@ public class Message
     [Column(TypeName = "vector(1536)")]
     public Vector? Embedding { get; set; }
 
+    public List<Document> UsedDocuments { get; set; } = null!;
+
     public MessageDto ToDto()
     {
-        return new MessageDto() { Text = Text, Role = Role, ChatId = ChatId };
+        return new MessageDto() { Text = Text, Role = Role, ChatId = ChatId, UsedDocument = UsedDocuments.Select(doc => doc.ToDto()).ToList()};
     }
 }

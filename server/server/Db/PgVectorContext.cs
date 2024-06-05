@@ -43,6 +43,10 @@ namespace server.Db
                 .WithMany(d => d.Chunks)
                 .HasForeignKey(dc => dc.DocumentId);
 
+            modelBuilder.Entity<Message>()
+                .HasMany(m => m.UsedDocuments)
+                .WithMany(d => d.UsedByMessage);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

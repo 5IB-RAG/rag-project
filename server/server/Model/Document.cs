@@ -15,6 +15,7 @@ public class Document
     public User User { get; set; } = null!;
     //Probably need an user
     public IEnumerable<DocumentChunk> Chunks { get; set; } = null!;
+    public List<Message> UsedByMessage { get; set; } = null!;
 
     public Document()
     {
@@ -27,6 +28,18 @@ public class Document
         this.Metadata = metadata;
         this.Chunks = chunks;
         this.UserId = userId;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is not Document doc) return false;
+
+        return Id == doc.Id;
+    }
+    
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
     }
 
     public DocumentDto ToDto()

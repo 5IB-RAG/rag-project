@@ -42,7 +42,8 @@ namespace server.Endponts;
                     if (user == null) return Results.NotFound();
                 
                 UserChat? userChat = database.UserChats
-                    .Include(chat => chat.Messages)
+                    .Include(chat => chat.Messages)!
+                    .ThenInclude(mess => mess.UsedDocuments)
                     .FirstOrDefault(chat => chat.UserId == user.Id && chat.Id == id);
 
                 if (userChat == null) return Results.NotFound();

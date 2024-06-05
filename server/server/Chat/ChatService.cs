@@ -26,13 +26,13 @@ namespace server.Chat
     public class ChatContext
     {
         public ChatRequest ChatRequest { get; set; }
-        public List<DocumentChunk> UsedChunk { get; set; }
+        public List<Document> UsedDocument { get; set; }
     }
 
     public class ChatEndPointResponse
     {
-        public string assistantMessage { get; set; }
-        public List<DocumentChunkDto> documentChunks { get; set; }
+        public string ResponseMessage { get; set; }
+        public List<DocumentDto> UsedDocuments { get; set; }
     }
 
     public class ChatService : IChat
@@ -82,19 +82,22 @@ namespace server.Chat
 
             await _context.SaveChangesAsync();
 
+            var distinctDocument = chatContext.UsedDocument.Distinct().ToList();
+            
             //salvataggio sul db della risposta di chat
             Message responseChat = new()
             {
                 Text = chatResponse,
                 ResponseId = savedMessage.Entity.Id,
                 ChatId = chatId,
+                UsedDocuments = distinctDocument,
                 Role = ChatRole.Assistant
             };
-
+            
             _context.Messages.Add(responseChat);
             await _context.SaveChangesAsync();
 
-            return new ChatEndPointResponse() { assistantMessage = chatResponse, documentChunks = chatContext.UsedChunk.Select(s => s.ToDto()).ToList()};
+            return new ChatEndPointResponse() { ResponseMessage = chatResponse, UsedDocuments = distinctDocument.Select(doc => doc.ToDto()).ToList()};
         }
         public async Task<ChatContext> CreateChatContext(Message userMessage, int userId)
         {
@@ -135,7 +138,7 @@ namespace server.Chat
 
             var chatRequest = new ChatRequest() { messages = messages };
 
-            return new ChatContext() { ChatRequest = chatRequest, UsedChunk = similarDocumentChunks };
+            return new ChatContext() { ChatRequest = chatRequest, UsedDocument = similarDocumentChunks.Select(dc => dc.Document).ToList() };
 
         }
         private async Task<List<DocumentChunk>> GetSimilarDocumentChunks(Vector embedding, int userId)//ok
@@ -151,7 +154,7 @@ namespace server.Chat
                 .Select(dc => new { DocumentChunk = dc, Distance = embedding.L2Distance(dc.Embedding) })
                 .OrderBy(obj => obj.Distance)
                 .Where(obj => obj.Distance < similitudine)
-                .Take(2) // Prendi i 2 chunk più simili
+                .Take(3) // Prendi i 2 chunk più simili
                 .Select(obj => obj.DocumentChunk)
                 .ToListAsync();
 
