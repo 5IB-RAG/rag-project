@@ -4,7 +4,7 @@ namespace client.Models
 {
     public class ChatEndPointResponse
     {
-        public string assistantMessage { get; set; }
-        public List<DocumentChunkDto> documentChunks { get; set; }
+        public string responseMessage { get; set; }
+        public List<DocumentDto> usedDocuments { get; set; }
     }
 }

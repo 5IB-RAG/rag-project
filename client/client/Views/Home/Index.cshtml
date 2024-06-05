@@ -154,13 +154,13 @@
                                             <span>
                                                 @message.Text
                                                 <div class="tag-group">
-                                                    @if (message.DocumentChunksUniqueNames != null)
+                                                    @if (message.DocumentUniqueNames != null)
                                                     {
                                                         <div class="response">
-                                                            @foreach (var chunkName in message.DocumentChunksUniqueNames)
+                                                            @foreach (var document in message.DocumentUniqueNames)
                                                             {
                                                                 <div class="tag">
-                                                                    @chunkName
+                                                                    @document.Name
                                                                 </div>
                                                             }
                                                         </div>

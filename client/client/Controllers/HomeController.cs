@@ -363,18 +363,7 @@ public class HomeController : Controller
                 content
             );
 
-            var distinctDocumentChunks = response.documentChunks
-                .GroupBy(dc => dc.Document.Name)
-                .Select(g => g.First())
-                .ToList();
-
-            List<string> distinctDocumentsName = new();
-            foreach(var document in distinctDocumentChunks)
-            {
-                distinctDocumentsName.Add(document.Document.Name);
-            }
-
-            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = response.assistantMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, DocumentChunks = response.documentChunks, DocumentChunksUniqueNames = distinctDocumentsName });
+            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = response.responseMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, DocumentUniqueNames = response.usedDocuments });
 
             TempData.Put("HomeModel", homeModel);
 
