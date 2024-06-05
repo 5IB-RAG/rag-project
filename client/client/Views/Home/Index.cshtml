@@ -131,9 +131,10 @@
             </div>
 
             <!---------------MESSAGGI CHAT--------->
-                <div class="col-md d-flex flex-column p-0 chat-column">
+            
+                <div class="col-md d-flex flex-column p-0 chat-column justify-content-center">
                     <div class="d-flex chat">
-                        <div class="flex-grow-1 p-3 message-container">
+                        <div class="p-3 message-container  display-grid padding-chat">
                             @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
                             {
                             for (int i = 0; i < Model.SelectedChat.Messages.Count; i++)
@@ -141,13 +142,19 @@
                             var message = Model.SelectedChat.Messages[i];
                             if (message.Role == client.Enum.ChatRole.USER) // User message
                             {
+                                        <div class="character-picture-user">
+                                            <img src="img/user-icon.jpg" alt="pupogelatoalcioccolato" />
+                                        </div>
                             <div class="message d-flex">
                                 <span>@message.Text</span>
                             </div>
                             }
                             else // Bot message
                             {
-                            <div class="response d-flex">
+                                        <div class="character-picture-bot">
+                                            <img src="img/logo_full_no_nome.svg" alt="pupogelatoalcioccolato" />
+                                        </div>
+                                        <div class="response d-flex col">
                                             <span>
                                                 @message.Text
                                                 <div class="tag-group">
@@ -177,7 +184,7 @@
                                     <img src="img/attach_file_icon.svg" alt="File Icon">
                                 </button>
                                 <form asp-action="MessagePost" method="post" class="input-form">
-                                    <input type="text" placeholder="Invia un messaggio" class="input-field" asp-for=Message/>
+                                    <input type="text" placeholder="Invia un messaggio" autocomplete="off" class="input-field" asp-for=Message />
                                     <button class="send-button">
                                         <img src="img/top_arrow_icon.svg" alt="File Icon">
                                     </button>

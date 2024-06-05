@@ -121,7 +121,7 @@ body {
     justify-content: space-between;
     background-color: #121212;
     width: 75%;
-    padding: 0;
+    padding: 10px;
     margin:0;
     height:80%;
 }
@@ -129,9 +129,11 @@ body {
 /*CSS PER CHAT SCROLLABILE*/
 
 
-/*.message-container > :last-child { TODO Da sistemare per mettere spazio finale
-    margin-bottom: 5rem;
-}*/
+.message-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
 
 .chat-column {
     height: 100vh;
@@ -141,9 +143,44 @@ body {
     flex: 1;
     overflow-y: auto;
     height: 100%;
+    width: 70%;
+    align-self:center;
+    margin-left:0;
+    margin: 1rem;
 }
 
-.message, .response {
+.display-grid{
+    display: grid;
+    flex-direction: column;
+
+}
+
+.character-picture-bot {
+    width: 30px;
+    margin-right: 10px;
+    border-radius: 15px;
+    flex-shrink: 0;
+}
+.character-picture-user {
+    width: 30px;
+    margin-left: 10px;
+    border-radius: 15px;
+    flex-shrink: 0;
+    justify-self: end;
+}
+
+    .character-picture-bot img {
+        width: 30px;
+        height: 30px;
+    }
+
+.character-picture-user img {
+    align-content: end;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+}
+    .message, .response {
     background-color: #333;
     padding: 10px;
     border-radius: 4px;
@@ -157,7 +194,8 @@ body {
     margin-bottom: 10px;
     max-width: 70%;
     word-wrap: break-word;
-    align-self: flex-end;
+    align-content: end;
+    justify-self: right;
 }
 
 .response {
@@ -165,9 +203,10 @@ body {
     padding: 0.7rem 1.2rem 0.7rem 1.2rem;
     border-radius: 2rem;
     margin-bottom: 10px;
-    max-width: 70%;
+    max-width: 100%;
     word-wrap: break-word;
-    align-self: flex-start;
+    align-content: start;
+    justify-self: left;
 }
 
 footer {
@@ -192,9 +231,8 @@ form {
     height: 100%;
     padding: 0.6rem;
     justify-content: left;
-    align-items:center;
-    align-content:center;
-
+    align-items: center;
+    align-content: center;
 }
 
 .input-container img {
