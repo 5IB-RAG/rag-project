@@ -154,12 +154,12 @@
                                             <span>
                                                 @message.Text
                                                 <div class="tag-group">
-                                                    @if (message.DocumentUniqueNames != null)
+                                                    @if (message.UsedDocument != null)
                                                     {
-                                                        @foreach (var document in message.DocumentUniqueNames)
+                                                        @foreach (var document in message.UsedDocument)
                                                         {
                                                             <div class="tag">
-                                                                🗃️ @document.Name
+                                                                🗃️ @document.Name 
                                                             </div>
                                                         }
                                                     }

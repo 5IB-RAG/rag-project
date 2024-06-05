@@ -131,7 +131,7 @@ body {
 
 
 .message-container {
-    display: flex;
+    display: inline-flex;
     justify-content: flex-start;
     align-items: flex-start;
 }
@@ -431,19 +431,19 @@ form {
         background-color: #757575;
     }
 
-    /*.response span {
-    display: block;
-}*/
-    .tag-group {
-        font-size: 15px;
-        display: block;
-    }
+    
+.tag-group {
+    margin-top:0.5rem;
+    font-size: 15px;
+    display: flex;
+}
 
 .tag {
     background-color: #666;
     border-radius: 2rem;
     margin: 5px;
     padding: 5px;
+    padding-right:10px;
 }
 
 .logo {

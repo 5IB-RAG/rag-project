@@ -248,7 +248,6 @@ public class HomeController : Controller
         return Forbid();
     }
 
-    //@ToDo in index.cshtml
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ChatRenamePost(HomeModel model)
@@ -365,7 +364,7 @@ public class HomeController : Controller
                 content
             );
 
-            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = response.responseMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, DocumentUniqueNames = response.usedDocuments });
+            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = response.responseMessage, Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, UsedDocument = response.usedDocuments });
 
             TempData.Put("HomeModel", homeModel);
 
