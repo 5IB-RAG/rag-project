@@ -64,37 +64,39 @@
                             </button>
                     </div>
                     <div class="sidebar-bot">
-                        <form method="post" asp-action="ChatPost">
-                            <div class="newChat file text-center">
-                                <button class="btn" id="newChatBtn">
-                                    <img class="imgLogo" src="/img/Logo_full_no_nome.svg" alt="ㅤ">
-                                    Nuova chat
-                                </button>
-                            </div>
-                        </form>
-                        <div class="cronologia mt-3" id="chatSection">
-                            @if (Model.Chats != null)
+
+                    <form method="post" asp-action="ChatPost">
+                        <div class="newChat file text-center">
+                            <button class="btn" id="newChatBtn">
+                                <img class="imgLogo" src="/img/Logo_full_no_nome.svg" alt="ㅤ">
+                                Nuova chat
+                            </button>
+                        </div>
+                    </form>
+                        <div style="width: 70%; height: 4px; border-radius: 2rem; background-color: #1a1a1a; align-self:center; margin-top:1rem;"></div>
+                    <div class="cronologia mt-3" id="chatSection">
+                        @if (Model.Chats != null)
+                        {
+                            foreach (var chat in Model.Chats)
                             {
-                                foreach (var chat in Model.Chats)
+                                if (Model.SelectedChat != null && Model.SelectedChat.Id == chat.Id)
                                 {
-                                    if (Model.SelectedChat != null && Model.SelectedChat.Id == chat.Id)
-                                    {
-                                        <div class="file-selected">
-                                            <form asp-action="ChatGetById" method="get" class="form-file">
-                                                <input type="hidden" name="id" value="@chat.Id" />
-                                                <button>@chat.Title</button>
-                                                <div class="dots-container">
-                                                    <a>▪️▪️▪️</a>
-                                                    <ul class="submenu">
-                                                        <li class="submenu-item">
-                                                            <a asp-action="ChatDelete" class="submenu-link text-danger ">Delete</a>
-                                                        </li>
-                                                        <li class="submenu-item">
-                                                            <a class="submenu-link" data-state="closed" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </form>
+                                    <div class="file-selected">
+                                        <form asp-action="ChatGetById" method="get" class="form-file">
+                                            <input type="hidden" name="id" value="@chat.Id" />
+                                            <button>@chat.Title</button>
+                                            <div class="dots-container">
+                                                <img src="img/3dots-icon.svg" alt="Alternate Text" />
+                                                <ul class="submenu">
+                                                    <li class="submenu-item">
+                                                        <a asp-action="ChatDelete" class="submenu-link text-danger ">Delete</a>
+                                                    </li>
+                                                    <li class="submenu-item">
+                                                        <a class="submenu-link" data-state="closed" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </form>
 
                                         </div>
                                     }
@@ -127,8 +129,9 @@
                     </div>
                 </div>
 
-                <!---------------MESSAGGI CHAT--------->
-                <div class="col-md d-flex flex-column p-0 chat-column justify-content-center">
+            <!---------------MESSAGGI CHAT--------->
+            
+                <div class="right-part col-md d-flex flex-column p-0 chat-column justify-content-center">
                     <div class="d-flex chat">
                         <div class="p-3 message-container  display-grid padding-chat">
                             @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
