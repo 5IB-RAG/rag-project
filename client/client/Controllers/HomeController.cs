@@ -136,13 +136,15 @@ public class HomeController : Controller
     public async Task<IActionResult> DocumentPost(HomeModel model )
     {
         var formData = new MultipartFormDataContent();
+        string metaData = "";
         foreach (var item in model.UploadDocument.FormFiles)
         {
             var file = new StreamContent(item.OpenReadStream());
             formData.Add(file, "FormFiles", item.FileName);
-            formData.Add(new StringContent(item.FileName.Split(".").Last() + ";"), "MetaData");
+            metaData += item.FileName.Split(".").Last()+";";
         }
-        formData.Add(new StringContent(model.UploadDocument.MetaData), "MetaData");
+
+        formData.Add(new StringContent(metaData+";"+model.UploadDocument.MetaData), "MetaData");
 
 
         // API per caricare un documento

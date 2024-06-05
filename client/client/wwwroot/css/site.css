@@ -81,9 +81,10 @@ body {
 
     .file a{
         justify-content: flex-end;
+        text-decoration: none;
     }
 
-    .file button, .file div, .file-selected button{
+    .file button, .file div, .file-selected button {
         width: 100%;
         padding: 10px;
         border: none;
@@ -440,10 +441,9 @@ form {
 
 .tag {
     background-color: #666;
-    border-radius: 5px;
+    border-radius: 2rem;
     margin: 5px;
     padding: 5px;
-    width: 100%;
 }
 
 .logo {

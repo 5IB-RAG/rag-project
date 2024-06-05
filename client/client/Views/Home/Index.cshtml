@@ -156,14 +156,12 @@
                                                 <div class="tag-group">
                                                     @if (message.DocumentUniqueNames != null)
                                                     {
-                                                        <div class="response">
-                                                            @foreach (var document in message.DocumentUniqueNames)
-                                                            {
-                                                                <div class="tag">
-                                                                    @document.Name
-                                                                </div>
-                                                            }
-                                                        </div>
+                                                        @foreach (var document in message.DocumentUniqueNames)
+                                                        {
+                                                            <div class="tag">
+                                                                🗃️ @document.Name
+                                                            </div>
+                                                        }
                                                     }
                                                 </div>
                                             </span>
