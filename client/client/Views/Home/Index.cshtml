@@ -56,14 +56,12 @@
                 <!-- Sidebar -->
                 <div class="col-md-6 d-none d-md-block sidebar">
                     <div class="sidebar-top">
-
                             <button class="sidebar-btn" id="chatBtn">
                                 <img src="img/chat_icon.svg" alt="Chat Icon"> Chat
                             </button>
                             <button class="sidebar-btn" id="fileBtn">
                                 <img src="img/file_icon.svg" alt="File Icon"> File
                             </button>
-                        
                     </div>
                     <div class="sidebar-bot">
 
@@ -100,36 +98,36 @@
                                             </div>
                                         </form>
 
-                                    </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="file">
+                                            <form asp-action="ChatGetById" method="get">
+                                                <input type="hidden" name="id" value="@chat.Id" />
+                                                <button>@chat.Title</button>
+                                            </form>
+                                        </div>
+                                    }
                                 }
-                                else
+                            }
+                        </div>
+                        <div class="files hidden" id="fileSection">
+                            @if (Model.Documents != null)
+                            {
+                                foreach (var file in Model.Documents)
                                 {
                                     <div class="file">
-                                        <form asp-action="ChatGetById" method="get">
-                                            <input type="hidden" name="id" value="@chat.Id" />
-                                            <button>@chat.Title</button>
-                                        </form>
+                                        <div>
+                                            @file.Name 
+                                            <a asp-action="DocumentDelete" asp-route-id="@file.Id">🗑️</a>
+                                        </div>
                                     </div>
                                 }
                             }
-                        }
-                    </div>
-                    <div class="files hidden" id="fileSection">
-                        @if (Model.Documents != null)
-                        {
-                            foreach (var file in Model.Documents)
-                            {
-                                <div class="file">
-                                    <div>
-                                        @file.Name 
-                                        <a asp-action="DocumentDelete" asp-route-id="@file.Id">🗑️</a>
-                                    </div>
-                                </div>
-                            }
-                        }
+                        </div>
                     </div>
                 </div>
-            </div>
 
             <!---------------MESSAGGI CHAT--------->
             
@@ -138,20 +136,20 @@
                         <div class="p-3 message-container  display-grid padding-chat">
                             @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
                             {
-                            for (int i = 0; i < Model.SelectedChat.Messages.Count; i++)
-                            {
-                            var message = Model.SelectedChat.Messages[i];
-                            if (message.Role == client.Enum.ChatRole.USER) // User message
-                            {
+                                for (int i = 0; i < Model.SelectedChat.Messages.Count; i++)
+                                {
+                                    var message = Model.SelectedChat.Messages[i];
+                                    if (message.Role == client.Enum.ChatRole.USER) // User message
+                                    {
                                         <div class="character-picture-user">
                                             <img src="img/user-icon.jpg" alt="pupogelatoalcioccolato" />
                                         </div>
-                            <div class="message d-flex">
-                                <span>@message.Text</span>
-                            </div>
-                            }
-                            else // Bot message
-                            {
+                                        <div class="message d-flex">
+                                            <span>@message.Text</span>
+                                        </div>
+                                    }
+                                    else // Bot message
+                                    {
                                         <div class="character-picture-bot">
                                             <img src="img/logo_full_no_nome.svg" alt="pupogelatoalcioccolato" />
                                         </div>
@@ -161,20 +159,20 @@
                                                 <div class="tag-group">
                                                     @if (message.DocumentChunksUniqueNames != null)
                                                     {
-                                                    <div class="response">
+                                                        <div class="response">
                                                             @foreach (var chunkName in message.DocumentChunksUniqueNames)
-                                                        {
-                                                        <div class="tag">
+                                                            {
+                                                                <div class="tag">
                                                                     @chunkName
                                                                 </div>
-                                                        }
+                                                            }
                                                         </div>
                                                     }
                                                 </div>
                                             </span>
-                            </div>
-                            }
-                            }
+                                        </div>
+                                    }
+                                }
                             }
                         </div>
                     </div>

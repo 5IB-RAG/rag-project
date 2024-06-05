@@ -313,6 +313,8 @@ public class HomeController : Controller
                 RequestRoute.Chats + "/" + homeModel.SelectedChat.Id,
                 Request.Cookies["authentication"]
             );
+            homeModel.SelectedChat = null;
+            TempData.Put("HomeModel", homeModel);
 
             return RedirectToAction(nameof(Index));
         }
