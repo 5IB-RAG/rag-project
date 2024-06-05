@@ -75,6 +75,7 @@
                             </button>
                         </div>
                     </form>
+                        <div style="width: 70%; height: 4px; border-radius: 2rem; background-color: #1a1a1a; align-self:center; margin-top:1rem;"></div>
                     <div class="cronologia mt-3" id="chatSection">
                         @if (Model.Chats != null)
                         {
@@ -132,7 +133,7 @@
 
             <!---------------MESSAGGI CHAT--------->
             
-                <div class="col-md d-flex flex-column p-0 chat-column justify-content-center">
+                <div class="right-part col-md d-flex flex-column p-0 chat-column justify-content-center">
                     <div class="d-flex chat">
                         <div class="p-3 message-container  display-grid padding-chat">
                             @if (Model.SelectedChat != null && Model.SelectedChat.Messages != null)
