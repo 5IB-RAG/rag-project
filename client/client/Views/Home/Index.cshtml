@@ -75,7 +75,7 @@
                             </button>
                         </div>
                     </form>
-                        <div style="width: 70%; height: 4px; border-radius: 2rem; background-color: #1a1a1a; align-self:center; margin-top:1rem;"></div>
+                        <div style="width: 70%; height: 4px; border-radius: 2rem; background-color: #E9CC70; align-self:center; margin-top:1rem;"></div>
                     <div class="cronologia mt-3" id="chatSection">
                         @if (Model.Chats != null)
                         {
@@ -90,12 +90,22 @@
                                             <div class="dots-container">
                                                 <img src="img/3dots-icon.svg" alt="Alternate Text" />
                                                 <ul class="submenu">
+                                                    
                                                     <li class="submenu-item">
-                                                        <a asp-action="ChatDelete" class="submenu-link text-danger ">Delete</a>
+                                                    <div class="d-flex">
+                                                                <img src="img/rename_icon.svg" class="submenu-img"/>
+                                                                <a class="submenu-link" data-state="closed" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a>
+                                                    </div>
+                                                    
                                                     </li>
-                                                    <li class="submenu-item">
-                                                        <a class="submenu-link" data-state="closed" data-bs-toggle="modal" data-bs-target="#renameModal">Rename</a>
-                                                    </li>
+                                                        
+                                                        <li class="submenu-item">
+                                                            <div class="d-flex">
+                                                                <img src="img/bin_icon.svg" />
+                                                                <a asp-action="ChatDelete" class="submenu-link text-danger ">Delete</a>
+                                                            </div>
+                                                        </li>
+                                                        
                                                 </ul>
                                             </div>
                                         </form>

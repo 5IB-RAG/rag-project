@@ -22,7 +22,8 @@ body {
     border-radius: 20px;
     text-align: center;
     position: relative;
-    padding-top: 60px; /* spazio per il logo */
+    padding-top: 60px;
+    width: 38vh;
 }
 
 .logo {
