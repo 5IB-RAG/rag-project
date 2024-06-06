@@ -4,7 +4,7 @@
 
     navigator.clipboard.writeText(copyText.textContent).then(function () {
         Swal.fire({
-            icon: 'sucess',
+            icon: 'success',
             title: 'Testo copiato',
             background: '#222',
             color: '#fff',
