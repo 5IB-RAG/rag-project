@@ -255,6 +255,8 @@ public class HomeController : Controller
     {
         // richiesta API per creare una nuova chat
         HomeModel homeModel = TempData.Get<HomeModel>("HomeModel"); //Questo � quello vero del client, model contiene solo i campi compilati dal form
+        homeModel.SelectedChat.Title = model.NewChatName;
+        TempData.Put("HomeModel", homeModel);
         try
         {
             JsonContent content = JsonContent.Create(model.NewChatName);

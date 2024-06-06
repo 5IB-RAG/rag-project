@@ -71,6 +71,10 @@ body {
     width: 100%;
 }
 
+    .newChat button:hover {
+        color: white;
+    }
+
 .cronologia {
     flex-grow: 1;
 }
@@ -437,6 +441,21 @@ form {
     margin: 5px;
     padding: 5px;
     padding-right:10px;
+}
+
+.copy {
+    background-color: #666;
+    border-radius: 2rem;
+    margin: 5px;
+    padding: 5px;
+    padding-right: 10px;
+    border-style: solid;
+    border-color: #E9CD72;
+    color: white;
+}
+
+.copy:hover{
+    background-color: #888;
 }
 
 .logo {
