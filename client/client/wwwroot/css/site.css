@@ -71,6 +71,10 @@ body {
     width: 100%;
 }
 
+    .newChat button:hover {
+        color: white;
+    }
+
 .cronologia {
     flex-grow: 1;
 }
