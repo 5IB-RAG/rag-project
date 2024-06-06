@@ -1,6 +1,7 @@
 @model client.Models.HomeModel
 @{
-    ViewData["Title"] = Model.SelectedChat.Title;
+    if (Model.SelectedChat != null)
+        ViewData["Title"] = Model.SelectedChat.Title;
 }
 
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
