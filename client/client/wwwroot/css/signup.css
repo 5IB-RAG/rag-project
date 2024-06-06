@@ -23,7 +23,9 @@ body {
     text-align: center;
     position: relative;
     padding-top: 60px; /* spazio per il logo */
-    width: 300px; /* Aumenta la larghezza del form */
+    width: 38vh;
+    
+    ; /* Aumenta la larghezza del form */
 }
 
 .logo {
