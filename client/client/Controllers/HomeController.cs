@@ -7,6 +7,7 @@ using System.Text;
 using client.Model.Dto;
 using client.Extentions;
 using Markdig;
+using Microsoft.AspNetCore.SignalR;
 
 namespace client.Controllers;
 
@@ -37,14 +38,11 @@ namespace client.Controllers;
 //}
 public class HomeController : Controller
 {
-    ApiService ApiService { get; set; } //Non ti serve piu'
-
     private readonly RequestService _requestService;
     
-    public HomeController(RequestService requestService, ApiService apiService)
+    public HomeController(RequestService requestService)
     {
         _requestService = requestService;
-        ApiService = apiService;
     }
 
     public async Task<IActionResult> Index()
@@ -344,6 +342,11 @@ public class HomeController : Controller
         if (string.IsNullOrEmpty(message)) {
             return Forbid();
         }
+        
+        var hubContext = HttpContext.RequestServices.GetService<IHubContext<ChatHub>>();
+
+        var markDownMessage = Markdown.ToHtml(message);
+        await hubContext.Clients.All.SendAsync("SendMessage", "User", markDownMessage);
 
         // Mandare richiesta API con testo e id chat riferimento
         var content = JsonContent.Create(message);
@@ -355,7 +358,7 @@ public class HomeController : Controller
                 await ChatPost();
             }
 
-            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = Markdown.ToHtml(message), Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
+            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = markDownMessage, Role = Enum.ChatRole.USER, ChatId = homeModel.SelectedChat.Id });
 
             //Ritornare la chat o il messaggio?
             var response = await _requestService.SendRequest<ChatEndPointResponse>(
@@ -365,9 +368,15 @@ public class HomeController : Controller
                 content
             );
 
-            homeModel.SelectedChat.Messages.Add(new MessageDto { Text = Markdown.ToHtml(response.responseMessage), Role = Enum.ChatRole.ASSISTANT, ChatId = homeModel.SelectedChat.Id, UsedDocument = response.usedDocuments });
+            var chatResponse = new MessageDto
+            {
+                Text = Markdown.ToHtml(response.responseMessage), Role = Enum.ChatRole.ASSISTANT,
+                ChatId = homeModel.SelectedChat.Id, UsedDocument = response.usedDocuments
+            };
+            homeModel.SelectedChat.Messages.Add(chatResponse);
 
             TempData.Put("HomeModel", homeModel);
+            //await hubContext.Clients.All.SendAsync("ReceiveMessage", "Assistant", chatResponse.Text);
 
             return RedirectToAction(nameof(Index));
         }

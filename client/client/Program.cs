@@ -7,8 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 //Add RequestService
 builder.Services.AddSingleton<RequestService>();
-// Add ApiService
-builder.Services.AddSingleton<ApiService>();
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -35,6 +35,11 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseEndpoints(endpoint =>
+{
+    endpoint.MapHub<ChatHub>("/chathub");
+});
 
 app.MapControllerRoute(
     name: "default",

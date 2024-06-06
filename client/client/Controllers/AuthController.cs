@@ -9,7 +9,6 @@ namespace client.Controllers
     public class AuthController : Controller
     {
         private readonly RequestService _requestService;
-        ApiService ApiService { get; set; }
         
 
         static JsonSerializerOptions jsonDeserializationOptions = new JsonSerializerOptions
@@ -18,9 +17,8 @@ namespace client.Controllers
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
-        public AuthController(RequestService requestService, ApiService apiService)
+        public AuthController(RequestService requestService)
         {
-            ApiService = apiService;
             _requestService = requestService;
         }
         public IActionResult Index()

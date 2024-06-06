@@ -190,6 +190,10 @@ body {
     justify-self: right;
 }
 
+.message p {
+    margin: 0;
+}
+
 .response {
     background-color: #333;
     padding: 0.7rem 1.2rem 0.7rem 1.2rem;
@@ -199,6 +203,10 @@ body {
     word-wrap: break-word;
     align-content: start;
     justify-self: left;
+}
+
+.response p {
+    margin: 0;
 }
 
 footer {
