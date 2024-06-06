@@ -452,6 +452,10 @@ form {
     color: white;
 }
 
+.copy:hover{
+    background-color: #888;
+}
+
 .logo {
     width: 30px;
     height: 30px;
