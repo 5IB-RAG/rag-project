@@ -217,18 +217,19 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form enctype="multipart/form-data" method="post" asp-action="DocumentPost">
-                    <div class="modal-body custom-modal-body">
+                        <div class="modal-body col custom-modal-body">
                         <div class="file-upload-container">
                             <input asp-for="UploadDocument.FormFiles" type="file" class="form-control mb-3 custom-input" multiple>
                         </div>
-                        <div class="custom-form">
+                            <div class="col custom-form">
                             <div class="custom-label">Scrivi i tags (usa ; per separarli)</div>
                             <input asp-for="UploadDocument.MetaData" type="text" class="form-control custom-input">
                         </div>
+                            <div class="col custom-modal-footer">
+                                <button type="submit" class="btn btn-primary custom-submit-button" id="modalSubmitButton">Invia</button>
+                            </div>
                     </div>
-                    <div class="modal-footer custom-modal-footer">
-                        <button type="submit" class="btn btn-primary custom-submit-button" id="modalSubmitButton">Invia</button>
-                    </div>
+                    
                 </form>
             </div>
         </div>
@@ -244,15 +245,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="post" asp-action="ChatRenamePost">
-                    <div class="modal-body custom-modal-body">
-                        <div class="custom-form">
+                        <div class="modal-body col custom-modal-body">
+                        <div class="custom-form col">
                             <div class="custom-label">Scrivi il nuovo nome della chat</div>
                             <input asp-for="NewChatName" type="text" class="form-control custom-input"/>
                         </div>
+                            <div class="col custom-modal-footer">
+                                <button type="submit" class="btn btn-primary custom-submit-button">Invia</button>
+                            </div>
                     </div>
-                    <div class="modal-footer custom-modal-footer">
-                        <button type="submit" class="btn btn-primary custom-submit-button">Invia</button>
-                    </div>
+                    
                 </form>
             </div>
         </div>
