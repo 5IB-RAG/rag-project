@@ -15,8 +15,6 @@
                 HAM
             </button>
         </div>
-
-
         <div class="offcanvas offcanvas-start d-md-none bg-black" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
             <div class="offcanvas-header bg-black">
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -76,7 +74,7 @@
                         </div>
                     </form>
                         <div style="width: 70%; height: 4px; border-radius: 2rem; background-color: #E9CC70; align-self:center; margin-top:1rem;"></div>
-                    <div class="cronologia mt-3" id="chatSection">
+                        <div class="cronologia mt-3" id="chatSection">
                         @if (Model.Chats != null)
                         {
                             foreach (var chat in Model.Chats)
@@ -124,7 +122,7 @@
                                 }
                             }
                         </div>
-                        <div class="files hidden" id="fileSection">
+                        <div class="mt-3 hidden" id="fileSection">
                             @if (Model.Documents != null)
                             {
                                 foreach (var file in Model.Documents)
