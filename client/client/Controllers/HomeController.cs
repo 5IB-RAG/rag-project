@@ -166,7 +166,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return Forbid();
+        return RedirectToAction(nameof(Index),"Error");
     }
 
     public async Task<IActionResult> DocumentDelete(int id) {
@@ -188,7 +188,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return Forbid();
+        return RedirectToAction(nameof(Index),"Error");
     }
     #endregion
 
@@ -246,7 +246,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return Forbid();
+        return RedirectToAction(nameof(Index),"Error");
     }
 
     [HttpPost]
@@ -276,7 +276,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return Forbid();
+        return RedirectToAction(nameof(Index),"Error");
     }
 
     [HttpGet]
@@ -303,7 +303,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return Forbid();
+        return RedirectToAction(nameof(Index),"Error");
     }
 
     public async Task<IActionResult> ChatDelete()
@@ -329,7 +329,7 @@ public class HomeController : Controller
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return Forbid();
+        return RedirectToAction(nameof(Index),"Error");
     }
     #endregion
 
@@ -344,7 +344,7 @@ public class HomeController : Controller
     public async Task<IActionResult> MessagePost(string message)
     {
         if (string.IsNullOrEmpty(message)) {
-            return Forbid();
+            return RedirectToAction(nameof(Index),"Error");
         }
 
         // Mandare richiesta API con testo e id chat riferimento
@@ -375,12 +375,13 @@ public class HomeController : Controller
         }
         catch (HttpRequestException e)
         {
-            if (e.StatusCode == HttpStatusCode.Unauthorized) return Unauthorized();
-            
+            if (e.StatusCode == HttpStatusCode.Unauthorized) 
+                return Unauthorized();
+
             Console.WriteLine("\nException Caught!");
             Console.WriteLine($"Message :{e.Message}");
         }
-        return Forbid();
+        return RedirectToAction(nameof(Index),"Error");
     }
     #endregion
 }

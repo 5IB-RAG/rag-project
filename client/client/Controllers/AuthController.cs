@@ -79,7 +79,6 @@ namespace client.Controllers
                 {
                     TempData["authResult"] = HttpRequestError.InvalidResponse;
                 }
-                return RedirectToAction(nameof(Result));
             }
             catch (HttpRequestException e)
             {
@@ -139,7 +138,6 @@ namespace client.Controllers
                 {
                     TempData["authResult"] = HttpRequestError.InvalidResponse;
                 }
-                return RedirectToAction(nameof(Result));
             }
             catch (HttpRequestException e)
             {
@@ -149,10 +147,5 @@ namespace client.Controllers
             return NotFound();
         }
         #endregion
-
-        public IActionResult Result()
-        {
-            return View(TempData["authResult"]);
-        }
     }
 }

@@ -2,7 +2,8 @@ namespace client.Models;
 
 public class ErrorViewModel
 {
-    public string? RequestId { get; set; }
+    public string MessageError { get; set;}
+    //public string? RequestId { get; set; }
 
-    public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+    //public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 }
