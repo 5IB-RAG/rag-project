@@ -161,18 +161,22 @@
                                             <div class="d-inline-flex">
                                                 <div class="response">
                                             <span>
-                                                @Html.Raw(message.Text)
-                                                @if (message.UsedDocument != null && message.UsedDocument.Count > 0)
-                                                {
+                                                <div id="message-@i">
+                                                    @Html.Raw(message.Text)
+                                                </div>
                                                 <div class="tag-group">
-                                                        @foreach (var document in message.UsedDocument)
+                                                    <button onclick="copyText('message-@i')" class="copy">📋 Copia</button>
+                                                    @if (message.UsedDocument != null && message.UsedDocument.Count > 0)
                                                     {
-                                                    <div class="tag">
+                                                        @foreach (var document in message.UsedDocument)
+                                                        {
+                                                            <div class="tag">
                                                                 🗃️ @document.Name 
                                                             </div>
+                                                        }
+                                                    
                                                     }
-                                                    </div>
-                                                }
+                                                </div>
                                             </span>
                                                 </div>
                                             </div>
@@ -255,7 +259,9 @@
     <script>
         var chatBody = document.querySelector('.chat');
         chatBody.scrollTop = chatBody.scrollHeight - chatBody.clientHeight;
+        
     </script>
+        <script src="~/js/copytext.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     @* <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script> *@

@@ -437,6 +437,17 @@ form {
     padding-right:10px;
 }
 
+.copy {
+    background-color: #666;
+    border-radius: 2rem;
+    margin: 5px;
+    padding: 5px;
+    padding-right: 10px;
+    border-style: solid;
+    border-color: #E9CD72;
+    color: white;
+}
+
 .logo {
     width: 30px;
     height: 30px;
