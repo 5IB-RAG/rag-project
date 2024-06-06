@@ -79,6 +79,11 @@ body {
     flex-grow: 1;
 }
 
+.file-spacing{
+    display:flex;
+    justify-content:space-between;
+}
+
 .file , .file-selected{
     margin-bottom: 10px;
     margin-top: 10px;
@@ -517,7 +522,7 @@ form {
     height:100px;
     background: #444;
     top: 110%;
-    padding:10px;
+    padding:0.5rem;
     -webkit-box-shadow: 0 15px 44px rgba(140, 140, 140, 0.18);
     box-shadow: 0 15px 44px rgba(140, 140, 140, 0.18);
     border-radius: 0.6rem;
@@ -534,6 +539,7 @@ form {
         font-size: 18px;
         text-decoration: none;
         justify-self: center;
+        margin-left: 1rem;
     }
 
     .submenu .submenu-link:hover {

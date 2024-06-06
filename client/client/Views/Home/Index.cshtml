@@ -130,9 +130,11 @@
                                 foreach (var file in Model.Documents)
                                 {
                                     <div class="file">
-                                        <div>
+                                        <div class="file-spacing">
                                             @file.Name 
-                                            <a asp-action="DocumentDelete" asp-route-id="@file.Id">🗑️</a>
+                                            <a asp-action="DocumentDelete" asp-route-id="@file.Id">
+                                            <img src="img/bin_icon.svg"/>
+                                            </a>
                                         </div>
                                     </div>
                                 }
