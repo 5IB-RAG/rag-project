@@ -369,6 +369,7 @@ form {
 
 .custom-input {
     background: #555;
+    background-color: #555;
     border: none;
     padding: 10px;
     color: white;
@@ -376,7 +377,6 @@ form {
     margin-bottom: 20px;
     text-align: center;
     border-radius: 5px;
-    
 }
     .custom-input:focus {
         background-color: #555;
@@ -416,6 +416,8 @@ form {
     cursor: pointer;
     border-radius: 5px;
     width: 18vh;
+    text-align:center;
+    justify-content:center;
 }
 
     .custom-submit-button:hover {
@@ -503,6 +505,7 @@ form {
 
     .submenu .submenu-link:hover {
         color: #E9CD72;
+        cursor:pointer;
     }
 
 .bottom-part {
