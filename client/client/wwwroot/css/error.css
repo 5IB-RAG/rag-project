@@ -1,0 +1,35 @@
+.hidden {
+    display: none;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #fff;
+}
+.error-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+    .error-group div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #333;
+        padding: 5vh;
+        border-radius: 5rem;
+    }
+
+    .error-group h1{
+        font-size: 5vh;
+        font-weight:bold;
+    }
+
+    .error-group h2{
+        font-style: italic;
+    }

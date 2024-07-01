@@ -401,3 +401,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 .idea/
+/server/server/Migrations
+/server/server/appsettings.json

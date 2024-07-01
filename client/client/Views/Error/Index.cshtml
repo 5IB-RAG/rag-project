@@ -1,0 +1,20 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<link rel="stylesheet" href="~/css/error.css" asp-append-version="true" />
+
+<div class="error-group">
+    <div>
+        <h1 class="text-danger">Errore!</h1>
+        <h2 class="text-danger">Si è verificato un errore durante l'espletamento della richiesta.</h2>
+    </div>
+    </div>
+
+@if (Model != null)
+{
+    <p>
+        <strong>Request ID:</strong> <code>@Model.MessageError</code>
+    </p>
+}
